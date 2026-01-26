@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>專屬空間沙龍 V21 滑輪軌道版</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/zh_tw.js"></script>
+    
+    <style>
+        /* --- V21 樣式 (維持 V20 黑金質感) --- */
+        :root { 
+            --primary: #2d3436; 
+            --secondary: #636e72;
+            --gold: #D4AF37;
+            --gold-light: #f1c40f;
+            --gold-shadow: rgba(212, 175, 55, 0.2);
+            --bg-gradient: linear-gradient(135deg, #f6f8fb 0%, #e2ebf0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            --holiday-bg: #fff5f5;
+            --holiday-text: #e17055;
+        }
+        
+        body { 
+            font-family: 'Noto Sans TC', sans-serif;
+            background: var(--bg-gradient); min-height: 100vh; margin: 0; 
+            padding-bottom: calc(90px + env(safe-area-inset-bottom)); color: var(--primary);
+            -webkit-tap-highlight-color: transparent; -webkit-overflow-scrolling: touch; 
+            overscroll-behavior-y: none; user-select: none; background-attachment: fixed;
+            overflow-x: hidden; /* 防止滑動時頁面晃動 */
+        }
+
+        /* 🆕 軌道專用容器 */
+        .calendar-track-wrapper {
+            overflow: hidden; /* 隱藏滑出去的部分 */
+            position: relative;
+            touch-action: pan-y; /* 允許垂直捲動，水平交給 JS 接管 */
+        }
+        
+        #calendar { 
+            background: #fff; border-radius: 35px; padding: 25px; 
+            box-shadow: var(--glass-shadow); min-height: 70vh; 
+            transition: transform 0.1s ease-out; /* 預設平滑 */
+            will-change: transform; /* 效能優化 */
+        }
+
+        /* 動畫定義 */
+        @keyframes liquidMorph {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        }
+        @keyframes shine { 0% { background-position: -200%; } 100% { background-position: 200%; } }
+
+        /* Header */
+        .header { background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); padding: 15px 25px; position: sticky; top: 0; z-index: 500; display: flex; justify-content: space-between; align-items: center; height: 70px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .app-title { 
+            font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; 
+            background: linear-gradient(to right, #2d3436 20%, #D4AF37 40%, #f1c40f 60%, #2d3436 80%);
+            background-size: 200% auto; color: #000; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+        }
+        #today-revenue { font-family: 'Noto Sans TC'; font-weight: 700; color: var(--gold) !important; text-shadow: 0 2px 10px rgba(212, 175, 55, 0.2); }
+
+        /* 玻璃卡片 */
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(25px); border: var(--glass-border); border-radius: 30px; box-shadow: var(--glass-shadow); transition: transform 0.3s; }
+        div:where(.swal2-popup) { background: #fff !important; border-radius: 35px !important; box-shadow: 0 30px 60px rgba(0,0,0,0.15) !important; padding: 20px !important; font-family: 'Noto Sans TC', sans-serif !important; }
+        div:where(.swal2-title) { font-weight: 700; color: var(--primary) !important; }
+
+        /* 輸入框 (側邊光條) */
+        .capsule-input, .search-box, .filter-select {
+            border: 1px solid #e0e0e0; border-left: 5px solid var(--gold); background: #fff; border-radius: 16px;
+            padding: 15px 20px; font-size: 1rem; outline: none; width: 100%; box-sizing: border-box; color: var(--primary);
+            transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02); font-family: 'Noto Sans TC', sans-serif; font-weight: 500;
+        }
+        .capsule-input:focus, .search-box:focus, .filter-select:focus { 
+            border-left-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.08); transform: translateY(-1px);
+        }
+
+        /* 服務膠囊 */
+        .service-check-input { display: none; }
+        .service-capsule-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0; }
+        .service-capsule {
+            background: #fff; border: 1px solid #e0e0e0; padding: 12px 20px; border-radius: 16px;
+            cursor: pointer; font-size: 1rem; color: var(--secondary); transition: 0.3s; display: flex; align-items: center; gap: 8px;
+            font-weight: 500; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .service-capsule.active { 
+            background: var(--primary); color: var(--gold); border-color: var(--primary) !important; 
+            transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(0,0,0,0.3);
+        }
+
+        /* 標籤 */
+        .smart-tags-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 15px; }
+        .smart-tag { border-radius: 12px; padding: 6px 14px; font-size: 0.85rem; background: #fff; border: 1px solid #e0e0e0; cursor: pointer; color: var(--secondary); box-shadow: 0 2px 5px rgba(0,0,0,0.02); font-weight: 500; transition: 0.2s; }
+        .smart-tag:active { transform: scale(0.95); background: var(--primary); color: var(--gold); border-color: var(--primary); }
+
+        .container { padding: 20px 15px; max-width: 800px; margin: 0 auto; }
+        .page { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; }
+        .page.active { display: block; opacity: 1; transform: translateY(0); }
+        
+        .flatpickr-calendar { border-radius: 25px !important; border:none!important; box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important; font-family: 'Noto Sans TC', sans-serif !important;}
+        .flatpickr-day.selected { background: var(--primary) !important; border-color: var(--primary) !important; color: var(--gold) !important; font-weight: bold; }
+
+        /* Calendar Controls */
+        .btn-view { padding: 8px 15px; background: transparent; border: none; font-size: 1rem; cursor: pointer; color: #aaa; font-weight: 500; transition: 0.3s; position: relative;}
+        .btn-view.active { color: var(--primary); font-weight: 700; }
+        .btn-view.active::after { content:''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 20px; height: 3px; background: var(--gold); border-radius: 3px; }
+        
+        .fc-toolbar{display:none!important;} 
+        .fc-timegrid-event { border-radius: 14px !important; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 5px; margin: 2px; }
+        .fc-event-title { font-weight: 700; font-size: 0.9rem; }
+        .fc-bg-event { opacity: 1 !important; background: var(--holiday-bg) !important; }
+        .fc-bg-event .fc-event-title { color: var(--holiday-text); font-weight: 900; opacity: 0.8; padding-top: 12px; text-align: center; display: block; width: 100%; letter-spacing: 1px;}
+
+        /* FAB (+號) */
+        .fab { position: fixed; bottom: 100px; right: 20px; width: 65px; height: 65px; background: linear-gradient(135deg, var(--primary), #000000); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); z-index: 900; cursor: pointer; animation: liquidMorph 6s ease-in-out infinite; transition: transform 0.2s; } 
+        /* 定義果凍動畫 */
+        @keyframes jelly {
+            0% { transform: scale(1, 1); }
+            30% { transform: scale(1.25, 0.75); }
+            40% { transform: scale(0.75, 1.25); }
+            50% { transform: scale(1.15, 0.85); }
+            65% { transform: scale(0.95, 1.05); }
+            75% { transform: scale(1.05, 0.95); }
+            100% { transform: scale(1, 1); }
+        }
+
+        /* 套用到所有按鈕的點擊狀態 (取代原本的縮小) */
+        .nav-item:active, .btn-act:active, .fab:active, .customer-card:active {
+            animation: jelly 0.5s both !important;
+        }
+
+        /* Lists */
+        .customer-card, .manage-item { background: #fff; padding: 20px; border-radius: 25px; margin-bottom: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; transition: 0.2s; border: 1px solid #f0f0f0; }
+        .customer-card:active { transform: scale(0.98); border-color: var(--gold); }
+        .cust-avatar { width: 50px; height: 50px; background: #f5f5f5; color: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; margin-right: 15px; border: 2px solid #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(30px); display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 20px 50px rgba(0,0,0,0.1); z-index: 1000; border-radius: 40px; border: 1px solid rgba(255,255,255,1); }
+        .nav-item { border: none; background: none; color: #aaa; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; } 
+        .nav-item.active { color: var(--gold); transform: translateY(-3px); }
+        
+        .btn-act { flex: 1; padding: 15px; border-radius: 20px; border: none; cursor: pointer; font-size: 1rem; font-weight: bold; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.3s; font-family: 'Noto Sans TC', sans-serif; }
+        .btn-act.book { background: var(--primary); color: var(--gold); }
+        .btn-act.edit { background: #e0e0e0; color: var(--primary); } 
+        .btn-act.delete { background: #fff; color: #ff7675; border: 2px solid #ff7675; flex: 0.5; box-shadow: none; }
+        #loadingMask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f5f7fa; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s; }
+        
+        .btn-trash { background: #fff; color: #ff7675; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; border: 2px solid #f0f0f0; cursor: pointer; }
+        .btn-add-item { width: 100%; padding: 18px; background: #fff; border: 2px dashed #e0e0e0; color: var(--secondary); margin-top: 15px; cursor: pointer; font-size:1rem; font-weight: 500; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transition: all 0.4s ease; }
+        .btn-add-item:hover { border-color: var(--gold); color: var(--gold); background: rgba(212, 175, 55, 0.05); border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; border-style: solid; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.15); }
+        .btn-add-item:active { transform: scale(0.98); }
+        
+        .pref-stylist-tag { background: rgba(212, 175, 55, 0.1); color: #bfa37e; font-size:0.8rem; padding:3px 10px; border-radius:10px; margin-top:4px; display:inline-block; font-weight: 600;}
+        .save-toggle-label { display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 10px 15px; background: #f0f0f0; border-radius: 20px; font-size: 0.85rem; color: var(--secondary); transition: 0.3s; user-select: none; white-space: nowrap; border: 1px solid #e0e0e0; }
+        .save-toggle-input { display: none; }
+        .save-toggle-input:checked + .save-toggle-label { background: var(--primary); color: var(--gold); border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .color-input-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 15px; padding: 10px; background: #f9f9f9; border-radius: 15px; }
+        .color-picker-input { border: 2px solid #fff; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; padding: 0; background: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .color-dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 12px; border: 3px solid #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+        
+        .holiday-settings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
+        .week-day-chk { display: none; }
+        .week-day-label { background: #fff; border: 1px solid #e0e0e0; border-radius: 16px; padding: 12px; text-align: center; cursor: pointer; font-size: 0.9rem; color: var(--secondary); transition: 0.2s; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .week-day-chk:checked + .week-day-label { background: var(--holiday-text); color: white; border-color: var(--holiday-text); box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3); }
+    </style>
+</head>
+<body>
+
+<div id="loadingMask">
+    <div style="text-align:center; color:#b2bec3; letter-spacing:3px; font-weight:500;">專屬空間沙龍<br><span style="font-size:0.8rem; opacity:0.6; color:var(--gold);">V21 Track</span></div>
+</div>
+
+<div class="header">
+    <div class="app-title">專屬空間沙龍</div>
+    <div style="font-size: 1.3rem;" id="today-revenue">$0</div>
+</div>
+
+<div class="container">
+    <div id="page-calendar" class="page active">
+        <div class="view-controls">
+            <button class="btn-view" onclick="changeView('dayGridMonth', this)">月</button>
+            <button class="btn-view" onclick="changeView('timeGridWeek', this)">週</button>
+            <button class="btn-view active" onclick="changeView('timeGridDay', this)">日</button>
+        </div>
+        <div style="text-align:center; margin-bottom:15px;">
+            <input type="text" id="dateNavigator" class="date-navigator" readonly="readonly" style="border:none;background:transparent;font-size:1.2rem;font-weight:700;color:var(--primary);text-align:center;width:160px;cursor:pointer;font-family:'Noto Sans TC';">
+            <div style="font-size:0.85rem; color:var(--secondary); margin-top:5px; font-weight:500;"><i class="far fa-calendar-alt" style="margin-right:5px; color:var(--gold);"></i>按住版面左右拖曳換頁</div>
+        </div>
+        
+        <div class="calendar-track-wrapper">
+            <div id='calendar'></div>
+        </div>
+        <div style="height:120px;"></div>
+    </div>
+    
+    <div id="page-customers" class="page">
+        <div class="filter-row" style="display:flex; gap:10px; margin-bottom:20px;">
+            <input type="text" id="custSearch" class="search-box" placeholder="🔍 搜尋客戶姓名/電話..." oninput="renderCustomerList(this.value)" style="flex:1;">
+            <button onclick="addCustomer()" style="width:55px; height:55px; background:var(--primary); color:var(--gold); border:none; border-radius:20px; cursor:pointer; font-size:1.2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1);"><i class="fas fa-plus"></i></button>
+        </div>
+        <select id="custStylistFilter" class="filter-select" style="width:100%; margin-bottom:25px;" onchange="renderCustomerList()"><option value="">全部設計師的熟客</option></select>
+        <div id="customerListArea" style="padding-bottom:100px;"></div>
+    </div>
+    
+    <div id="page-settings" class="page">
+        <div class="glass-card" style="padding:30px; margin-bottom:25px;">
+            <h3 style="margin:0 0 25px 0; font-size:1.3rem; font-weight:700;"><i class="fas fa-calendar-check" style="margin-right:10px; color:var(--gold);"></i>智慧排休設定</h3>
+            <div style="font-size:0.95rem; color:var(--primary); margin-bottom:12px; font-weight:700;">每週固定排休</div>
+            <div class="holiday-settings-grid">
+                <label><input type="checkbox" class="week-day-chk" value="1" onchange="updateRecurringHoliday('week', 1, this.checked)"><div class="week-day-label">一</div></label>
+                <label><input type="checkbox" class="week-day-chk" value="2" onchange="updateRecurringHoliday('week', 2, this.checked)"><div class="week-day-label">二</div></label>
+                <label><input type="checkbox" class="week-day-chk" value="3" onchange="updateRecurringHoliday('week', 3, this.checked)"><div class="week-day-label">三</div></label>
+                <label><input type="checkbox" class="week-day-chk" value="4" onchange="updateRecurringHoliday('week', 4, this.checked)"><div class="week-day-label">四</div></label>
+                <label><input type="checkbox" class="week-day-chk" value="5" onchange="updateRecurringHoliday('week', 5, this.checked)"><div class="week-day-label">五</div></label>
+                <label><input type="checkbox" class="week-day-chk" value="6" onchange="updateRecurringHoliday('week', 6, this.checked)"><div class="week-day-label">六</div></label>
+                <label><input type="checkbox" class="week-day-chk" value="0" onchange="updateRecurringHoliday('week', 0, this.checked)"><div class="week-day-label">日</div></label>
+            </div>
+            <div style="font-size:0.95rem; color:var(--primary); margin-bottom:12px; margin-top:25px; font-weight:700;">每月固定幾號休</div>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="monthly-day-input" class="capsule-input" placeholder="輸入日期 (例如 5)" min="1" max="31">
+                <button onclick="addMonthlyRule()" style="width:90px; background:var(--primary); color:var(--gold); border:none; border-radius:16px; font-weight:700; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">新增</button>
+            </div>
+            <div id="monthly-rules-list" style="margin-top:15px; display:flex; gap:8px; flex-wrap:wrap;"></div>
+            <div style="font-size:0.95rem; color:var(--primary); margin-bottom:12px; margin-top:25px; font-weight:700;">臨時排休</div>
+            <div class="manage-group" id="manualHolidayList"></div>
+            <button class="btn-add-item" onclick="addManualHoliday()">+ 新增臨時休假</button>
+            <div style="margin-top:30px; padding-top:20px; border-top:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:700; color:var(--primary);"><i class="fas fa-palette" style="margin-right:10px; color:var(--gold);"></i>店休顏色</span>
+                <input type="color" id="holiday-color-picker" value="#fff5f5" style="border:3px solid #fff; width:50px; height:50px; cursor:pointer; border-radius:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);" onchange="updateHolidayColor(this.value)">
+            </div>
+        </div>
+        
+        <div style="padding:0 10px;">
+            <div style="font-size:1rem; color:var(--primary); margin-bottom:15px; font-weight:700;">基礎設定</div>
+            <div class="glass-card" style="padding:25px; display:flex; gap:15px; margin-bottom:30px;">
+                <div style="flex:1;"><div style="font-size:0.9rem; color:var(--secondary); margin-bottom:8px; font-weight:500;"><i class="far fa-clock" style="margin-right:5px;"></i>開店時間</div><input type="text" id="s_open" class="capsule-input flatpickr-time" onchange="saveSettings()"></div>
+                <div style="flex:1;"><div style="font-size:0.9rem; color:var(--secondary); margin-bottom:8px; font-weight:500;"><i class="far fa-clock" style="margin-right:5px;"></i>打烊時間</div><input type="text" id="s_close" class="capsule-input flatpickr-time" onchange="saveSettings()"></div>
+            </div>
+
+            <div style="font-size:1rem; color:var(--primary); margin-bottom:15px; font-weight:700;">資料管理 (可自訂顏色)</div>
+            <div class="manage-group" id="stylistList"></div>
+            <button class="btn-add-item" onclick="triggerAdd('stylists')">新增設計師</button>
+            <div style="height:20px;"></div>
+            <div class="manage-group" id="serviceList"></div>
+            <button class="btn-add-item" onclick="triggerAdd('services')">新增服務</button>
+            <div style="height:20px;"></div>
+            <div class="manage-group" id="tagList"></div>
+            <button class="btn-add-item" onclick="triggerAdd('tags')">新增預約標籤</button>
+
+            <div style="margin-top:40px;">
+                <div class="btn-action-group">
+                    <button class="btn-act book" onclick="exportBackup()"><i class="fas fa-file-export" style="margin-right:8px;"></i>備份資料</button>
+                    <button class="btn-act edit" onclick="importBackup()"><i class="fas fa-file-import" style="margin-right:8px;"></i>還原資料</button>
+                    <input type="file" id="backupInput" style="display:none" accept=".json" onchange="processImport(this)">
+                </div>
+                <button onclick="hardReset()" style="width:100%; padding:18px; background:#fff; border:2px solid #ff7675; color:#ff7675; border-radius:20px; font-size:1rem; margin-top:20px; margin-bottom:120px; font-weight:700; cursor:pointer; transition:0.3s;">重置系統 (清空所有資料)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fab" id="fabBtn" onclick="openBookingModal()"><i class="fas fa-plus"></i></div>
+
+<div class="bottom-nav">
+    <button class="nav-item active" onclick="switchPage('page-calendar', this)"><i class="far fa-calendar-alt" style="font-size:1.5rem; margin-bottom:5px;"></i><span style="font-size:0.8rem; font-weight:500;">預約</span></button>
+    <button class="nav-item" onclick="switchPage('page-customers', this)"><i class="far fa-user" style="font-size:1.5rem; margin-bottom:5px;"></i><span style="font-size:0.8rem; font-weight:500;">客戶</span></button>
+    <button class="nav-item" onclick="switchPage('page-settings', this)"><i class="fas fa-cog" style="font-size:1.5rem; margin-bottom:5px;"></i><span style="font-size:0.8rem; font-weight:500;">設定</span></button>
+</div>
+
+<script>
+    const defaultData = { 
+        stylists: [{id:1, name:"Tony", color:"#2d3436"}, {id:2, name:"Alice", color:"#D4AF37"}], 
+        services: [{id:1, name:"洗剪", price:600, duration:60, color:"#2d3436"}, {id:2, name:"染髮", price:2500, duration:120, color:"#bfa37e"}], 
+        tags: [{name:"先生", color:"#636e72"}, {name:"小姐", color:"#bfa37e"}, {name:"VIP", color:"#D4AF37"}], 
+        bookings: [], customers: [], 
+        manualHolidays: [], holidayRules: { weekly: [], monthly: [] }, 
+        holidayColor: "#fff5f5", holidayTextColor: "#e17055",
+        settings: {open: "10:00", close: "21:00"} 
+    };
+    
+    let localData = JSON.parse(localStorage.getItem('salon_offline_v21')) || JSON.parse(JSON.stringify(defaultData));
+    if(localData.tags && typeof localData.tags[0] === 'string') { localData.tags = localData.tags.map(t => ({name: t, color: "#636e72"})); }
+    if(localData.services) { localData.services.forEach(s => { if(!s.color) s.color = "#636e72"; }); }
+
+    let calendar; let activeStylists = (localData.stylists && localData.stylists.length > 0) ? localData.stylists.map(s=>s.name) : [];
+    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, timerProgressBar: false, background:'#fff', color:'#2d3436' });
+    let datePickerInstance;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        datePickerInstance = flatpickr("#dateNavigator", { locale: "zh_tw", defaultDate: new Date(), dateFormat: "Y-m-d", disableMobile: "true", onChange: function(s, d) { jumpToDate(d); } });
+        flatpickr(".flatpickr-time", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, locale: "zh_tw", disableMobile: "true" });
+        applyHolidayColor();
+        initCalendar(); 
+        refreshAll();
+        setTimeout(() => { document.getElementById('loadingMask').style.opacity = '0'; setTimeout(()=>{document.getElementById('loadingMask').style.display='none'}, 600); }, 500);
+    });
+
+    function saveData(m=true) { localStorage.setItem('salon_offline_v21', JSON.stringify(localData)); refreshAll(); if(m) Toast.fire({icon:'success', title:'已儲存'}); }
+    
+    function refreshAll() {
+        if (activeStylists.length === 0 && localData.stylists.length > 0) activeStylists = localData.stylists.map(s => s.name);
+        document.getElementById('s_open').value = localData.settings.open || "10:00"; 
+        document.getElementById('s_close').value = localData.settings.close || "21:00";
+        document.getElementById('holiday-color-picker').value = localData.holidayColor;
+        renderManageLists(); renderHolidaySettings(); renderCustomerList(); updateRevenue();
+        if(calendar) { 
+            calendar.setOption('slotMinTime', (localData.settings.open||"10:00")+":00"); 
+            calendar.setOption('slotMaxTime', (localData.settings.close||"21:00")+":00"); 
+            calendar.refetchEvents(); 
+        }
+    }
+    function generateId() { return '_' + Math.random().toString(36).substr(2, 9); }
+
+    function updateRecurringHoliday(type, val, isAdded) { val = parseInt(val); if(type === 'week') { if(isAdded && !localData.holidayRules.weekly.includes(val)) localData.holidayRules.weekly.push(val); else if(!isAdded) localData.holidayRules.weekly = localData.holidayRules.weekly.filter(d => d !== val); } saveData(false); }
+    function addMonthlyRule() { const val = parseInt(document.getElementById('monthly-day-input').value); if(val >= 1 && val <= 31 && !localData.holidayRules.monthly.includes(val)) { localData.holidayRules.monthly.push(val); document.getElementById('monthly-day-input').value = ''; saveData(); } }
+    function removeMonthlyRule(val) { localData.holidayRules.monthly = localData.holidayRules.monthly.filter(d => d !== val); saveData(); }
+    async function addManualHoliday() { const { value: date } = await Swal.fire({ title: '新增臨時休假', html: '<input id="sw-h-date" class="capsule-input flat-date">', preConfirm: () => document.getElementById('sw-h-date').value, didOpen: () => flatpickr("#sw-h-date", { locale: "zh_tw", dateFormat: "Y-m-d", disableMobile: "true" }) }); if (date && !localData.manualHolidays.includes(date)) { localData.manualHolidays.push(date); saveData(); } }
+    function deleteManualHoliday(idx) { if(confirm('刪除?')) { localData.manualHolidays.splice(idx, 1); saveData(); } }
+    function updateHolidayColor(color) { localData.holidayColor = color; const hex = color.replace('#', ''); const r = parseInt(hex.substring(0, 2), 16); const g = parseInt(hex.substring(2, 4), 16); const b = parseInt(hex.substring(4, 6), 16); localData.holidayTextColor = ((r * 299 + g * 587 + b * 114) / 1000) > 125 ? '#e17055' : '#ffffff'; applyHolidayColor(); saveData(); }
+    function applyHolidayColor() { document.documentElement.style.setProperty('--holiday-bg', localData.holidayColor); document.documentElement.style.setProperty('--holiday-text', localData.holidayTextColor); }
+    function renderHolidaySettings() { document.querySelectorAll('.week-day-chk').forEach(chk => { chk.checked = localData.holidayRules.weekly.includes(parseInt(chk.value)); }); document.getElementById('monthly-rules-list').innerHTML = localData.holidayRules.monthly.sort((a,b)=>a-b).map(d => `<div class="filter-chip active" style="background:#fff; color:var(--primary); border:1px solid #eee; box-shadow:0 2px 5px rgba(0,0,0,0.05);">每月 ${d} 號 <span onclick="removeMonthlyRule(${d})" style="margin-left:8px; cursor:pointer; color:var(--holiday-text); font-weight:bold;">&times;</span></div>`).join(''); document.getElementById('manualHolidayList').innerHTML = (localData.manualHolidays || []).sort().map((h, i) => `<div class="manage-item" style="padding:15px;"><div class="manage-info"><h4 style="margin:0;">${h}</h4></div><button class="btn-trash" onclick="deleteManualHoliday(${i})"><i class="fas fa-trash-alt"></i></button></div>`).join(''); }
+
+    // --- 核心行事曆與滑動軌道 (Physics Track) ---
+    function initCalendar() {
+        const calendarEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek',
+            headerToolbar: false, locale: 'zh-tw', 
+            timeZone: 'local', // 關鍵：強制本地時間
+            slotMinTime: localData.settings.open + ":00", slotMaxTime: localData.settings.close + ":00",
+            allDaySlot: false, height: 'auto', dayMaxEvents: false, nowIndicator: true, slotEventOverlap: true,
+            selectable: true, selectLongPressDelay: 350, eventLongPressDelay: 350, selectMinDistance: 10,
+            select: function(info) {
+                if(isDateHoliday(new Date(info.start))) return Swal.fire({ icon: 'warning', title: '本日店休', timer: 1500, showConfirmButton: false });
+                if(navigator.vibrate) navigator.vibrate(50);
+                openBookingModal(info.startStr.split('T')[0], info.startStr.includes('T') ? info.startStr.split('T')[1].substring(0,5) : "10:00");
+            },
+            datesSet: info => { if(datePickerInstance) datePickerInstance.setDate(calendar.getDate().toISOString().split('T')[0]); },
+            events: (info, cb) => {
+                const bookings = (localData.bookings || []).filter(b => activeStylists.includes(b.stylist) || b.stylist === '不指定').map(b => ({
+                        id: b.id, title: `${b.stylist.substring(0,2)} ${b.customer}`,
+                        start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent', extendedProps: { ...b } 
+                    }));
+                let holidayEvents = [];
+                let loopDate = new Date(info.start);
+                while(loopDate < info.end) {
+                    if(isDateHoliday(loopDate)) { 
+                        holidayEvents.push({ start: getLocalDateStr(loopDate), display: 'background', title: '店休', allDay: true, classNames: ['fc-bg-event'] }); 
+                    }
+                    loopDate.setDate(loopDate.getDate() + 1);
+                }
+                cb([...bookings, ...holidayEvents]);
+            },
+            eventClick: info => { if(info.event.display !== 'background') showBookingActionSheet(info.event); }
+        });
+        calendar.render();
+        handleTrackTouch(); // 啟動滑動偵測
+    }
+
+    function handleTrackTouch() {
+        const track = document.getElementById('calendar');
+        let startX = 0, currentX = 0, startY = 0;
+        let isDragging = false;
+
+        track.addEventListener('touchstart', e => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isDragging = true;
+            track.style.transition = 'none'; // 拖曳時無延遲
+        }, {passive: true});
+
+        track.addEventListener('touchmove', e => {
+            if (!isDragging) return;
+            const x = e.touches[0].clientX;
+            const y = e.touches[0].clientY;
+            const deltaX = x - startX;
+            const deltaY = y - startY;
+
+            // 如果垂直移動大於水平，則判定為捲動頁面，取消左右滑動
+            if(Math.abs(deltaY) > Math.abs(deltaX)) return;
+
+            currentX = deltaX;
+            track.style.transform = `translateX(${currentX}px)`; // 跟隨手指
+        }, {passive: true});
+
+        track.addEventListener('touchend', e => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.transition = 'transform 0.3s ease-out'; // 釋放時加入彈性動畫
+
+            if (Math.abs(currentX) > 80) { // 門檻值 80px
+                const dir = currentX > 0 ? -1 : 1; // 左滑 or 右滑
+                const screenWidth = window.innerWidth;
+                // 滑出螢幕
+                track.style.transform = `translateX(${dir * -screenWidth}px)`;
+                
+                setTimeout(() => {
+                    if (currentX > 0) calendar.prev(); else calendar.next();
+                    track.style.transition = 'none';
+                    track.style.transform = `translateX(${dir * screenWidth}px)`; // 瞬間移到另一邊
+                    setTimeout(() => {
+                        track.style.transition = 'transform 0.3s ease-out';
+                        track.style.transform = 'translateX(0)'; // 滑入
+                    }, 50);
+                }, 200);
+            } else {
+                // 回彈
+                track.style.transform = 'translateX(0)';
+            }
+            currentX = 0;
+        });
+    }
+
+    function getLocalDateStr(date) {
+        const offset = date.getTimezoneOffset() * 60000;
+        const localDate = new Date(date.getTime() - offset);
+        return localDate.toISOString().split('T')[0];
+    }
+
+    function isDateHoliday(dateObj) { 
+        const dateStr = getLocalDateStr(dateObj); 
+        if(localData.manualHolidays.includes(dateStr)) return true; 
+        if(localData.holidayRules.weekly.includes(dateObj.getDay())) return true; 
+        if(localData.holidayRules.monthly.includes(dateObj.getDate())) return true; 
+        return false; 
+    }
+
+    async function openBookingModal(dDate, dTime, dName='', dPhone='', editData=null) {
+        dDate = dDate || getLocalDateStr(new Date()); 
+        dTime = dTime || "10:00";
+
+        if(localData.stylists.length===0 || localData.services.length===0) return Swal.fire('提示', '請先新增設計師與服務', 'warning');
+        
+        let dStylistIdx=0; if(activeStylists.length===1) dStylistIdx=localData.stylists.findIndex(s=>s.name===activeStylists[0]);
+        const initStylist=editData?editData.stylist:''; const initSvcs=editData?(editData.services||"").split(', '):[];
+        
+        const sOpts = `<option value="不指定|#b2bec3">👤 不指定</option>` + localData.stylists.map((s,i) => `<option value="${s.name}|${s.color}" ${(editData?(s.name===initStylist):(i===dStylistIdx))?'selected':''}>${s.name}</option>`).join('');
+        const custList = (localData.customers||[]).map(c => `<option value="${c.name}">${c.phone}</option>`).join('');
+        
+        const tagsHtml = (localData.tags || []).map(tag => `<span class="smart-tag" style="color:${tag.color}; border-color:${tag.color}33;" onclick="appendName('${tag.name}')">${tag.name}</span>`).join(' ');
+        
+        const svcsHtml = localData.services.map(s => {
+            const chk = initSvcs.includes(s.name);
+            const color = s.color || '#636e72';
+            return `<label class="service-capsule ${chk?'active':''}" style="${chk?`background:${color};color:white;border-color:${color};`:`border-left:4px solid ${color};`}" data-color="${color}" onclick="toggleCapsule(this)">
+                <input type="checkbox" class="service-check-input" value="${s.name}|${s.price}|${s.duration}" ${chk?'checked':''} onchange="updateSummary()"><span>${s.name}</span></label>`;
+        }).join('');
+        
+        const filterOpts = `<option value="">🔍 篩選設計師客群 (選填)</option>` + localData.stylists.map(s=>`<option value="${s.name}">${s.name} 的熟客</option>`).join('');
+
+        const confirmBtnColor = editData ? '#2d3436' : '#2d3436'; // 修正錯誤：使用固定顏色，避免崩潰
+
+        const { value: f } = await Swal.fire({
+            title: editData?'修改預約':'新增預約',
+            html: `
+                <div style="text-align:left; padding:0 5px;">
+                    <div class="smart-tags-container">${tagsHtml}</div>
+                    <select id="sw-filter-cust-stylist" class="capsule-input" style="margin-bottom:12px; color:var(--primary); font-weight:700;" onchange="filterCustDatalist(this.value)">${filterOpts}</select>
+                    <div style="margin-bottom:15px; display:flex; gap:10px; align-items:center;">
+                        <input list="cust-list" id="sw-name" class="capsule-input" placeholder="客戶姓名 (可搜尋)" value="${editData?editData.customer:dName}" oninput="autoFillCustomerData(this)" style="flex:1;">
+                        <datalist id="cust-list">${custList}</datalist>
+                        <input type="checkbox" id="sw-save-cust" class="save-toggle-input"><label for="sw-save-cust" class="save-toggle-label"><i class="fas fa-save" style="margin-right:5px;"></i>存入名單</label>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-bottom:15px;">
+                         <input id="sw-phone" type="tel" class="capsule-input" placeholder="電話" value="${editData?editData.phone:dPhone}" style="flex:2;">
+                         <input id="sw-pax" type="number" class="capsule-input" placeholder="人數" value="${editData?(editData.pax||1):1}" min="1" style="flex:1; text-align:center;">
+                    </div>
+                    <div class="glass-card" style="padding:20px; margin-bottom:25px; box-shadow:none; border:1px solid #eee; background:#fafafa;">
+                        <select id="sw-stylist" class="capsule-input" style="margin-bottom:12px;">${sOpts}</select>
+                        <div style="display:flex; gap:10px;">
+                            <input id="sw-date" class="capsule-input flat-date" value="${dDate}" placeholder="日期">
+                            <input id="sw-time" class="capsule-input flat-time" value="${dTime}" placeholder="時間">
+                        </div>
+                    </div>
+                    <div class="service-capsule-grid">${svcsHtml}</div>
+                    <div class="total-bar-floating" style="background:linear-gradient(135deg, var(--primary), #000); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        <div style="font-size:0.95rem; opacity:0.9; color:var(--gold); font-weight:500;"><i class="far fa-clock" style="margin-right:5px;"></i><span id="sw-duration-display">0分</span></div>
+                        <div style="display:flex;align-items:center; color:var(--gold);"><span>$</span><input id="sw-price" type="number" value="${editData?editData.price:0}" style="background:rgba(255,255,255,0.2);border-radius:10px;padding:0 10px;border:none;color:var(--gold);font-size:1.6rem;font-weight:700;width:100px;text-align:right;outline:none;"></div>
+                        <input type="hidden" id="sw-duration" value="0">
+                    </div>
+                </div>
+            `,
+            didOpen:()=>{
+                if(dName&&!editData)autoFillCustomerData(document.getElementById('sw-name'));
+                updateSummary(false);
+                flatpickr(".flat-date", { locale: "zh_tw", dateFormat: "Y-m-d", disableMobile: "true" });
+                flatpickr(".flat-time", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, locale: "zh_tw", disableMobile: "true" });
+            },
+            focusConfirm:false, showCancelButton:true, confirmButtonText:'儲存預約', confirmButtonColor: confirmBtnColor, cancelButtonText:'取消', width:'400px',
+            preConfirm:()=>{
+                const n=document.getElementById('sw-name').value; const chk=document.querySelectorAll('.service-check-input:checked');
+                if(!n) return Swal.showValidationMessage('請輸入姓名'); if(chk.length===0) return Swal.showValidationMessage('請選擇服務');
+                let s=[], d=0; chk.forEach(b=>{const[nx,px,dx]=b.value.split('|'); s.push(nx); d+=parseInt(dx);});
+                return { name:n, phone:document.getElementById('sw-phone').value, stylistRaw:document.getElementById('sw-stylist').value, pax:document.getElementById('sw-pax').value, services:s.join(', '), price:document.getElementById('sw-price').value, duration:d, date:document.getElementById('sw-date').value, time:document.getElementById('sw-time').value, saveCust: document.getElementById('sw-save-cust').checked };
+            }
+        });
+
+        if(f) {
+            const [sName, color] = f.stylistRaw.split('|'); const start=`${f.date}T${f.time}`;
+            const end = new Date(new Date(start).getTime()+parseInt(f.duration)*60000);
+            const localEnd = `${f.date}T${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`;
+            const exC = (localData.customers||[]).find(c=>c.name===f.name);
+            if(exC) { if(f.phone && exC.phone!==f.phone) exC.phone=f.phone; } 
+            else if(f.saveCust) { localData.customers.push({id:generateId(), name:f.name, phone:f.phone, preferredStylist:sName==='不指定'?'':sName, note:''}); }
+            const bObj={customer:f.name, phone:f.phone, stylist:sName, color:color, services:f.services, price:f.price, pax:f.pax, start:start, end:localEnd};
+            if(editData) { const idx=localData.bookings.findIndex(b=>b.id===editData.id); if(idx>=0) localData.bookings[idx]={...localData.bookings[idx], ...bObj}; }
+            else localData.bookings.push({id:generateId(), ...bObj});
+            saveData();
+        }
+    }
+    
+    // --- Helpers ---
+    window.toggleCapsule = function(el) { 
+        const color = el.getAttribute('data-color');
+        setTimeout(()=>{
+            const c=el.querySelector('input'); 
+            if(c.checked) { el.classList.add('active'); el.style.background = color; el.style.borderColor = color; el.style.color = 'white'; } 
+            else { el.classList.remove('active'); el.style.background = '#fff'; el.style.borderColor = '#e0e0e0'; el.style.borderLeft = `4px solid ${color}`; el.style.color = '#636e72'; }
+            updateSummary();
+        },10); 
+    }
+    window.updateSummary = function(u=true) { const chk=document.querySelectorAll('.service-check-input:checked'); let p=0,d=0; chk.forEach(b=>{const[n,pr,du]=b.value.split('|'); p+=parseInt(pr); d+=parseInt(du);}); if(u)document.getElementById('sw-price').value=p; document.getElementById('sw-duration').value=d; document.getElementById('sw-duration-display').innerText=`${d}分`; }
+    window.filterCustDatalist = function(sName) { const l=document.getElementById('cust-list'), f=(localData.customers||[]).filter(c=>!sName||c.preferredStylist===sName); l.innerHTML=f.map(c=>`<option value="${c.name}">${c.phone}</option>`).join(''); if(sName){const s=document.getElementById('sw-stylist');for(let i=0;i<s.options.length;i++){if(s.options[i].value.startsWith(sName)){s.selectedIndex=i;break;}}} }
+    window.autoFillCustomerData = function(i) { const c=(localData.customers||[]).find(cust=>cust.name===i.value), t=document.getElementById('sw-save-cust'); if(c){document.getElementById('sw-phone').value=c.phone; if(t){t.checked=true;t.disabled=true;} if(c.preferredStylist){const s=document.getElementById('sw-stylist');for(let j=0;j<s.options.length;j++)if(s.options[j].value.split('|')[0]===c.preferredStylist){s.selectedIndex=j;break;}}} else {if(t){t.checked=false;t.disabled=false;}} }
+    window.appendName=function(t){const i=document.getElementById('sw-name');i.value+=t;autoFillCustomerData(i);}
+    
+    function showBookingActionSheet(e) { const p=e.extendedProps; Swal.fire({html:`<div style="text-align:left"><h3 style="color:var(--primary);font-weight:700;margin-bottom:10px;">${p.customer}</h3><p style="color:var(--primary);font-weight:700;font-size:1.1rem;margin-bottom:5px;">${p.services}</p><p style="color:var(--secondary);font-size:0.95rem;font-weight:500;"><i class="far fa-clock" style="margin-right:5px;"></i>${e.startStr.split('T')[1].substring(0,5)}<span style="margin:0 10px;">|</span><i class="fas fa-dollar-sign" style="margin-right:2px;"></i>${p.price}<span style="margin:0 10px;">|</span><i class="far fa-user" style="margin-right:5px;"></i>${p.stylist}</p><div class="btn-action-group" style="margin-top:30px;"><button class="btn-act edit" onclick="triggerEditBooking('${e.id}')"><i class="fas fa-edit" style="margin-right:5px;"></i>修改</button><button class="btn-act delete" onclick="deleteBooking('${e.id}')"><i class="fas fa-trash-alt" style="margin-right:5px;"></i>刪除</button></div></div>`, showConfirmButton:false, showCloseButton:true}); }
+    window.triggerEditBooking=function(bid){Swal.close();const b=localData.bookings.find(k=>k.id===bid);if(b){const[d,t]=b.start.split('T');openBookingModal(d,t.substring(0,5),b.customer,b.phone,b);}}
+    window.deleteBooking=function(bid){Swal.fire({title:'確定刪除?',icon:'warning',showCancelButton:true,confirmButtonColor:'#ff7675', confirmButtonText:'刪除', cancelButtonText:'取消'}).then(r=>{if(r.isConfirmed){localData.bookings=localData.bookings.filter(b=>b.id!=bid);saveData();}});}
+    
+    window.showCustomerProfile=function(cid){ 
+        const c=localData.customers.find(x=>x.id===cid); 
+        if(c) Swal.fire({
+            title:c.name, 
+            html:`<h2 style="color:var(--gold);font-weight:700;">${c.phone||'無電話'}</h2>
+                  <div style="color:var(--secondary); margin-top:10px; font-weight:500;">專屬設計師: ${c.preferredStylist||'無'}</div>
+                  <div style="margin-top:20px;display:flex;gap:10px;">
+                    <button onclick="editCustomerData('${cid}')" class="btn-act edit" style="background:#e0e0e0;">修改資料</button>
+                    <button onclick="deleteCustomer('${cid}')" class="btn-act delete" style="flex:0.5;border:1px solid #ff7675;color:#ff7675;">刪除</button>
+                  </div>`,
+            showConfirmButton: false
+        }); 
+    }
+
+    window.editCustomerData = async function(cid) {
+        Swal.close();
+        const c = localData.customers.find(x=>x.id===cid);
+        if(!c) return;
+        const sOpts = `<option value="">無指定</option>` + localData.stylists.map(s=>`<option value="${s.name}" ${c.preferredStylist===s.name?'selected':''}>${s.name}</option>`).join('');
+        const { value: f } = await Swal.fire({
+            title: '修改客戶資料',
+            html: `
+                <input id="e1" class="capsule-input" value="${c.name}" placeholder="姓名">
+                <input id="e2" class="capsule-input" value="${c.phone}" placeholder="電話" style="margin-top:15px;">
+                <select id="e3" class="capsule-input" style="margin-top:15px;">${sOpts}</select>
+            `,
+            confirmButtonText: '儲存', confirmButtonColor: '#2d3436',
+            preConfirm: () => ({ name: document.getElementById('e1').value, phone: document.getElementById('e2').value, pref: document.getElementById('e3').value })
+        });
+        if (f) { c.name = f.name; c.phone = f.phone; c.preferredStylist = f.pref; saveData(); renderCustomerList(); Swal.fire('修改成功', '', 'success'); }
+    }
+
+    window.addCustomer=async()=>{const sOpts=`<option value="">無指定</option>`+localData.stylists.map(s=>`<option value="${s.name}">${s.name}</option>`).join('');const{value:f}=await Swal.fire({title:'新增客戶',html:`<input id="n1" class="capsule-input" placeholder="姓名"><input id="n2" class="capsule-input" placeholder="電話" style="margin-top:15px;"><select id="n3" class="capsule-input" style="margin-top:15px;">${sOpts}</select>`,preConfirm:()=>({name:document.getElementById('n1').value,phone:document.getElementById('n2').value,pref:document.getElementById('n3').value})});if(f&&f.name){localData.customers.push({id:generateId(),...f,preferredStylist:f.pref,note:''});saveData();renderCustomerList();}}
+    window.deleteCustomer=function(i){if(confirm('確定刪除此客戶?')){localData.customers=localData.customers.filter(c=>c.id!==i);saveData();renderCustomerList();Swal.close();}}
+    
+    function updateCustStylistFilter() { document.getElementById('custStylistFilter').innerHTML=`<option value="">全部設計師的熟客</option>`+localData.stylists.map(s=>`<option value="${s.name}">${s.name}</option>`).join(''); }
+    function renderCustomerList() { const k=document.getElementById('custSearch').value, f=document.getElementById('custStylistFilter').value; const l=(localData.customers||[]).filter(c=>(c.name.includes(k)||c.phone?.includes(k))&&(f===''||c.preferredStylist===f)); document.getElementById('customerListArea').innerHTML=l.map(c=>`<div class="customer-card" onclick="showCustomerProfile('${c.id}')"><div style="display:flex;align-items:center;"><div class="cust-avatar">${c.name[0]}</div><div><b style="font-size:1.1rem;">${c.name}</b>${c.preferredStylist?`<span class="pref-stylist-tag" style="margin-left:10px;">${c.preferredStylist}</span>`:''}<br><small style="color:var(--secondary);font-weight:500;"><i class="fas fa-phone-alt" style="margin-right:5px;font-size:0.8rem;"></i>${c.phone||''}</small></div></div><i class="fas fa-chevron-right" style="color:#ddd;"></i></div>`).join(''); }
+    function renderFilters(){ let h=`<button class="filter-chip" onclick="toggleAll()">全部</button>`; localData.stylists.forEach(s=>h+=`<div class="filter-chip ${activeStylists.includes(s.name)?'active':''}" onclick="toggleStylist('${s.name}')"><div class="dot" style="background:${s.color};box-shadow:0 2px 5px ${s.color}66;"></div>${s.name}</div>`); document.getElementById('stylistFilters').innerHTML=h; }
+    
+    function renderManageLists(){
+        document.getElementById('stylistList').innerHTML=localData.stylists.map((s,i)=>`<div class="manage-item"><div style="display:flex;align-items:center;"><span class="color-dot" style="background:${s.color};border-color:${s.color};box-shadow:0 2px 5px ${s.color}44;"></span><span style="font-weight:700;font-size:1.1rem;">${s.name}</span></div><button class="btn-trash" onclick="deleteItem('stylists',${i})"><i class="fas fa-times"></i></button></div>`).join(''); 
+        document.getElementById('serviceList').innerHTML=localData.services.map((s,i)=>`<div class="manage-item"><div style="display:flex;align-items:center;"><span class="color-dot" style="background:${s.color};border-color:${s.color};box-shadow:0 2px 5px ${s.color}44;"></span><div><span style="font-weight:700;font-size:1.05rem;">${s.name}</span><br><small style="color:var(--secondary);">$${s.price} / ${s.duration}分</small></div></div><button class="btn-trash" onclick="deleteItem('services',${i})"><i class="fas fa-times"></i></button></div>`).join('');
+        document.getElementById('tagList').innerHTML=(localData.tags||[]).map((t,i)=>`<div class="manage-item"><div style="display:flex;align-items:center;"><span class="color-dot" style="background:${t.color};border-color:${t.color};box-shadow:0 2px 5px ${t.color}44;"></span><span style="font-weight:700;">${t.name}</span></div><button class="btn-trash" onclick="deleteItem('tags',${i})"><i class="fas fa-times"></i></button></div>`).join('');
+    }
+    
+    function toggleStylist(n){activeStylists=activeStylists.includes(n)?activeStylists.filter(x=>x!==n):[...activeStylists,n];renderFilters();calendar.refetchEvents();}
+    function toggleAll(){activeStylists=activeStylists.length?[]:localData.stylists.map(s=>s.name);renderFilters();calendar.refetchEvents();}
+    
+    function triggerAdd(t){
+        let htmlContent = '<input id="a1" class="capsule-input" placeholder="名稱">';
+        if(t === 'services') htmlContent += '<input id="a2" type="number" class="capsule-input" placeholder="價格" style="margin-top:15px;"><input id="a3" type="number" class="capsule-input" placeholder="分鐘" style="margin-top:15px;">';
+        htmlContent += `<div class="color-input-wrapper"><label style="font-weight:700;">選擇代表色:</label><input type="color" id="a-color" class="color-picker-input" value="${'#'+Math.floor(Math.random()*16777215).toString(16)}"></div>`;
+
+        Swal.fire({
+            title: t==='stylists'?'新增設計師':(t==='services'?'新增服務':'新增標籤'),
+            html: htmlContent,
+            preConfirm:()=>({ name:document.getElementById('a1').value, price:document.getElementById('a2')?.value, duration:document.getElementById('a3')?.value, color:document.getElementById('a-color').value })
+        }).then(r=>{
+            if(r.value && r.value.name){
+                if(t==='tags'){ if(!localData.tags)localData.tags=[]; localData.tags.push({name:r.value.name, color:r.value.color}); } 
+                else if (t==='services') { localData.services.push({id:generateId(), name:r.value.name, price:r.value.price, duration:r.value.duration, color:r.value.color}); } 
+                else { localData.stylists.push({id:generateId(), name:r.value.name, color:r.value.color}); }
+                saveData();
+            }
+        });
+    }
+    
+    function deleteItem(t,i){if(confirm('確定刪除?')){if(t==='holidays')localData.holidays.splice(i,1);else if(t==='tags')localData.tags.splice(i,1);else localData[t].splice(i,1);saveData();}}
+    function exportBackup(){const a=document.createElement('a');a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(localData));a.download=`salon_${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();}
+    function importBackup(){Swal.fire({title:'匯入備份',input:'file',inputAttributes:{accept:'.json'}}).then(r=>{if(r.value){const rd=new FileReader();rd.onload=e=>{localData=JSON.parse(e.target.result);saveData();location.reload();};rd.readAsText(r.value);}});}
+    function hardReset(){if(confirm('確定重置系統? 所有資料將消失')){localStorage.removeItem('salon_offline_v20');location.reload();}}
+    function changeView(v,b){calendar.changeView(v);document.querySelectorAll('.btn-view').forEach(x=>x.classList.remove('active'));b.classList.add('active');}
+    function jumpToDate(v){if(calendar) calendar.gotoDate(v);}
+    function switchPage(p,b){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('fabBtn').style.display=p==='page-calendar'?'flex':'none';if(p==='page-calendar')setTimeout(()=>calendar.render(),100);}
+    function updateRevenue(){let t=new Date().toISOString().split('T')[0];document.getElementById('today-revenue').innerText='$'+(localData.bookings||[]).filter(b=>b.start.startsWith(t)).reduce((a,b)=>a+parseInt(b.price||0),0);}
+</script>
+</body>
+</html>
