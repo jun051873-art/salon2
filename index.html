@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>專屬空間沙龍 V27.7 Final</title>
+    <title>專屬空間沙龍 V27.8 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -24,14 +24,15 @@
         html, body { height: 100%; margin: 0; padding: 0; background-color: var(--morandi-bg); }
         body { font-family: 'Noto Sans TC', sans-serif; display: flex; flex-direction: column; overflow: hidden; padding-top: env(safe-area-inset-top); }
 
+        /* 流光標題 */
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.4); backdrop-filter: var(--glass); z-index: 2000; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .app-title { font-size: 1.8rem; font-weight: 900; background: var(--gold-gradient); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s infinite linear; }
 
+        /* 切換器與日曆 */
         #top-view-switcher { display: flex; background: rgba(255, 255, 255, 0.15); border-radius: 12px; margin: 10px auto; width: 90%; max-width: 380px; padding: 4px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); }
         .view-btn { flex: 1; border: none; background: transparent; padding: 10px; font-weight: 700; color: #576574; cursor: pointer; z-index: 5; font-size: 0.95rem; }
         .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: transform 0.4s; z-index: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
         .main-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 15px 150px 15px; }
         .page { display: none; } .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -40,10 +41,11 @@
         .page-flip-right { transform: translateX(-30px) rotateY(-5deg); opacity: 0.5; }
         .page-flip-left { transform: translateX(30px) rotateY(5deg); opacity: 0.5; }
 
+        /* 金色流光 + 號 */
         .fab-gold { background: #fff !important; border: 2px solid #D4AF37 !important; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .fab-gold-inline { background: var(--gold-gradient); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s infinite linear; font-weight: 900; }
 
-        /* 預約面板圓潤與搜尋 */
+        /* 預約面板與快速搜尋 */
         .glass-swal { background: rgba(255, 255, 255, 0.9) !important; backdrop-filter: blur(35px) saturate(180%) !important; border-radius: 45px !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; box-shadow: 0 25px 60px rgba(0,0,0,0.15) !important; width: 95% !important; max-width: 500px !important; }
         .swal-row { display: flex; align-items: center; background: rgba(255,255,255,0.6); border-radius: 25px; margin-bottom: 12px; border: 1px solid #eee; overflow: visible; position: relative; }
         .swal-input-round { border: none !important; background: transparent !important; margin: 0 !important; flex: 1; padding: 14px 12px !important; outline: none; font-size: 1rem; border-radius: 25px !important; }
@@ -51,10 +53,13 @@
         #search-results { position: absolute; top: 100%; left: 0; width: 100%; background: var(--primary); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 999999 !important; max-height: 180px; overflow-y: auto; display: none; margin-top: 5px; }
         .search-item { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-size: 0.95rem; color: #fff; }
 
-        /* 服務項目多選樣式 */
-        .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px 5px; }
-        .svc-chip { background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 15px; font-size: 0.85rem; text-align: center; cursor: pointer; transition: 0.2s; font-weight: 700; color: #555; }
-        .svc-chip.active { background: var(--morandi-teal); border-color: var(--morandi-teal); color: white; transform: scale(0.95); }
+        /* 抽屜式服務選擇器樣式 */
+        .drawer-btn { background: var(--morandi-teal); color: white; border: none; padding: 12px; border-radius: 25px; width: 100%; font-weight: 900; margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .svc-drawer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; background: rgba(255,255,255,0.4); border-radius: 20px; margin-bottom: 12px; }
+        .svc-drawer.open { max-height: 300px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
+        .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .svc-chip { background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 15px; font-size: 0.85rem; text-align: center; cursor: pointer; font-weight: 700; color: #555; }
+        .svc-chip.active { background: var(--morandi-teal); border-color: var(--morandi-teal); color: white; }
 
         .cust-card { background: rgba(255, 255, 255, 0.7); border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.6); display: flex; flex-direction: column; gap: 8px; }
         .mini-tag { background: #f1f2f6; color: #576574; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; }
@@ -132,7 +137,7 @@
     let calendar;
     let flatpickrInstance;
     let notifiedIds = new Set();
-    const STORAGE_KEY = 'SALON_PRO_V27_7';
+    const STORAGE_KEY = 'SALON_PRO_V27_8';
 
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
         bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [{name:'剪髮', color:'#A3B8B8'}], 
@@ -170,7 +175,14 @@
         document.getElementById('search-results').style.display = 'none';
     }
 
-    // 核心升級：服務項目多選
+    // 抽屜切換邏輯
+    function toggleDrawer() {
+        const drawer = document.getElementById('svc-drawer');
+        const icon = document.getElementById('drawer-icon');
+        drawer.classList.toggle('open');
+        icon.className = drawer.classList.contains('open') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+    }
+
     async function openBookingModal(date, time, editId = null) {
         let b = editId ? salonData.bookings.find(x => x.id == editId) : null;
         let selectedSvcs = b ? b.service.split(', ') : [];
@@ -185,8 +197,12 @@
                 <div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${b?b.phone||'':''}"></div>
                 <div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toISOString().split('T')[0])}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div></div>
                 <div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div>
-                <p style="font-size:0.85rem; font-weight:900; margin:10px 5px 5px 5px;">💇 服務多選：</p>
-                <div class="svc-grid" id="svc-selector">${salonData.services.map(s=>`<div class="svc-chip ${selectedSvcs.includes(s.name)?'active':''}" onclick="this.classList.toggle('active')">${s.name}</div>`).join('')}</div>
+                
+                <div class="drawer-btn" onclick="toggleDrawer()"><span>💇 選擇服務項目 (可多選)</span><i id="drawer-icon" class="fas fa-chevron-down"></i></div>
+                <div class="svc-drawer" id="svc-drawer">
+                    <div class="svc-grid">${salonData.services.map(s=>`<div class="svc-chip ${selectedSvcs.includes(s.name)?'active':''}" onclick="this.classList.toggle('active')">${s.name}</div>`).join('')}</div>
+                </div>
+
                 <div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註..." style="height:60px;">${b?b.note||'':''}</textarea></div></div>`,
             preConfirm: () => {
                 const activeSvcs = Array.from(document.querySelectorAll('.svc-chip.active')).map(el => el.innerText);
@@ -223,7 +239,7 @@
         });
     }
 
-    // 全項鎖定功能區
+    // 全項鎖定區
     function initFlipSwipe() {
         const el = document.getElementById('calendar-container'); let sX = 0;
         el.addEventListener('touchstart', (e) => sX = e.touches[0].clientX, { passive: true });
@@ -279,7 +295,7 @@
     function addTempOff(v) { if(v && !salonData.offDays.includes(v)) { salonData.offDays.push(v); save(); refreshAll(); } }
     function deleteCust(id) { if(confirm('確定刪除？')) { salonData.customers = salonData.customers.filter(x => x.id !== id); save(); renderCustomers(); } }
     function exportData() { const blob = new Blob([JSON.stringify(salonData)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `SALON_BACKUP.json`; a.click(); }
-    function importData() { Swal.fire({ title: '恢復資料', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => { if(res.value) { const reader = new FileReader(); reader.onload = e => { try { Object.assign(salonData, JSON.parse(e.target.result)); save(); location.reload(); } catch(err) { Swal.fire('錯誤', '無效檔案', 'error'); } }; reader.readAsText(res.value); } }); }
+    function importData() { Swal.fire({ title: '恢復', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => { if(res.value) { const reader = new FileReader(); reader.onload = e => { try { Object.assign(salonData, JSON.parse(e.target.result)); save(); location.reload(); } catch(err) { Swal.fire('錯誤', '檔案無效', 'error'); } }; reader.readAsText(res.value); } }); }
     async function openMetaModal(type) { const { value: f } = await Swal.fire({ title: '新增項目', html: `<input id="meta-name" class="swal2-input swal-input-round" placeholder="名稱"><div style="margin-top:15px; text-align:center;"><input type="color" id="meta-color" value="#A3B8B8" style="width:80px; height:80px; border:none; background:transparent;"></div>`, preConfirm: () => ({ name: document.getElementById('meta-name').value, color: document.getElementById('meta-color').value }) }); if(f && f.name) { salonData[type].push(f); save(); refreshAll(); } }
     async function openCustomerEditModal(id = null) { const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '' }; const { value: f } = await Swal.fire({ title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}"><select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, preConfirm: () => ({ name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value }) }); if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f, visitCount: 1 }); save(); renderCustomers(); } }
 </script>
