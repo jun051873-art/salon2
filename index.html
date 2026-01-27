@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>專屬空間沙龍 V27.8 Final</title>
+    <title>專屬空間沙龍 V27.9 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -24,15 +24,14 @@
         html, body { height: 100%; margin: 0; padding: 0; background-color: var(--morandi-bg); }
         body { font-family: 'Noto Sans TC', sans-serif; display: flex; flex-direction: column; overflow: hidden; padding-top: env(safe-area-inset-top); }
 
-        /* 流光標題 */
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.4); backdrop-filter: var(--glass); z-index: 2000; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .app-title { font-size: 1.8rem; font-weight: 900; background: var(--gold-gradient); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s infinite linear; }
 
-        /* 切換器與日曆 */
         #top-view-switcher { display: flex; background: rgba(255, 255, 255, 0.15); border-radius: 12px; margin: 10px auto; width: 90%; max-width: 380px; padding: 4px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); }
         .view-btn { flex: 1; border: none; background: transparent; padding: 10px; font-weight: 700; color: #576574; cursor: pointer; z-index: 5; font-size: 0.95rem; }
         .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: transform 0.4s; z-index: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
         .main-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 15px 150px 15px; }
         .page { display: none; } .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -41,11 +40,9 @@
         .page-flip-right { transform: translateX(-30px) rotateY(-5deg); opacity: 0.5; }
         .page-flip-left { transform: translateX(30px) rotateY(5deg); opacity: 0.5; }
 
-        /* 金色流光 + 號 */
         .fab-gold { background: #fff !important; border: 2px solid #D4AF37 !important; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .fab-gold-inline { background: var(--gold-gradient); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s infinite linear; font-weight: 900; }
 
-        /* 預約面板與快速搜尋 */
         .glass-swal { background: rgba(255, 255, 255, 0.9) !important; backdrop-filter: blur(35px) saturate(180%) !important; border-radius: 45px !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; box-shadow: 0 25px 60px rgba(0,0,0,0.15) !important; width: 95% !important; max-width: 500px !important; }
         .swal-row { display: flex; align-items: center; background: rgba(255,255,255,0.6); border-radius: 25px; margin-bottom: 12px; border: 1px solid #eee; overflow: visible; position: relative; }
         .swal-input-round { border: none !important; background: transparent !important; margin: 0 !important; flex: 1; padding: 14px 12px !important; outline: none; font-size: 1rem; border-radius: 25px !important; }
@@ -53,7 +50,6 @@
         #search-results { position: absolute; top: 100%; left: 0; width: 100%; background: var(--primary); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 999999 !important; max-height: 180px; overflow-y: auto; display: none; margin-top: 5px; }
         .search-item { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-size: 0.95rem; color: #fff; }
 
-        /* 抽屜式服務選擇器樣式 */
         .drawer-btn { background: var(--morandi-teal); color: white; border: none; padding: 12px; border-radius: 25px; width: 100%; font-weight: 900; margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .svc-drawer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; background: rgba(255,255,255,0.4); border-radius: 20px; margin-bottom: 12px; }
         .svc-drawer.open { max-height: 300px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
@@ -137,7 +133,7 @@
     let calendar;
     let flatpickrInstance;
     let notifiedIds = new Set();
-    const STORAGE_KEY = 'SALON_PRO_V27_8';
+    const STORAGE_KEY = 'SALON_PRO_V27_9';
 
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
         bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [{name:'剪髮', color:'#A3B8B8'}], 
@@ -163,19 +159,18 @@
         if (!val) { resDiv.style.display = 'none'; return; }
         const matches = salonData.customers.filter(c => c.name.includes(val) || (c.phone && c.phone.includes(val))).slice(0, 5);
         if (matches.length > 0) {
-            resDiv.innerHTML = matches.map(c => `<div class="search-item" onclick="selectCustomer('${c.name}', '${c.phone||''}', '${c.note||''}')"><i class="fas fa-user-check" style="margin-right:10px;"></i>${c.name} (${c.phone||'無'})</div>`).join('');
+            resDiv.innerHTML = matches.map(c => `<div class="search-item" onclick="selectCustomer('${c.name}', '${c.phone||''}', '${c.note||''}', '${c.birthday||''}')"><i class="fas fa-user-check" style="margin-right:10px;"></i>${c.name} (${c.phone||'無'})</div>`).join('');
             resDiv.style.display = 'block';
         } else { resDiv.style.display = 'none'; }
     }
 
-    function selectCustomer(name, phone, note) {
+    function selectCustomer(name, phone, note, bday) {
         document.getElementById('sw-n').value = name;
         document.getElementById('sw-p').value = phone;
         document.getElementById('sw-o').value = note;
         document.getElementById('search-results').style.display = 'none';
     }
 
-    // 抽屜切換邏輯
     function toggleDrawer() {
         const drawer = document.getElementById('svc-drawer');
         const icon = document.getElementById('drawer-icon');
@@ -191,28 +186,31 @@
             title: b ? '📝 編輯預約' : '✨ 新增預約', confirmButtonColor: '#A3B8B8', showDenyButton: !!b, denyButtonText: '刪除',
             customClass: { popup: 'glass-swal' },
             html: `<div style="text-align:left;">
-                <div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="輸入姓或電話搜尋" value="${b?b.customer:''}" oninput="searchCustomers(this.value)">
+                <div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名(可搜尋)" value="${b?b.customer:''}" oninput="searchCustomers(this.value)">
                 <label style="margin-right:15px; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><input type="checkbox" id="sw-save" checked> 存客資</label>
                 <div id="search-results"></div></div>
                 <div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${b?b.phone||'':''}"></div>
-                <div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toISOString().split('T')[0])}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div></div>
+                <div style="display:flex; gap:10px;">
+                    <div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toISOString().split('T')[0])}"></div>
+                    <div class="swal-row" style="flex:1;"><div class="swal-icon">👥</div><select id="sw-count" class="swal-input-round"><option value="1" ${b&&b.count=='1'?'selected':''}>1人</option><option value="2" ${b&&b.count=='2'?'selected':''}>2人</option><option value="3" ${b&&b.count=='3'?'selected':''}>3人</option><option value="4" ${b&&b.count=='4'?'selected':''}>4人</option><option value="5" ${b&&b.count=='5'?'selected':''}>5人</option></select></div>
+                </div>
+                <div class="swal-row"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div>
                 <div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div>
                 
-                <div class="drawer-btn" onclick="toggleDrawer()"><span>💇 選擇服務項目 (可多選)</span><i id="drawer-icon" class="fas fa-chevron-down"></i></div>
+                <div class="drawer-btn" onclick="toggleDrawer()"><span>💇 選擇服務 (可多選)</span><i id="drawer-icon" class="fas fa-chevron-down"></i></div>
                 <div class="svc-drawer" id="svc-drawer">
                     <div class="svc-grid">${salonData.services.map(s=>`<div class="svc-chip ${selectedSvcs.includes(s.name)?'active':''}" onclick="this.classList.toggle('active')">${s.name}</div>`).join('')}</div>
                 </div>
-
                 <div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註..." style="height:60px;">${b?b.note||'':''}</textarea></div></div>`,
             preConfirm: () => {
                 const activeSvcs = Array.from(document.querySelectorAll('.svc-chip.active')).map(el => el.innerText);
-                return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, stylist: document.getElementById('sw-s').value, service: activeSvcs.join(', '), note: document.getElementById('sw-o').value, saveCust: document.getElementById('sw-save').checked };
+                return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, count: document.getElementById('sw-count').value, stylist: document.getElementById('sw-s').value, service: activeSvcs.join(', '), note: document.getElementById('sw-o').value, saveCust: document.getElementById('sw-save').checked };
             }
         });
         if(isDenied) { salonData.bookings = salonData.bookings.filter(x => x.id != editId); save(); return; }
         if(f && f.name) {
             const [sN, sC] = f.stylist.split('|');
-            const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, note: f.note };
+            const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, count: f.count, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, note: f.note };
             if(editId) salonData.bookings[salonData.bookings.findIndex(x=>x.id==editId)] = data;
             else salonData.bookings.push(data);
             if(f.saveCust) {
@@ -233,13 +231,27 @@
         salonData.customers.filter(c => c.name.includes(q) || (c.phone && c.phone.includes(q))).forEach(c => {
             const history = c.visits ? c.visits.map(v => `<div class="mini-tag" style="background:#fff; border: 1px solid #D4AF37; color:#D4AF37;">📅 ${v}</div>`).join('') : '<div class="mini-tag">首訪</div>';
             area.innerHTML += `<div class="cust-card"><div class="cust-header"><strong style="font-size:1.1rem;">${c.name}</strong><div><i class="fas fa-edit" onclick="openCustomerEditModal(${c.id})" style="color:var(--morandi-teal); margin-right:15px;"></i><i class="fas fa-trash-alt" onclick="deleteCust(${c.id})" style="color:#ff7675;"></i></div></div>
-                <div style="display:flex; gap:6px; flex-wrap: wrap;"><div class="mini-tag">📞 ${c.phone||'無'}</div><div class="mini-tag">✂️ 指定: ${c.stylist||'無'}</div><div class="mini-tag">🔥 共 ${c.visitCount||1} 次</div></div>
+                <div style="display:flex; gap:6px; flex-wrap: wrap;"><div class="mini-tag">📞 ${c.phone||'無'}</div><div class="mini-tag">🎂 ${c.birthday||'未設'}</div><div class="mini-tag">✂️ 指定: ${c.stylist||'無'}</div><div class="mini-tag">🔥 共 ${c.visitCount||1} 次</div></div>
                 <div style="margin-top:5px;"><div style="display:flex; gap:4px; margin-top:3px; flex-wrap:wrap;">${history}</div></div>
                 <div style="background:rgba(0,0,0,0.03); padding:8px 12px; border-radius:12px; font-size:0.8rem; margin-top:5px;">備註: ${c.note||'無'}</div></div>`;
         });
     }
 
-    // 全項鎖定區
+    async function openCustomerEditModal(id = null) {
+        const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '', birthday: '' };
+        const { value: f } = await Swal.fire({ 
+            title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, 
+            html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}">
+                   <input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">
+                   <input id="c-b" type="date" class="swal2-input swal-input-round" value="${c.birthday||''}">
+                   <select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select>
+                   <textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, 
+            preConfirm: () => ({ name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: document.getElementById('c-b').value, stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value }) 
+        });
+        if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f, visitCount: 1 }); save(); renderCustomers(); }
+    }
+
+    // 全項鎖定區 (穩定運行)
     function initFlipSwipe() {
         const el = document.getElementById('calendar-container'); let sX = 0;
         el.addEventListener('touchstart', (e) => sX = e.touches[0].clientX, { passive: true });
@@ -257,7 +269,7 @@
             slotMinTime: salonData.startTime + ':00', slotMaxTime: salonData.endTime + ':00',
             events: (info, success) => {
                 const fVal = document.getElementById('stylist-filter').value;
-                let evts = salonData.bookings.filter(b => fVal==='all' || b.stylist===fVal).map(b => ({ id: b.id, title: `${b.stylist}: ${b.customer} (${b.service})`, start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent' }));
+                let evts = salonData.bookings.filter(b => fVal==='all' || b.stylist===fVal).map(b => ({ id: b.id, title: `${b.stylist}: ${b.customer} (${b.count||1}人 - ${b.service})`, start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent' }));
                 salonData.offDays.forEach(d => evts.push({ start: d, display: 'background', backgroundColor: salonData.offColor }));
                 let d = new Date(info.start);
                 while(d < info.end) { if(salonData.weeklyOff.includes(d.getDay())) { evts.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: salonData.offColor }); } d.setDate(d.getDate() + 1); }
@@ -297,7 +309,6 @@
     function exportData() { const blob = new Blob([JSON.stringify(salonData)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `SALON_BACKUP.json`; a.click(); }
     function importData() { Swal.fire({ title: '恢復', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => { if(res.value) { const reader = new FileReader(); reader.onload = e => { try { Object.assign(salonData, JSON.parse(e.target.result)); save(); location.reload(); } catch(err) { Swal.fire('錯誤', '檔案無效', 'error'); } }; reader.readAsText(res.value); } }); }
     async function openMetaModal(type) { const { value: f } = await Swal.fire({ title: '新增項目', html: `<input id="meta-name" class="swal2-input swal-input-round" placeholder="名稱"><div style="margin-top:15px; text-align:center;"><input type="color" id="meta-color" value="#A3B8B8" style="width:80px; height:80px; border:none; background:transparent;"></div>`, preConfirm: () => ({ name: document.getElementById('meta-name').value, color: document.getElementById('meta-color').value }) }); if(f && f.name) { salonData[type].push(f); save(); refreshAll(); } }
-    async function openCustomerEditModal(id = null) { const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '' }; const { value: f } = await Swal.fire({ title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}"><select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, preConfirm: () => ({ name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value }) }); if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f, visitCount: 1 }); save(); renderCustomers(); } }
 </script>
 </body>
 </html>
