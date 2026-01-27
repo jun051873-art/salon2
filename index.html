@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>專屬空間沙龍 V27.0 Final</title>
+    <title>專屬空間沙龍 V27.1 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -33,31 +33,43 @@
         #top-view-switcher { display: flex; background: rgba(255, 255, 255, 0.15); border-radius: 12px; margin: 10px auto; width: 90%; max-width: 380px; padding: 4px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); }
         .view-btn { flex: 1; border: none; background: transparent; padding: 10px; font-weight: 700; color: #576574; cursor: pointer; z-index: 5; font-size: 0.95rem; }
         .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: transform 0.4s; z-index: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
         .main-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 15px 150px 15px; }
         .page { display: none; } .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        #calendar-container { background: #fff; border-radius: 35px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); overflow: hidden; }
+
+        /* 仿真翻書容器樣式 */
+        #calendar-container { 
+            background: #fff; border-radius: 35px; padding: 15px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.02); overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s;
+        }
+        .page-flip-right { transform: translateX(-30px) rotateY(-5deg); opacity: 0.5; }
+        .page-flip-left { transform: translateX(30px) rotateY(5deg); opacity: 0.5; }
 
         /* 金色流光 + 號 */
         .fab-gold { background: #fff !important; border: 2px solid #D4AF37 !important; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .fab-gold-inline { background: var(--gold-gradient); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s infinite linear; font-weight: 900; }
 
-        /* 預約面板圓潤化 */
+        /* 預約面板極致圓潤 */
         .glass-swal { background: rgba(255, 255, 255, 0.85) !important; backdrop-filter: blur(35px) saturate(180%) !important; border-radius: 45px !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; box-shadow: 0 25px 60px rgba(0,0,0,0.15) !important; }
         .swal-row { display: flex; align-items: center; background: rgba(255,255,255,0.5); border-radius: 25px; margin-bottom: 12px; border: 1px solid #eee; overflow: hidden; }
-        .swal-input-round { border: none !important; background: transparent !important; margin: 0 !important; flex: 1; padding: 14px 10px !important; outline: none; font-size: 1rem; border-radius: 25px !important; }
+        .swal-input-round { border: none !important; background: transparent !important; margin: 0 !important; flex: 1; padding: 14px 12px !important; outline: none; font-size: 1rem; border-radius: 25px !important; }
 
-        /* 其他樣式 */
+        /* 名片式客資卡 */
         .cust-card { background: rgba(255, 255, 255, 0.7); border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.6); display: flex; flex-direction: column; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
         .mini-tag { background: #f1f2f6; color: #576574; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+
         .manage-section { background: #fff; border-radius: 25px; padding: 20px; margin-bottom: 15px; border: 1px solid #eee; }
         .off-btn { padding: 10px; border-radius: 12px; border: 1px solid #ddd; background: #fff; font-weight: 900; cursor: pointer; flex: 1; font-size: 0.8rem; margin: 0 2px; }
         .off-btn.active { background: #ff7675; color: white; border-color: #ff7675; }
+
         .bottom-nav-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px; z-index: 3000; }
         .bottom-nav { position: relative; display: flex; justify-content: space-around; padding: 12px 0; border-radius: 35px; height: 70px; align-items: center; background: rgba(255, 255, 255, 0.2); backdrop-filter: var(--glass); border: 1px solid rgba(255, 255, 255, 0.3); }
         .nav-indicator { position: absolute; top: 8px; left: 8px; height: calc(100% - 16px); width: calc(33.33% - 12px); background: var(--morandi-teal); border-radius: 28px; transition: 0.4s; z-index: 1; }
         .nav-item { border: none; background: none; color: #444; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.95rem; flex: 1; cursor: pointer; z-index: 10; font-weight: 700; }
         .nav-item.active { color: #fff; }
+        
         .fab { position: fixed; bottom: 120px; right: 25px; width: 68px; height: 68px; border-radius: 50%; z-index: 1500; animation: organicBreath 5s infinite ease-in-out; }
         @keyframes organicBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
@@ -130,7 +142,7 @@
     let calendar;
     let flatpickrInstance;
     let notifiedIds = new Set();
-    const STORAGE_KEY = 'SALON_FINAL_V27';
+    const STORAGE_KEY = 'SALON_PRO_V27_1';
 
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
         bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [{name:'剪髮', color:'#A3B8B8'}], 
@@ -140,6 +152,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         flatpickrInstance = flatpickr("#datePicker", { locale: "zh_tw", defaultDate: new Date(), dateFormat: "Y-m-d", onChange: (s, d) => calendar.gotoDate(d) });
         initCalendar();
+        initFlipSwipe(); // 確保重新初始化滑動功能
         refreshAll();
         updateStylistFilter();
         setInterval(checkUpcomingAppointments, 60000);
@@ -149,24 +162,63 @@
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(salonData)); if(calendar) calendar.refetchEvents(); }
 
+    // 核心修復：仿真翻書滑動功能
+    function initFlipSwipe() {
+        const el = document.getElementById('calendar-container');
+        let startX = 0;
+        
+        el.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        el.addEventListener('touchend', (e) => {
+            let diff = e.changedTouches[0].clientX - startX;
+            if (Math.abs(diff) > 80) { // 滑動閾值
+                const isNext = diff < 0;
+                // 加入動畫類別
+                el.classList.add(isNext ? 'page-flip-right' : 'page-flip-left');
+                
+                setTimeout(() => {
+                    if (isNext) calendar.next(); else calendar.prev();
+                    el.classList.remove('page-flip-right', 'page-flip-left');
+                }, 250);
+            }
+        }, { passive: true });
+    }
+
+    // 恢復資料修復
+    function importData() {
+        Swal.fire({ title: '恢復資料', text: '選擇備份檔 (.json)', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => {
+            if(res.value) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        // 合併數據
+                        salonData = Object.assign(salonData, imported);
+                        save();
+                        location.reload();
+                    } catch(err) { Swal.fire('錯誤', '檔案讀取失敗', 'error'); }
+                };
+                reader.readAsText(res.value);
+            }
+        });
+    }
+
+    // 日曆核心
     function initCalendar() {
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'timeGridDay', headerToolbar: false, locale: 'zh-tw', height: 'auto', allDaySlot: false,
             slotMinTime: salonData.startTime + ':00', slotMaxTime: salonData.endTime + ':00',
+            navLinkDayClick: (date) => { calendar.changeView('timeGridDay', date); changeView('timeGridDay', 2); },
             events: (info, success) => {
                 const fVal = document.getElementById('stylist-filter').value;
                 let evts = salonData.bookings.filter(b => fVal==='all' || b.stylist===fVal).map(b => ({ id: b.id, title: `${b.stylist}: ${b.customer}`, start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent' }));
-                
-                // 臨時排休
                 salonData.offDays.forEach(d => evts.push({ start: d, display: 'background', backgroundColor: salonData.offColor }));
-                
-                // 修正：每週固定休日期位移修復邏輯
                 let d = new Date(info.start);
                 while(d < info.end) {
-                    // 使用本地時間 getDay() 確保與點選按鈕一致
                     if(salonData.weeklyOff.includes(d.getDay())) { 
-                        let localDateStr = d.toLocaleDateString('sv'); // 格式 YYYY-MM-DD
-                        evts.push({ start: localDateStr, display: 'background', backgroundColor: salonData.offColor }); 
+                        evts.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: salonData.offColor }); 
                     }
                     d.setDate(d.getDate() + 1);
                 }
@@ -178,24 +230,6 @@
         calendar.render();
     }
 
-    // 恢復資料
-    function importData() {
-        Swal.fire({ title: '恢復資料', text: '選擇備份檔 (.json)', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => {
-            if(res.value) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    try {
-                        const imported = JSON.parse(e.target.result);
-                        Object.assign(salonData, imported);
-                        save();
-                        location.reload();
-                    } catch(err) { Swal.fire('錯誤', '無效的備份檔案格式', 'error'); }
-                };
-                reader.readAsText(res.value);
-            }
-        });
-    }
-
     // 提醒功能
     function speak(t) { if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(t); u.lang = 'zh-TW'; u.rate = 0.9; window.speechSynthesis.speak(u); } }
     function checkUpcomingAppointments() {
@@ -205,8 +239,8 @@
             const appointTime = new Date(b.start);
             if (appointTime > now && appointTime <= target && !notifiedIds.has(b.id)) {
                 notifiedIds.add(b.id);
-                speak(`提醒您，下一位預約是 ${b.customer}，時間是 15 分鐘後`);
-                Swal.fire({ title: '🔔 提醒', text: `15 分鐘後：${b.customer}`, toast: true, position: 'top-end', showConfirmButton: false, timer: 6000 });
+                speak(`下一位預約是 ${b.customer}，時間快到了`);
+                Swal.fire({ title: '🔔 提醒', text: `15 分鐘後：${b.customer}`, toast: true, position: 'top-end', showConfirmButton: false, timer: 6000, customClass: { popup: 'glass-swal' } });
             }
         });
     }
@@ -237,7 +271,7 @@
         });
     }
     function updateBusinessTime() { salonData.startTime = document.getElementById('set-start-time').value; salonData.endTime = document.getElementById('set-end-time').value; save(); calendar.setOption('slotMinTime', salonData.startTime + ':00'); calendar.setOption('slotMaxTime', salonData.endTime + ':00'); }
-    async function openMetaModal(type) { const { value: f } = await Swal.fire({ title: '新增項目', html: `<input id="meta-name" class="swal2-input swal-input-round" placeholder="名稱"><div style="margin-top:15px;"><input type="color" id="meta-color" value="#A3B8B8" style="width:80px; height:80px; border:none; background:transparent;"></div>`, preConfirm: () => ({ name: document.getElementById('meta-name').value, color: document.getElementById('meta-color').value }) }); if(f && f.name) { salonData[type].push(f); save(); refreshAll(); } }
+    async function openMetaModal(type) { const { value: f } = await Swal.fire({ title: '新增項目', html: `<input id="meta-name" class="swal2-input swal-input-round" placeholder="名稱"><div style="margin-top:15px; text-align:center;"><input type="color" id="meta-color" value="#A3B8B8" style="width:80px; height:80px; border:none; background:transparent;"></div>`, preConfirm: () => ({ name: document.getElementById('meta-name').value, color: document.getElementById('meta-color').value }) }); if(f && f.name) { salonData[type].push(f); save(); refreshAll(); } }
     function switchPage(p, b, i) { document.querySelectorAll('.page').forEach(x => x.classList.remove('active')); document.getElementById(p).classList.add('active'); document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active')); b.classList.add('active'); document.getElementById('navIndicator').style.transform = `translateX(${i * 100}%)`; if(p === 'page-calendar') setTimeout(() => calendar.render(), 100); if(p === 'page-customers') renderCustomers(); }
     function changeView(v, i) { document.getElementById('viewSlider').style.transform = `translateX(${i * 100}%)`; calendar.changeView(v); }
     function goToday() { calendar.today(); }
@@ -249,6 +283,8 @@
             salonData[type].forEach((it, i) => { area.innerHTML += `<div class="manage-item"><span><div class="color-dot" style="background:${it.color}; width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:8px;"></div>${it.name}</span><i class="fas fa-times" onclick="salonData.${type}.splice(${i},1); save(); refreshAll();" style="color:red; cursor:pointer;"></i></div>`; });
         });
         document.querySelectorAll('.off-btn').forEach((b, i) => b.className = salonData.weeklyOff.includes(i) ? 'off-btn active' : 'off-btn');
+        document.getElementById('temp-off-list').innerHTML = salonData.offDays.map((d,i) => `<span style="background:#fff; padding:5px 10px; margin:2px; border-radius:8px; display:inline-block; border:1px solid #ddd; font-size:0.8rem;">${d} <i onclick="salonData.offDays.splice(${i},1); save(); refreshAll();" class="fas fa-times" style="color:red;"></i></span>`).join('');
+        document.getElementById('off-color-picker').value = salonData.offColor;
     }
     function updateStylistFilter() { const f = document.getElementById('stylist-filter'); f.innerHTML = '<option value="all">設計師</option>'; salonData.stylists.forEach(s => f.innerHTML += `<option value="${s.name}">${s.name}</option>`); }
     function toggleWeeklyOff(day) { salonData.weeklyOff.includes(day) ? salonData.weeklyOff = salonData.weeklyOff.filter(d => d !== day) : salonData.weeklyOff.push(day); save(); refreshAll(); }
