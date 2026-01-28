@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Salon Elite V60.0 Final</title>
+    <title>Salon Elite V61.0 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -13,7 +13,7 @@
     <style>
         :root { 
             --primary: #2c3e50; --gold: #D4AF37; --morandi: #A3B8B8; --bg: #F2F2F7; 
-            --glass: blur(20px) saturate(160%);
+            --glass: blur(25px) saturate(180%);
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -52,7 +52,7 @@
         .bday-select { flex: 1; border: none; background: white; padding: 12px; border-radius: 15px; font-weight: 900; text-align: center; -webkit-appearance: none; }
 
         .nav-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 3000; }
-        .nav-bar { display: flex; background: rgba(255, 255, 255, 0.85); backdrop-filter: var(--glass); border-radius: 45px; height: 85px; align-items: center; border: 1.5px solid var(--gold); animation: goldBreath 3s infinite; }
+        .nav-bar { display: flex; background: rgba(255, 255, 255, 0.85); backdrop-filter: var(--glass); border-radius: 45px; height: 85px; align-items: center; border: 2px solid var(--gold); animation: goldBreath 3s infinite; }
         .nav-item { flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #888; font-weight: 900; gap: 6px; }
         .nav-item.active { color: var(--gold); }
         .nav-item i { font-size: 1.5rem; }
@@ -67,7 +67,7 @@
 <body>
 
 <div class="header">
-    <div class="app-title">Salon Elite V60</div>
+    <div class="app-title">Salon Elite V61</div>
     <div style="display:flex; gap:8px;">
         <select id="stylist-filter" onchange="refreshAll()" style="border-radius:15px; border:2px solid var(--gold); padding:6px; font-weight:900; background:white; outline:none;"></select>
         <button onclick="calendar.today()" style="background:var(--morandi); color:white; border:none; border-radius:15px; padding:6px 15px; font-weight:900;">今天</button>
@@ -113,7 +113,7 @@
 
 <script>
     let calendar;
-    const KEY = 'SALON_ELITE_V60_FINAL';
+    const KEY = 'SALON_ELITE_V61_FINAL';
     let data = JSON.parse(localStorage.getItem(KEY)) || {
         bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [{name:'洗'}], offDays: [], weeklyOff: [], startTime:'09:00', endTime:'21:00'
     };
