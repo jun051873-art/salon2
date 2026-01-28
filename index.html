@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Salon Elite V61.0 Final</title>
+    <title>Salon Elite V62.0 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -13,7 +13,7 @@
     <style>
         :root { 
             --primary: #2c3e50; --gold: #D4AF37; --morandi: #A3B8B8; --bg: #F2F2F7; 
-            --glass: blur(25px) saturate(180%);
+            --glass: blur(20px) saturate(160%);
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -43,7 +43,7 @@
         .fc-theme-standard td, .fc-theme-standard th { border: 1px solid #f0f0f0 !important; }
         .fc-event-main { padding: 8px !important; font-weight: 800 !important; white-space: normal !important; word-break: break-all !important; }
 
-        /* 最終遮擋修復：彈窗自動高度限制與內部滾動 */
+        /* 彈窗遮擋物理級修復 */
         .glass-swal { border-radius: 45px !important; width: 92% !important; max-height: 85vh !important; overflow-y: auto !important; padding: 20px !important; z-index: 9999 !important; }
         .swal-row { display: flex; align-items: center; background: #f5f5f5; border-radius: 25px; margin-bottom: 12px; border: 1px solid #eee; }
         .swal-input-round { border: none !important; background: transparent !important; flex: 1; padding: 15px !important; outline: none; font-size: 1.1rem; }
@@ -51,6 +51,7 @@
         .bday-picker-box { display: flex; gap: 10px; background: rgba(212,175,55,0.05); padding: 10px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(212,175,55,0.1); }
         .bday-select { flex: 1; border: none; background: white; padding: 12px; border-radius: 15px; font-weight: 900; text-align: center; -webkit-appearance: none; }
 
+        /* 導覽列 */
         .nav-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 3000; }
         .nav-bar { display: flex; background: rgba(255, 255, 255, 0.85); backdrop-filter: var(--glass); border-radius: 45px; height: 85px; align-items: center; border: 2px solid var(--gold); animation: goldBreath 3s infinite; }
         .nav-item { flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #888; font-weight: 900; gap: 6px; }
@@ -67,7 +68,7 @@
 <body>
 
 <div class="header">
-    <div class="app-title">Salon Elite V61</div>
+    <div class="app-title">Salon Elite V62</div>
     <div style="display:flex; gap:8px;">
         <select id="stylist-filter" onchange="refreshAll()" style="border-radius:15px; border:2px solid var(--gold); padding:6px; font-weight:900; background:white; outline:none;"></select>
         <button onclick="calendar.today()" style="background:var(--morandi); color:white; border:none; border-radius:15px; padding:6px 15px; font-weight:900;">今天</button>
@@ -77,8 +78,8 @@
 <div id="top-view-switcher">
     <div class="view-slider" id="viewSlider"></div>
     <button class="view-btn" onclick="changeView('dayGridMonth', 0)">月</button>
-    <button class="view-btn" onclick="changeView('timeGridWeek', 1)">週</button>
-    <button class="view-btn" onclick="changeView('timeGridDay', 2)">日</button>
+    <button class="view-btn" onclick="timeToView('timeGridWeek', 1)">週</button>
+    <button class="view-btn" onclick="timeToView('timeGridDay', 2)">日</button>
 </div>
 
 <div class="page-slider" id="mainSlider">
@@ -96,7 +97,7 @@
     <div class="page">
         <div class="manage-section"><h4>📅 休息設定</h4><div style="display:flex; gap:6px; margin-bottom:15px; overflow-x: auto;"><button class="view-btn" id="off-0" onclick="toggleWeeklyOff(0)" style="border:1px solid #ddd; border-radius:15px !important;">日</button><button class="view-btn" id="off-1" onclick="toggleWeeklyOff(1)" style="border:1px solid #ddd; border-radius:15px !important;">一</button><button class="view-btn" id="off-2" onclick="toggleWeeklyOff(2)" style="border:1px solid #ddd; border-radius:15px !important;">二</button><button class="view-btn" id="off-3" onclick="toggleWeeklyOff(3)" style="border:1px solid #ddd; border-radius:15px !important;">三</button><button class="view-btn" id="off-4" onclick="toggleWeeklyOff(4)" style="border:1px solid #ddd; border-radius:15px !important;">四</button><button class="view-btn" id="off-5" onclick="toggleWeeklyOff(5)" style="border:1px solid #ddd; border-radius:15px !important;">五</button><button class="view-btn" id="off-6" onclick="toggleWeeklyOff(6)" style="border:1px solid #ddd; border-radius:15px !important;">六</button></div><input type="date" onchange="addOff(this.value)" style="width:100%; padding:15px; border-radius:20px; border:1px solid #ddd;"><div id="off-list-render" style="margin-top:10px;"></div></div>
         <div class="manage-section"><div style="display:flex; justify-content:space-between;"><h4>✂️ 設計師</h4><button onclick="openMetaModal('stylists')" style="background:var(--morandi); color:white; border:none; padding:8px 15px; border-radius:15px; font-weight:900;">+ 新增</button></div><div id="stylist-manage-render"></div></div>
-        <div class="manage-section"><div style="display:flex; justify-content:space-between;"><h4>🏷️ 標籤</h4><button onclick="openMetaModal('services')" style="background:var(--morandi); color:white; border:none; padding:8px 15px; border-radius:15px; font-weight:900;">+ 新增</button></div><div id="tag-manage-render" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div></div>
+        <div class="manage-section"><div style="display:flex; justify-content:space-between;"><h4>🏷️ 標籤快速鍵</h4><button onclick="openMetaModal('services')" style="background:var(--morandi); color:white; border:none; padding:8px 15px; border-radius:15px; font-weight:900;">+ 新增</button></div><div id="tag-manage-render" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div></div>
         <div style="display:flex; gap:15px;"><button onclick="exportData()" style="flex:1; padding:20px; border-radius:35px; background:var(--primary); color:white; font-weight:900; border:none;">💾 備份</button><button onclick="importData()" style="flex:1; padding:20px; border-radius:35px; background:var(--gold); color:white; font-weight:900; border:none;">📥 恢復</button></div>
     </div>
 </div>
@@ -113,7 +114,7 @@
 
 <script>
     let calendar;
-    const KEY = 'SALON_ELITE_V61_FINAL';
+    const KEY = 'SALON_ELITE_V62_FINAL';
     let data = JSON.parse(localStorage.getItem(KEY)) || {
         bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [{name:'洗'}], offDays: [], weeklyOff: [], startTime:'09:00', endTime:'21:00'
     };
@@ -159,7 +160,7 @@
         let b = editId ? data.bookings.find(x => x.id == editId) : null;
         const { value: res, isDenied } = await Swal.fire({
             title: b ? '編輯預約' : '新增預約', customClass: { popup: 'glass-swal' }, showDenyButton: !!b, denyButtonText: '刪除',
-            html: `<div style="text-align:left; position:relative;"><div class="swal-row">👤<input id="sw-n" class="swal-input-round" placeholder="姓名" value="${preCust?preCust.name:(b?b.customer:'')}" oninput="window.searchC(this.value)"><div id="search-results"></div></div><div class="swal-row">📞<input id="sw-p" class="swal-input-round" placeholder="電話" value="${preCust?preCust.phone:(b?b.phone||'') || ''}"></div><div class="swal-row">✂️<select id="sw-s" class="swal-input-round">${data.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><p style="font-weight:900; margin:10px 0 5px 0;">標籤快速鍵：</p><div style="display:flex; flex-wrap:wrap; gap:8px;">${data.services.map(s=>`<div style="background:#fff; border:1px solid #ddd; padding:8px 12px; border-radius:20px; font-size:0.8rem; font-weight:900;" onclick="document.getElementById('sw-o').value+='${s.name} '">${s.name}</div>`).join('')}</div><textarea id="sw-o" class="swal-input-round" style="width:100%; height:100px; background:#fff !important; border:1px solid #eee !important; margin-top:10px; border-radius:20px; padding:15px;" placeholder="備註內容...">${b?b.note:''}</textarea><div class="swal-row" style="margin-top:10px;"><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div></div>`,
+            html: `<div style="text-align:left; position:relative;"><div class="swal-row">👤<input id="sw-n" class="swal-input-round" placeholder="姓名" value="${preCust?preCust.name:(b?b.customer:'')}" oninput="window.searchC(this.value)"><div id="search-results"></div></div><div class="swal-row">📞<input id="sw-p" class="swal-input-round" placeholder="電話" value="${preCust?preCust.phone:(b?b.phone||'') || ''}"></div><div class="swal-row">✂️<select id="sw-s" class="swal-input-round">${data.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><p style="font-weight:900; margin:10px 0 5px 0;">標籤快速鍵：</p><div style="display:flex; flex-wrap:wrap; gap:8px;">${data.services.map(s=>`<div style="background:#fff; border:1px solid #ddd; padding:8px 12px; border-radius:20px; font-size:0.8rem; font-weight:900;" onclick="document.getElementById('sw-o').value+='${s.name} '">${s.name}</div>`).join('')}</div><textarea id="sw-o" class="swal-input-round" style="width:100%; height:100px; background:#fff !important; border:1px solid #eee !important; margin-top:10px; border-radius:20px; padding:15px;" placeholder="項目詳情...">${b?b.note:''}</textarea><div class="swal-row" style="margin-top:10px;"><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div></div>`,
             preConfirm: () => ({ name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, stylist: document.getElementById('sw-s').value, note: document.getElementById('sw-o').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value })
         });
         if(isDenied) { data.bookings = data.bookings.filter(x => x.id != editId); save(); refreshAll(); }
@@ -209,6 +210,7 @@
         if(idx === 2) renderSettings();
     }
     function changeView(v, i) { document.getElementById('viewSlider').style.transform = `translateX(${i * 100}%)`; calendar.changeView(v); }
+    function timeToView(v, i) { changeView(v, i); slideTo(0); }
     function initSwipe() {
         let sX = 0; const el = document.getElementById('calendar-container'); el.addEventListener('touchstart', e => sX = e.touches[0].clientX, {passive:true});
         el.addEventListener('touchend', e => { let diff = e.changedTouches[0].clientX - sX; if(Math.abs(diff)>80) { el.style.opacity='0.3'; setTimeout(()=>{ diff>0?calendar.prev():calendar.next(); el.style.opacity='1'; },100); } }, {passive:true});
@@ -227,7 +229,7 @@
     }
     async function editMeta(type, index) {
         const item = data[type][index];
-        const { value: res } = await Swal.fire({ title: '修改', html: `<input id="e-n" class="swal2-input" value="${item.name}"><input type="color" id="e-c" value="${item.color||'#A3B8B8'}">`, preConfirm: () => ({ name: document.getElementById('e-n').value, color: document.getElementById('e-c').value }) });
+        const { value: res } = await Swal.fire({ title: '修改資料', html: `<input id="e-n" class="swal2-input" value="${item.name}"><input type="color" id="e-c" value="${item.color||'#A3B8B8'}">`, preConfirm: () => ({ name: document.getElementById('e-n').value, color: document.getElementById('e-c').value }) });
         if(res && res.name) { data[type][index] = res; save(); renderSettings(); }
     }
     function toggleWeeklyOff(day) { 
