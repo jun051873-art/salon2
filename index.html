@@ -36,36 +36,37 @@
 
         #calendar-container { background: #fff; border-radius: 35px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); }
 
-        /* 預約塊視覺重塑 */
-        .fc-event { border: none !important; border-radius: 15px !important; overflow: hidden !important; box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; cursor: pointer !important; }
-        .fc-v-event { background-color: #fcfcfc !important; }
-        .fc-event-main { color: #333 !important; border-left: 6px solid var(--event-color, #A3B8B8) !important; padding: 8px !important; display: flex; flex-direction: column; gap: 2px; }
-        
-        /* 藥丸標籤強制顯影 CSS */
-        .calendar-svc-info { 
-            display: inline-block; background: #f0f0f0; color: #555; 
-            padding: 1px 10px; border-radius: 20px; font-size: 0.75rem; 
-            font-weight: 800; border: 1px solid #ddd; margin-top: 4px;
-            width: fit-content; max-width: 95%;
-        }
-        .off-day-label { color: rgba(0,0,0,0.3); font-weight: 900; font-size: 0.85rem; text-align: center; padding-top: 10px; }
+        /* 預約塊視覺優化：強制圓角與清晰顯像 */
+        .fc-event { border: none !important; border-radius: 15px !important; overflow: hidden !important; cursor: pointer !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important; }
+        .fc-event-main { padding: 8px !important; font-weight: 900 !important; white-space: normal !important; word-break: break-all !important; color: #fff !important; }
+        .off-day-label { color: rgba(0,0,0,0.3); font-weight: 900; font-size: 0.85rem; text-align: center; padding-top: 5px; }
 
         .fab-gold { background: #fff !important; border: 2.2px solid #D4AF37 !important; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         .fab-gold-inline { background: var(--gold-gradient); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s infinite linear; font-weight: 900; }
 
-        /* 抽屜式收納 */
-        .drawer-btn { background: var(--morandi-teal); color: white; border: none; padding: 12px; border-radius: 20px; width: 100%; font-weight: 900; margin-bottom: 10px; display: flex; justify-content: space-between; cursor: pointer; }
+        /* 預約彈窗樣式 */
+        .glass-swal { background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(35px) saturate(180%) !important; border-radius: 40px !important; width: 95% !important; max-width: 500px !important; }
+        .swal-row { display: flex; align-items: center; background: rgba(255,255,255,0.7); border-radius: 20px; margin-bottom: 10px; border: 1px solid #eee; position: relative; }
+        .swal-input-round { border: none !important; background: transparent !important; margin: 0 !important; flex: 1; padding: 12px 10px !important; outline: none; font-size: 1rem; border-radius: 20px !important; }
+        
+        #search-results { position: absolute; top: 100%; left: 0; width: 100%; background: var(--primary); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 10000 !important; max-height: 180px; overflow-y: auto; display: none; margin-top: 5px; }
+        .search-item { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: #fff; }
+
+        .drawer-btn { background: var(--morandi-teal); color: white; border: none; padding: 12px; border-radius: 20px; width: 100%; font-weight: 900; margin-bottom: 10px; display: flex; justify-content: space-between; }
         .svc-drawer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: rgba(255,255,255,0.4); border-radius: 15px; margin-bottom: 10px; }
-        .svc-drawer.open { max-height: 350px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
+        .svc-drawer.open { max-height: 300px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
         
         .pill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .pill-chip { border: 1.5px solid #ddd; padding: 10px; border-radius: 25px; font-size: 0.8rem; text-align: center; font-weight: 700; background: #fff; cursor: pointer; transition: 0.2s; color: #555; }
         .pill-chip.active { color: white; border-color: transparent; }
 
-        /* 設定頁面排版全復原 */
+        .cust-card { background: rgba(255, 255, 255, 0.7); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.6); }
+        .custom-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; color: white; margin: 2px; }
+
+        /* 設定頁面修復 */
         .manage-section { background: #fff; border-radius: 25px; padding: 22px; margin-bottom: 20px; border: 1px solid #eee; }
         .manage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .manage-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f8f8f8; }
+        .manage-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f8f8f8; }
 
         .bottom-nav-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px; z-index: 3000; }
         .bottom-nav { display: flex; justify-content: space-around; border-radius: 40px; height: 85px; align-items: center; background: rgba(255, 255, 255, 0.25); backdrop-filter: var(--glass); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.05); overflow: hidden; position: relative; }
@@ -75,8 +76,7 @@
         .nav-item span { font-size: 0.85rem; font-weight: 900; }
         .nav-item.active { color: #fff; }
         
-        .fab { position: fixed; bottom: 130px; right: 25px; width: 68px; height: 68px; border-radius: 50%; z-index: 1500; animation: organicBreath 5s infinite ease-in-out; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        @keyframes organicBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+        .fab { position: fixed; bottom: 130px; right: 25px; width: 68px; height: 68px; border-radius: 50%; z-index: 1500; animation: organicBreath 5s infinite ease-in-out; }
     </style>
 </head>
 <body>
@@ -150,9 +150,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        initCalendar();
-        initFlipSwipe();
-        refreshAll();
+        initCalendar(); initFlipSwipe(); refreshAll();
         setInterval(checkUpcomingAppointments, 60000);
         document.getElementById('set-start-time').value = salonData.startTime;
         document.getElementById('set-end-time').value = salonData.endTime;
@@ -160,29 +158,7 @@
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(salonData)); if(calendar) calendar.refetchEvents(); }
 
-    function importData() {
-        Swal.fire({ title: '恢復資料', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => {
-            if(res.value) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    try {
-                        let imported = JSON.parse(e.target.result);
-                        if(imported.bookings) {
-                            imported.bookings = imported.bookings.map(b => {
-                                if(b.start && !b.start.includes('T')) b.start = b.start.replace(' ', 'T');
-                                return b;
-                            });
-                        }
-                        salonData = Object.assign(salonData, imported);
-                        save();
-                        location.reload();
-                    } catch(err) { Swal.fire('錯誤', '資料損壞', 'error'); }
-                };
-                reader.readAsText(res.value);
-            }
-        });
-    }
-
+    // 核心校準：強制內容顯影與對齊
     function initCalendar() {
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'timeGridDay', headerToolbar: false, locale: 'zh-tw', height: 'auto', allDaySlot: false, firstDay: 1, navLinks: true,
@@ -190,31 +166,20 @@
             slotMinTime: salonData.startTime+':00', slotMaxTime: salonData.endTime+':00',
             events: (info, success) => {
                 const f = document.getElementById('stylist-filter').value;
-                let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => ({ 
-                    id: b.id, title: `${b.stylist}: ${b.customer}`, 
-                    extendedProps: { svc: b.service || b.note || "預約", clr: b.color }, 
-                    start: b.start, end: b.end, 
-                    backgroundColor: '#fcfcfc', borderColor: 'transparent' 
-                }));
+                let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => {
+                    // 強制拼接顯影：不再依賴 DOM 渲染以防吃字
+                    const svcText = b.service ? ` (${b.service})` : "";
+                    return { id: b.id, title: `${b.stylist}: ${b.customer}${svcText}`, start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent' };
+                });
                 salonData.offDays.forEach(d => evts.push({ start: d, display: 'background', backgroundColor: salonData.offColor }));
                 let d = new Date(info.start); while(d < info.end) { if(salonData.weeklyOff.includes(d.getDay())) evts.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: salonData.offColor }); d.setDate(d.getDate() + 1); }
                 success(evts);
             },
             eventContent: function(arg) {
-                let wrap = document.createElement('div');
-                if (arg.event.display === 'background') {
-                    wrap.className = 'off-day-label'; wrap.innerText = '🚫 店休';
-                    return { domNodes: [wrap] };
+                if (arg.event.display === 'background') { 
+                    let wrap = document.createElement('div'); wrap.className = 'off-day-label'; wrap.innerText = '🚫 店休'; return { domNodes: [wrap] }; 
                 }
-                wrap.style.cssText = "display:flex; flex-direction:column; width:100%; border-left: 6px solid " + (arg.event.extendedProps.clr || '#A3B8B8') + "; padding-left: 8px; overflow:hidden;";
-                let title = document.createElement('div');
-                title.style.cssText = "font-weight:900; font-size:0.82rem; color:#2c3e50; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;";
-                title.innerText = arg.event.title;
-                let svc = document.createElement('div');
-                svc.className = 'calendar-svc-info';
-                svc.innerText = arg.event.extendedProps.svc;
-                wrap.appendChild(title); wrap.appendChild(svc);
-                return { domNodes: [wrap] };
+                return { html: arg.event.title }; // 使用原始穩定模式顯影
             },
             eventClick: (info) => { if(info.event.display !== 'background') openBookingModal(null, null, info.event.id); },
             datesSet: () => { const dp = document.getElementById('datePicker'); if(dp) dp.value = calendar.view.title; }
@@ -222,6 +187,7 @@
         calendar.render();
     }
 
+    // 修復資料恢復與過濾失效
     function refreshAll() { renderCustomers(); renderOffDaysList(); renderSettingsUI(); updateStylistFilter(); if(calendar) calendar.refetchEvents(); }
 
     function renderSettingsUI() {
@@ -232,23 +198,15 @@
                 area.innerHTML += `<div class="manage-item"><span><div style="background:${it.color}; width:13px; height:13px; border-radius:50%; display:inline-block; margin-right:10px;"></div>${it.name}</span><i class="fas fa-times" onclick="salonData.${type}.splice(${i},1); save(); refreshAll();" style="color:#ff7675; cursor:pointer; padding:8px;"></i></div>`;
             });
         });
-        document.querySelectorAll('.off-btn').forEach((b, i) => {
-            b.style.background = salonData.weeklyOff.includes(i) ? '#ff7675' : '#fff';
-            b.style.color = salonData.weeklyOff.includes(i) ? '#fff' : '#444';
-            b.style.borderColor = salonData.weeklyOff.includes(i) ? '#ff7675' : '#ddd';
-        });
+        document.querySelectorAll('.off-btn').forEach((b, i) => { b.style.background = salonData.weeklyOff.includes(i) ? '#ff7675' : '#fff'; b.style.color = salonData.weeklyOff.includes(i) ? '#fff' : '#444'; });
     }
 
     function renderOffDaysList() {
-        const area = document.getElementById('temp-off-list-render');
-        if(!area) return;
-        area.innerHTML = salonData.offDays.length === 0 ? '<p style="color:#aaa; font-size:0.8rem;">目前無臨時排休</p>' : '';
-        salonData.offDays.sort().forEach((date, index) => {
-            area.innerHTML += `<div class="off-date-item"><span>📅 ${date}</span><i class="fas fa-trash-alt" onclick="salonData.offDays.splice(${index},1); save(); refreshAll();" style="color:#ff7675; cursor:pointer; padding:8px;"></i></div>`;
-        });
+        const area = document.getElementById('temp-off-list-render'); if(!area) return; area.innerHTML = salonData.offDays.length === 0 ? '<p style="color:#aaa; font-size:0.8rem;">無臨時排休</p>' : '';
+        salonData.offDays.sort().forEach((date, index) => { area.innerHTML += `<div class="off-date-item"><span>📅 ${date}</span><i class="fas fa-trash-alt" onclick="salonData.offDays.splice(${index},1); save(); refreshAll();" style="color:#ff7675; cursor:pointer; padding:8px;"></i></div>`; });
     }
 
-    // 核心預約功能
+    // 核心彈窗邏輯
     async function openBookingModal(date, time, editId = null, prefillName = null) {
         let b = editId ? salonData.bookings.find(x => x.id == editId) : null;
         let selectedSvcs = b ? b.service.split(', ') : [];
