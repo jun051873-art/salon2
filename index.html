@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>專屬空間沙龍 V31.1 Final</title>
+    <title>專屬空間沙龍 V31.2 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -133,7 +133,7 @@
 
 <script>
     let calendar;
-    const STORAGE_KEY = 'SALON_PRO_V31_1_FINAL';
+    const STORAGE_KEY = 'SALON_PRO_V31_2_FINAL';
     let notifiedIds = new Set();
 
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
@@ -153,6 +153,7 @@
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(salonData)); if(calendar) calendar.refetchEvents(); }
 
+    // 核心修復：恢復資料強制校準
     function importData() {
         Swal.fire({ title: '恢復資料', text: '請選擇備份檔 (.json)', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => {
             if(res.value) {
@@ -179,7 +180,7 @@
     function renderOffDaysList() {
         const area = document.getElementById('temp-off-list-v31');
         if(!area) return;
-        area.innerHTML = salonData.offDays.length === 0 ? '<p style="color:#aaa; font-size:0.8rem;">無臨時排休</p>' : '';
+        area.innerHTML = salonData.offDays.length === 0 ? '<p style="color:#aaa; font-size:0.8rem;">目前無臨時排休</p>' : '';
         salonData.offDays.sort().forEach((date, index) => {
             area.innerHTML += `<div class="off-date-item"><span>📅 ${date}</span><i class="fas fa-trash-alt" onclick="deleteOffDay(${index})" style="color:#ff7675;"></i></div>`;
         });
@@ -189,11 +190,20 @@
     function initCalendar() {
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'timeGridDay', headerToolbar: false, locale: 'zh-tw', height: 'auto', allDaySlot: false, firstDay: 1, navLinks: true,
-            navLinkDayClick: (date) => { calendar.changeView('timeGridDay', date); document.getElementById('viewSlider').style.transform = `translateX(200%)`; },
+            navLinkDayClick: (date) => { 
+                calendar.changeView('timeGridDay', date); 
+                document.getElementById('viewSlider').style.transform = `translateX(200%)`;
+            },
             slotMinTime: salonData.startTime+':00', slotMaxTime: salonData.endTime+':00',
             events: (info, success) => {
                 const f = document.getElementById('stylist-filter').value;
-                let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => ({ id: b.id, title: `${b.stylist}: ${b.customer} (${b.count||1}人)`, start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent' }));
+                // 核心校準：在日曆上同時顯示顧客姓名與預約項目
+                let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => ({ 
+                    id: b.id, 
+                    title: `${b.stylist}: ${b.customer} (${b.service})`, 
+                    start: b.start, end: b.end, 
+                    backgroundColor: b.color, borderColor: 'transparent' 
+                }));
                 salonData.offDays.forEach(d => evts.push({ start: d, display: 'background', backgroundColor: salonData.offColor }));
                 let d = new Date(info.start); while(d < info.end) { if(salonData.weeklyOff.includes(d.getDay())) evts.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: salonData.offColor }); d.setDate(d.getDate() + 1); }
                 success(evts);
@@ -204,11 +214,8 @@
         calendar.render();
     }
 
-    function handlePillClick(el, color) {
-        el.classList.toggle('active');
-        if(el.classList.contains('active')) { el.style.background = color; el.style.borderColor = color; el.style.color = '#fff'; }
-        else { el.style.background = '#fff'; el.style.borderColor = '#ddd'; el.style.color = '#555'; }
-    }
+    function toggleDrawer(id) { const d = document.getElementById(id); d.classList.toggle('open'); }
+    function handlePillClick(el, color) { el.classList.toggle('active'); el.style.background = el.classList.contains('active') ? color : '#fff'; el.style.borderColor = el.classList.contains('active') ? color : '#ddd'; el.style.color = el.classList.contains('active') ? '#fff' : '#555'; }
 
     function searchCustomers(val) {
         const res = document.getElementById('search-results'); if(!val) { res.style.display='none'; return; }
@@ -239,7 +246,7 @@
 
         const { value: f } = await Swal.fire({
             title: b ? '📝 編輯預約' : '✨ 新增預約', confirmButtonColor: '#A3B8B8', showDenyButton: !!b, denyButtonText: '刪除', customClass: { popup: 'glass-swal' },
-            html: `<div style="text-align:left;"><div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名" value="${name}" oninput="searchCustomers(this.value)"><label style="margin-right:15px; font-size:0.8rem; white-space:nowrap;"><input type="checkbox" id="sw-save" checked> 存客資</label><div id="search-results"></div></div><div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${phone}"></div><div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">👥</div><select id="sw-c" class="swal-input-round"><option value="1" ${b&&b.count=='1'?'selected':''}>1人</option><option value="2" ${b&&b.count=='2'?'selected':''}>2人</option><option value="3" ${b&&b.count=='3'?'selected':''}>3人</option></select></div></div><div class="swal-row"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div><div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><div class="drawer-btn" onclick="document.getElementById('sw-svc-d').classList.toggle('open')"><span>💇 服務多選</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-svc-d"><div class="pill-grid">${salonData.services.map(s=>`<div class="pill-chip ${selectedSvcs.includes(s.name)?'active':''}" style="${selectedSvcs.includes(s.name)?'background:'+s.color+'; border-color:'+s.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${s.color}')">${s.name}</div>`).join('')}</div></div><div class="drawer-btn" onclick="document.getElementById('sw-tag-d').classList.toggle('open')" style="background:var(--primary);"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-tag-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${selectedTags.includes(t.name)?'active':''}" style="${selectedTags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註...">${note}</textarea></div></div>`,
+            html: `<div style="text-align:left;"><div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名" value="${name}" oninput="searchCustomers(this.value)"><label style="margin-right:15px; font-size:0.8rem; white-space:nowrap;"><input type="checkbox" id="sw-save" checked> 存客資</label><div id="search-results"></div></div><div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${phone}"></div><div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">👥</div><select id="sw-c" class="swal-input-round"><option value="1" ${b&&b.count=='1'?'selected':''}>1人</option><option value="2" ${b&&b.count=='2'?'selected':''}>2人</option><option value="3" ${b&&b.count=='3'?'selected':''}>3人</option></select></div></div><div class="swal-row"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div><div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><div class="drawer-btn" onclick="toggleDrawer('sw-svc-d')"><span>💇 服務多選</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-svc-d"><div class="pill-grid">${salonData.services.map(s=>`<div class="pill-chip ${selectedSvcs.includes(s.name)?'active':''}" style="${selectedSvcs.includes(s.name)?'background:'+s.color+'; border-color:'+s.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${s.color}')">${s.name}</div>`).join('')}</div></div><div class="drawer-btn" onclick="toggleDrawer('sw-tag-d')" style="background:var(--primary);"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-tag-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${selectedTags.includes(t.name)?'active':''}" style="${selectedTags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註...">${note}</textarea></div></div>`,
             preConfirm: () => { const svcs = Array.from(document.querySelectorAll('#sw-svc-d .pill-chip.active')).map(el => el.innerText); const tags = Array.from(document.querySelectorAll('#sw-tag-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, count: document.getElementById('sw-c').value, stylist: document.getElementById('sw-s').value, service: svcs.join(', '), tags: tags, note: document.getElementById('sw-o').value, saveCust: document.getElementById('sw-save').checked }; },
             showDenyButton: !!b
         }).then(res => {
@@ -255,11 +262,11 @@
         salonData.customers.filter(c => (c.name.includes(q) || (c.phone && c.phone.includes(q))) && (fStylist==='all' || c.stylist===fStylist)).forEach(c => {
             const h = c.visits && c.visits.length ? c.visits.map(v => `<div class="mini-tag" style="background:#fff; border: 1px solid #D4AF37; color:#D4AF37;">📅 ${v}</div>`).join('') : '<div class="mini-tag">無紀錄</div>';
             const tags = (c.tags || []).map(tn => { const t = salonData.tags.find(x => x.name === tn); return `<span class="custom-badge" style="background:${t?t.color:'#ddd'}">${tn}</span>`; }).join('');
-            area.innerHTML += `<div class="cust-card"><div class="cust-header" style="display:flex; justify-content:space-between; align-items:center;">
+            area.innerHTML += `<div class="cust-card"><div class="cust-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
                     <div style="display:flex; align-items:center;"><strong style="font-size:1.2rem;">${c.name}</strong><div class="cust-action-btn" onclick="openBookingModal(null, null, null, '${c.name}')"><i class="fas fa-calendar-plus"></i></div>${c.phone?`<a href="tel:${c.phone}" class="cust-action-btn"><i class="fas fa-phone"></i></a>`:''}</div>
-                    <div><i class="fas fa-edit" onclick="openCustomerEditModal(${c.id})" style="color:var(--morandi-teal); margin-right:15px; cursor:pointer;"></i><i class="fas fa-trash-alt" onclick="deleteCust(${c.id})" style="color:#ff7675;"></i></div></div>
-                <div style="display:flex; gap:6px; flex-wrap: wrap; margin-top:5px;"><div class="mini-tag">📞 ${c.phone||'無'}</div><div class="mini-tag">🎂 ${c.birthday||'未設'}</div><div class="mini-tag">✂️ ${c.stylist||'無'}</div><div class="mini-tag">🔥 共 ${c.visitCount||0} 次</div></div>
-                <div style="margin-top:5px;">${tags}</div><div style="display:flex; gap:4px; margin-top:5px; flex-wrap:wrap;">${h}</div>
+                    <div><i class="fas fa-edit" onclick="openCustomerEditModal(${c.id})" style="color:var(--morandi-teal); margin-right:15px; cursor:pointer;"></i><i class="fas fa-trash-alt" onclick="deleteCust(${c.id})" style="color:#ff7675; cursor:pointer;"></i></div></div>
+                <div style="display:flex; gap:6px; flex-wrap: wrap; margin-bottom:5px;"><div class="mini-tag">📞 ${c.phone||'無'}</div><div class="mini-tag">🎂 ${c.birthday||'未設'}</div><div class="mini-tag">✂️ ${c.stylist||'無'}</div><div class="mini-tag">🔥 共 ${c.visitCount||0} 次</div></div>
+                <div style="margin-bottom:5px;">${tags}</div><div style="display:flex; gap:4px; margin-top:5px; flex-wrap:wrap;">${h}</div>
                 <div style="background:rgba(0,0,0,0.03); padding:8px 12px; border-radius:12px; font-size:0.8rem; margin-top:5px;">備註: ${c.note||'無'}</div></div>`;
         });
     }
@@ -268,8 +275,8 @@
         const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '', birthday: '', tags: [] };
         const { value: f } = await Swal.fire({ 
             title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, 
-            html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="document.getElementById('c-t-d').classList.toggle('open')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="tag-grid">${salonData.tags.map(t=>`<div class="tag-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, 
-            preConfirm: () => { const m = document.getElementById('c-b-m').value; const d = document.getElementById('c-b-d').value; const tags = Array.from(document.querySelectorAll('#c-t-d .tag-chip.active')).map(el => el.innerText); return { name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: (m && d) ? `${m}-${d}` : '', stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value, tags: tags } }
+            html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="document.getElementById('c-t-d').classList.toggle('open')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, 
+            preConfirm: () => { const m = document.getElementById('c-b-m').value; const d = document.getElementById('c-b-d').value; const tags = Array.from(document.querySelectorAll('#c-t-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: (m && d) ? `${m}-${d}` : '', stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value, tags: tags } }
         });
         if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f }); save(); refreshAll(); }
     }
