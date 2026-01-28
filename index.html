@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>專屬空間沙龍 V33.2 Final</title>
+    <title>專屬空間沙龍 V33.3 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -36,13 +36,17 @@
 
         #calendar-container { background: #fff; border-radius: 35px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); transition: 0.4s; }
 
-        /* 預約表內部藥丸樣式：最強校準 */
-        .calendar-pill-row { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; pointer-events: none; }
+        /* 預約表內部藥丸樣式：解決白條問題 */
+        .calendar-item-container { display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; padding: 2px; }
+        .calendar-pill-row { 
+            display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; 
+            max-width: 100%; overflow: hidden;
+        }
         .calendar-pill { 
             background: #ffffff; color: var(--primary); 
-            padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; 
-            font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: inline-block; white-space: nowrap;
+            padding: 1px 6px; border-radius: 8px; font-size: 0.65rem; 
+            font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            white-space: normal; /* 允許換行，防止白條 */
         }
 
         .fab-gold { background: #fff !important; border: 2px solid #D4AF37 !important; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -61,11 +65,11 @@
         
         .pill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .pill-chip { border: 1.5px solid #ddd; padding: 10px; border-radius: 25px; font-size: 0.8rem; text-align: center; font-weight: 700; background: #fff; cursor: pointer; transition: 0.2s; color: #555; }
-        .pill-chip.active { color: white; border-color: transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .pill-chip.active { color: white; border-color: transparent; }
 
         .cust-card { background: rgba(255, 255, 255, 0.7); border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.6); }
         .mini-tag { background: #f1f2f6; color: #576574; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
-        .custom-badge { display: inline-block; padding: 4px 12px; border-radius: 25px; font-size: 0.72rem; font-weight: 900; color: white; margin: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .custom-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 900; color: white; margin: 2px; }
 
         .manage-section { background: #fff; border-radius: 25px; padding: 20px; margin-bottom: 15px; border: 1px solid #eee; }
         .off-date-item { background:#f9f9f9; padding:10px 15px; border-radius:15px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee; font-weight:700; font-size:0.9rem; }
@@ -138,7 +142,7 @@
 
 <script>
     let calendar;
-    const STORAGE_KEY = 'SALON_PRO_V33_2_FINAL';
+    const STORAGE_KEY = 'SALON_PRO_V33_3_FINAL';
     let notifiedIds = new Set();
 
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
@@ -159,7 +163,7 @@
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(salonData)); if(calendar) calendar.refetchEvents(); }
 
     function importData() {
-        Swal.fire({ title: '恢復資料', text: '請選擇備份檔 (.json)', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => {
+        Swal.fire({ title: '恢復資料', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => {
             if(res.value) {
                 const reader = new FileReader();
                 reader.onload = e => {
@@ -174,7 +178,7 @@
                         salonData = Object.assign(salonData, imported);
                         save();
                         location.reload();
-                    } catch(err) { Swal.fire('錯誤', '檔案無效', 'error'); }
+                    } catch(err) { Swal.fire('錯誤', '檔案格式不符', 'error'); }
                 };
                 reader.readAsText(res.value);
             }
@@ -188,11 +192,10 @@
             slotMinTime: salonData.startTime+':00', slotMaxTime: salonData.endTime+':00',
             events: (info, success) => {
                 const f = document.getElementById('stylist-filter').value;
-                // 強制將 service 內容塞進 extendedProps.pillContent 屬性，確保渲染器能抓到
                 let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => ({ 
                     id: b.id, 
                     title: `${b.stylist}: ${b.customer}`, 
-                    pillContent: b.service || b.note || "預約", 
+                    pillContent: b.service || b.note || "預約", // 確保數據強制封裝
                     start: b.start, end: b.end, 
                     backgroundColor: b.color, borderColor: 'transparent' 
                 }));
@@ -201,30 +204,31 @@
                 success(evts);
             },
             eventContent: function(arg) {
-                // 總統級渲染邏輯：強制內容顯影
-                let container = document.createElement('div');
-                container.style.cssText = "display:flex; flex-direction:column; overflow:hidden;";
+                // 總統級物理渲染：解決白條並顯示藥丸
+                let mainWrap = document.createElement('div');
+                mainWrap.className = 'calendar-item-container';
                 
-                let title = document.createElement('div');
-                title.style.cssText = "font-weight:900; font-size:0.85rem; color:#fff;";
-                title.innerText = arg.event.title;
+                let titleDiv = document.createElement('div');
+                titleDiv.style.cssText = "font-weight:900; font-size:0.85rem; color:#fff; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;";
+                titleDiv.innerText = arg.event.title;
                 
-                let pillRow = document.createElement('div');
-                pillRow.className = 'calendar-pill-row';
+                let pillBox = document.createElement('div');
+                pillBox.className = 'calendar-pill-row';
                 
-                // 強制讀取 pillContent，並切割成藥丸
-                let content = arg.event.extendedProps.pillContent || "預約";
-                let items = content.split(', ');
-                items.forEach(txt => {
-                    let p = document.createElement('span');
-                    p.className = 'calendar-pill';
-                    p.innerText = txt;
-                    pillRow.appendChild(p);
-                });
+                // 強制顯影：從 extendedProps 讀取並渲染
+                let content = arg.event.extendedProps.pillContent || "";
+                if(content) {
+                    content.split(', ').forEach(t => {
+                        let p = document.createElement('span');
+                        p.className = 'calendar-pill';
+                        p.innerText = t;
+                        pillBox.appendChild(p);
+                    });
+                }
                 
-                container.appendChild(title);
-                container.appendChild(pillRow);
-                return { domNodes: [container] };
+                mainWrap.appendChild(titleDiv);
+                mainWrap.appendChild(pillBox);
+                return { domNodes: [mainWrap] };
             },
             eventClick: (info) => openBookingModal(null, null, info.event.id),
             datesSet: (info) => { const dp = document.getElementById('datePicker'); if(dp) dp.value = calendar.view.title; }
@@ -237,12 +241,11 @@
     function searchCustomers(val) {
         const res = document.getElementById('search-results'); if(!val) { res.style.display='none'; return; }
         const matches = salonData.customers.filter(c => c.name.includes(val) || (c.phone && c.phone.includes(val))).slice(0, 5);
-        if(matches.length > 0) { res.innerHTML = matches.map(c => `<div class="search-item" onclick="selectCustomer('${c.name}', '${c.phone||''}', '${c.note||''}')"><i class="fas fa-user-check" style="margin-right:8px;"></i>${c.name}</div>`).join(''); res.style.display = 'block'; } 
+        if(matches.length > 0) { res.innerHTML = matches.map(c => `<div class="search-item" onclick="selectCustomer('${c.name}', '${c.phone||''}', '${c.note||''}')"><i class="fas fa-user-check"></i> ${c.name}</div>`).join(''); res.style.display = 'block'; } 
         else res.style.display = 'none';
     }
     function selectCustomer(n, p, o) { document.getElementById('sw-n').value=n; document.getElementById('sw-p').value=p; document.getElementById('sw-o').value=o; document.getElementById('search-results').style.display='none'; }
     function syncVisitHistory() { salonData.customers.forEach(cust => { const h = salonData.bookings.filter(b => b.customer === cust.name).map(b => b.start.split('T')[0]).sort((a,b) => new Date(b) - new Date(a)); cust.visits = [...new Set(h)].slice(0, 3); cust.visitCount = h.length; }); }
-    
     function renderCustomers() {
         syncVisitHistory(); const q = document.getElementById('custSearch').value.toLowerCase();
         const fStylist = document.getElementById('stylist-filter').value;
@@ -258,16 +261,7 @@
                 <div style="background:rgba(0,0,0,0.03); padding:8px 12px; border-radius:12px; font-size:0.8rem; margin-top:5px;">備註: ${c.note||'無'}</div></div>`;
         });
     }
-
-    function getBirthdayPicker(current) {
-        const [m, d] = current ? current.split('-') : ['', ''];
-        let mH = `<select id="c-b-m" class="swal-input-round" style="flex:1;"><option value="">月</option>`;
-        for(let i=1; i<=12; i++) mH += `<option value="${i.toString().padStart(2,'0')}" ${m==i?'selected':''}>${i}月</option>`;
-        let dH = `<select id="c-b-d" class="swal-input-round" style="flex:1;"><option value="">日</option>`;
-        for(let i=1; i<=31; i++) dH += `<option value="${i.toString().padStart(2,'0')}" ${d==i?'selected':''}>${i}日</option>`;
-        return `<div style="display:flex; gap:10px; background:rgba(255,255,255,0.6); border-radius:20px; border:1px solid #eee; margin-bottom:10px; padding:0 10px;"><div style="padding:12px 5px; color:var(--morandi-teal);">🎂</div>${mH}</select>${dH}</select></div>`;
-    }
-
+    function getBirthdayPicker(current) { const [m, d] = current ? current.split('-') : ['', '']; let mH = `<select id="c-b-m" class="swal-input-round" style="flex:1;"><option value="">月</option>`; for(let i=1; i<=12; i++) mH += `<option value="${i.toString().padStart(2,'0')}" ${m==i?'selected':''}>${i}月</option>`; let dH = `<select id="c-b-d" class="swal-input-round" style="flex:1;"><option value="">日</option>`; for(let i=1; i<=31; i++) dH += `<option value="${i.toString().padStart(2,'0')}" ${d==i?'selected':''}>${i}日</option>`; return `<div style="display:flex; gap:10px; background:rgba(255,255,255,0.6); border-radius:20px; border:1px solid #eee; margin-bottom:10px; padding:0 10px;"><div style="padding:12px 5px; color:var(--morandi-teal);">🎂</div>${mH}</select>${dH}</select></div>`; }
     async function openBookingModal(date, time, editId = null, prefillName = null) {
         let b = editId ? salonData.bookings.find(x => x.id == editId) : null;
         let selectedSvcs = b ? b.service.split(', ') : [];
@@ -276,29 +270,11 @@
         let phone = ''; let note = '';
         if (prefillName) { const c = salonData.customers.find(x => x.name === prefillName); if(c){ phone = c.phone; note = c.note; selectedTags = c.tags || []; } } 
         else if (b) { phone = b.phone; note = b.note; }
-
-        const { value: f, isDenied } = await Swal.fire({
-            title: b ? '📝 編輯預約' : '✨ 新增預約', confirmButtonColor: '#A3B8B8', showDenyButton: !!b, denyButtonText: '刪除', customClass: { popup: 'glass-swal' },
-            html: `<div style="text-align:left;"><div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名" value="${name}" oninput="searchCustomers(this.value)"><label style="margin-right:15px; font-size:0.8rem; white-space:nowrap;"><input type="checkbox" id="sw-save" checked> 存客資</label><div id="search-results"></div></div><div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${phone}"></div><div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">👥</div><select id="sw-c" class="swal-input-round"><option value="1" ${b&&b.count=='1'?'selected':''}>1人</option><option value="2" ${b&&b.count=='2'?'selected':''}>2人</option><option value="3" ${b&&b.count=='3'?'selected':''}>3人</option></select></div></div><div class="swal-row"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div><div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><div class="drawer-btn" onclick="toggleDrawer('sw-svc-d')"><span>💇 服務多選</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-svc-d"><div class="pill-grid">${salonData.services.map(s=>`<div class="pill-chip ${selectedSvcs.includes(s.name)?'active':''}" style="${selectedSvcs.includes(s.name)?'background:'+s.color+'; border-color:'+s.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${s.color}')">${s.name}</div>`).join('')}</div></div><div class="drawer-btn" onclick="toggleDrawer('sw-tag-d')" style="background:var(--primary);"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-tag-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${selectedTags.includes(t.name)?'active':''}" style="${selectedTags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註...">${note}</textarea></div></div>`,
-            preConfirm: () => { const svcs = Array.from(document.querySelectorAll('#sw-svc-d .pill-chip.active')).map(el => el.innerText); const tags = Array.from(document.querySelectorAll('#sw-tag-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, count: document.getElementById('sw-c').value, stylist: document.getElementById('sw-s').value, service: svcs.join(', '), tags: tags, note: document.getElementById('sw-o').value, saveCust: document.getElementById('sw-save').checked }; }
-        });
+        const { value: f, isDenied } = await Swal.fire({ title: b ? '📝 編輯預約' : '✨ 新增預約', confirmButtonColor: '#A3B8B8', showDenyButton: !!b, denyButtonText: '刪除', customClass: { popup: 'glass-swal' }, html: `<div style="text-align:left;"><div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名" value="${name}" oninput="searchCustomers(this.value)"><label style="margin-right:15px; font-size:0.8rem; white-space:nowrap;"><input type="checkbox" id="sw-save" checked> 存客資</label><div id="search-results"></div></div><div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${phone}"></div><div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">👥</div><select id="sw-c" class="swal-input-round"><option value="1" ${b&&b.count=='1'?'selected':''}>1人</option><option value="2" ${b&&b.count=='2'?'selected':''}>2人</option><option value="3" ${b&&b.count=='3'?'selected':''}>3人</option></select></div></div><div class="swal-row"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div><div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><div class="drawer-btn" onclick="toggleDrawer('sw-svc-d')"><span>💇 服務選擇</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-svc-d"><div class="pill-grid">${salonData.services.map(s=>`<div class="pill-chip ${selectedSvcs.includes(s.name)?'active':''}" style="${selectedSvcs.includes(s.name)?'background:'+s.color+'; border-color:'+s.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${s.color}')">${s.name}</div>`).join('')}</div></div><div class="drawer-btn" onclick="toggleDrawer('sw-tag-d')" style="background:var(--primary);"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-tag-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${selectedTags.includes(t.name)?'active':''}" style="${selectedTags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註...">${note}</textarea></div></div>`, preConfirm: () => { const svcs = Array.from(document.querySelectorAll('#sw-svc-d .pill-chip.active')).map(el => el.innerText); const tags = Array.from(document.querySelectorAll('#sw-tag-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, count: document.getElementById('sw-c').value, stylist: document.getElementById('sw-s').value, service: svcs.join(', '), tags: tags, note: document.getElementById('sw-o').value, saveCust: document.getElementById('sw-save').checked }; } });
         if(isDenied) { salonData.bookings = salonData.bookings.filter(x => x.id != editId); syncVisitHistory(); save(); refreshAll(); }
-        else if(f && f.name) {
-            const [sN, sC] = f.stylist.split('|');
-            const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, count: f.count, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, tags: f.tags, note: f.note };
-            if(editId) salonData.bookings[salonData.bookings.findIndex(x=>x.id==editId)] = data; else salonData.bookings.push(data);
-            if(f.saveCust) { let ex = salonData.customers.find(c => c.name === f.name); if(!ex) salonData.customers.push({ id: Date.now(), name: f.name, phone: f.phone, stylist: sN, note: f.note, tags: f.tags, visits: [] }); else { ex.stylist = sN; ex.phone = f.phone; ex.tags = f.tags; } }
-            syncVisitHistory(); save(); refreshAll();
-        }
+        else if(f && f.name) { const [sN, sC] = f.stylist.split('|'); const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, count: f.count, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, tags: f.tags, note: f.note }; if(editId) salonData.bookings[salonData.bookings.findIndex(x=>x.id==editId)] = data; else salonData.bookings.push(data); if(f.saveCust) { let ex = salonData.customers.find(c => c.name === f.name); if(!ex) salonData.customers.push({ id: Date.now(), name: f.name, phone: f.phone, stylist: sN, note: f.note, tags: f.tags, visits: [] }); else { ex.stylist = sN; ex.phone = f.phone; ex.tags = f.tags; } } syncVisitHistory(); save(); refreshAll(); }
     }
-
-    async function openCustomerEditModal(id = null) {
-        const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '', birthday: '', tags: [] };
-        const { value: f } = await Swal.fire({ title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="toggleDrawer('c-t-d')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, preConfirm: () => { const m = document.getElementById('c-b-m').value; const d = document.getElementById('c-b-d').value; const tags = Array.from(document.querySelectorAll('#c-t-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: (m && d) ? `${m}-${d}` : '', stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value, tags: tags } } });
-        if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f }); save(); refreshAll(); }
-    }
-
-    function refreshAll() { renderCustomers(); renderOffDaysList(); renderSettingsUI(); updateStylistFilter(); if(calendar) calendar.refetchEvents(); }
+    async function openCustomerEditModal(id = null) { const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '', birthday: '', tags: [] }; const { value: f } = await Swal.fire({ title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="toggleDrawer('c-t-d')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, preConfirm: () => { const m = document.getElementById('c-b-m').value; const d = document.getElementById('c-b-d').value; const tags = Array.from(document.querySelectorAll('#c-t-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: (m && d) ? `${m}-${d}` : '', stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value, tags: tags } } }); if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f }); save(); refreshAll(); } }
     function renderOffDaysList() { const area = document.getElementById('temp-off-list-render'); if(!area) return; area.innerHTML = salonData.offDays.length === 0 ? '<p style="color:#aaa; font-size:0.8rem;">目前無臨時排休</p>' : ''; salonData.offDays.sort().forEach((date, index) => { area.innerHTML += `<div class="off-date-item"><span>📅 ${date}</span><i class="fas fa-trash-alt" onclick="deleteOffDay(${index})" style="color:#ff7675;"></i></div>`; }); }
     function deleteOffDay(idx) { salonData.offDays.splice(idx, 1); save(); refreshAll(); }
     function renderSettingsUI() { ['stylists', 'services', 'tags'].forEach(type => { const area = document.getElementById(`${type === 'tags' ? 'tag' : (type === 'stylists' ? 'stylist' : 'service')}-manage-render`); if(!area) return; area.innerHTML = ''; salonData[type].forEach((it, i) => { area.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f5;"><span><div style="background:${it.color}; width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:8px;"></div>${it.name}</span><i class="fas fa-times" onclick="salonData.${type}.splice(${i},1); save(); refreshAll();" style="color:red; cursor:pointer;"></i></div>`; }); }); document.querySelectorAll('.off-btn').forEach((b, i) => { b.style.background = salonData.weeklyOff.includes(i) ? '#ff7675' : '#fff'; b.style.color = salonData.weeklyOff.includes(i) ? '#fff' : '#444'; }); }
