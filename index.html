@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間沙龍 V51.0 Final</title>
+    <title>專屬空間沙龍 V52.0 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -41,32 +41,22 @@
         .fc-event-main { padding: 8px !important; font-weight: 800 !important; white-space: normal !important; overflow: visible !important; word-break: break-all !important; color: #fff !important; }
         .off-day-label { color: rgba(0,0,0,0.3); font-weight: 900; font-size: 0.85rem; text-align: center; padding-top: 10px; }
 
-        /* 已選項目：玻璃質感 */
-        .glass-svc-container { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(212,175,55,0.4); border-radius: 20px; padding: 12px; margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; min-height: 50px; }
-        .glass-tag { background: rgba(255, 255, 255, 0.85); color: #2c3e50; padding: 5px 14px; border-radius: 12px; font-size: 0.9rem; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-
-        /* 卡片精品美學 */
+        /* 彈窗卡片圓潤精品化 */
         .glass-swal { border-radius: 40px !important; width: 90% !important; max-width: 420px !important; padding: 20px !important; }
         .swal-row { display: flex; align-items: center; background: rgba(255,255,255,0.7); border-radius: 20px; margin-bottom: 12px; border: 1px solid #eee; overflow: visible; position: relative; }
         .swal-input-round { border: none !important; background: transparent !important; margin: 0 !important; flex: 1; padding: 14px 12px !important; outline: none; font-size: 1.05rem; }
 
-        /* 快速搜尋回歸 */
+        /* 快速搜尋結果 */
         #search-results { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 10000; max-height: 180px; overflow-y: auto; display: none; border: 1px solid #eee; }
         .search-item { padding: 12px 18px; border-bottom: 1px solid #f8f8f8; cursor: pointer; font-weight: 900; color: var(--primary); }
 
-        /* 下拉收納 */
-        .drawer-btn { background: var(--morandi-teal); color: white; border: none; padding: 14px; border-radius: 25px; width: 100%; font-weight: 900; margin-top: 10px; display: flex; justify-content: space-between; }
-        .svc-drawer { max-height: 0; overflow: hidden; transition: max-height 0.4s; background: rgba(0,0,0,0.02); border-radius: 20px; margin-top: 10px; }
-        .svc-drawer.open { max-height: 500px; overflow-y: auto; padding: 12px; }
-        
-        .pill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .pill-chip { border: 1.5px solid #eee; padding: 12px; border-radius: 30px; font-size: 0.85rem; text-align: center; background: #fff; cursor: pointer; font-weight: 700; color: #555; }
-        .pill-chip.active { background: var(--morandi-teal); color: white; border-color: transparent; }
+        /* 顧客卡片 */
+        .cust-card { background: #fff; border-radius: 25px; padding: 18px; margin-bottom: 15px; border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
 
         /* 設定管理項 */
         .manage-section { background: #fff; border-radius: 35px; padding: 25px; margin-bottom: 25px; border: 1px solid #eee; }
+        .manage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .manage-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f8f8f8; }
-        .editable-label { cursor: pointer; display: flex; align-items: center; font-weight: 900; color: var(--primary); }
 
         /* 底部導覽 85px */
         .bottom-nav-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px; z-index: 3000; }
@@ -101,7 +91,10 @@
     </div>
     
     <div id="page-customers" class="page">
-        <input type="text" id="custSearch" placeholder="🔍 搜尋姓名或電話..." oninput="renderCustomers()" style="width:100%; padding:18px; border-radius:30px; border:none; background:#fff; outline:none; font-weight:700; margin-bottom:15px; box-shadow:0 4px 10px rgba(0,0,0,0.02);">
+        <div style="display:flex; gap:12px; margin-bottom:20px;">
+            <input type="text" id="custSearch" placeholder="🔍 搜尋姓名或電話..." oninput="renderCustomers()" style="flex:1; padding:18px; border-radius:30px; border:none; background:#fff; outline:none; font-weight:700;">
+            <button onclick="openCustomerEditModal()" style="background:var(--morandi-teal); color:white; border:none; padding:10px 20px; border-radius:20px; font-weight:900;">+ 新增</button>
+        </div>
         <div id="customer-list-render"></div>
     </div>
     
@@ -110,16 +103,17 @@
         
         <div class="manage-section">
             <h4>📅 排休管理</h4>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><span style="font-size:0.9rem;">店休背景顏色：</span><input type="color" id="off-color-picker" onchange="updateOffColor(this.value)" style="border:none; width:45px; height:45px; background:transparent;"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><span style="font-size:0.9rem;">店休背景顏色：</span><input type="color" id="off-color-picker" onchange="updateOffColor(this.value)" style="border:none; width:50px; height:50px; background:transparent;"></div>
             <div style="display:flex; gap:8px; margin-bottom:20px; overflow-x: auto;"><button class="off-btn" onclick="toggleWeeklyOff(0)">日</button><button class="off-btn" onclick="toggleWeeklyOff(1)">一</button><button class="off-btn" onclick="toggleWeeklyOff(2)">二</button><button class="off-btn" onclick="toggleWeeklyOff(3)">三</button><button class="off-btn" onclick="toggleWeeklyOff(4)">四</button><button class="off-btn" onclick="toggleWeeklyOff(5)">五</button><button class="off-btn" onclick="toggleWeeklyOff(6)">六</button></div>
             <input type="date" onchange="addTempOff(this.value)" style="width:100%; padding:15px; border-radius:25px; border:1px solid #ddd; margin-bottom:15px;">
             <div id="temp-off-list-render"></div>
         </div>
 
-        <div class="manage-section"><div style="display:flex; justify-content:space-between; align-items:center;"><h4>設計師管理 (點擊修改)</h4><button onclick="openMetaModal('stylists')" style="background:var(--morandi-teal); border:none; color:white; padding:6px 20px; border-radius:15px; font-weight:700;">+ 新增</button></div><div id="stylist-manage-render"></div></div>
-        <div class="manage-section"><div style="display:flex; justify-content:space-between; align-items:center;"><h4>服務項目 (點擊修改)</h4><button onclick="openMetaModal('services')" style="background:var(--morandi-teal); border:none; color:white; padding:6px 20px; border-radius:15px; font-weight:700;">+ 新增</button></div><div id="service-manage-render"></div></div>
+        <div class="manage-section"><div style="display:flex; justify-content:space-between; align-items:center;"><h4>標籤管理</h4><button onclick="openMetaModal('tags')" style="background:var(--morandi-teal); border:none; color:white; padding:8px 20px; border-radius:15px; font-weight:700;">+ 新增</button></div><div id="tag-manage-render"></div></div>
+        <div class="manage-section"><div style="display:flex; justify-content:space-between; align-items:center;"><h4>設計師管理</h4><button onclick="openMetaModal('stylists')" style="background:var(--morandi-teal); border:none; color:white; padding:8px 20px; border-radius:15px; font-weight:700;">+ 新增</button></div><div id="stylist-manage-render"></div></div>
+        <div class="manage-section"><div style="display:flex; justify-content:space-between; align-items:center;"><h4>服務項目</h4><button onclick="openMetaModal('services')" style="background:var(--morandi-teal); border:none; color:white; padding:8px 20px; border-radius:15px; font-weight:700;">+ 新增</button></div><div id="service-manage-render"></div></div>
         
-        <div style="display:flex; gap:15px;"><button onclick="exportData()" style="flex:1; padding:20px; border-radius:30px; background:var(--primary); color:white; font-weight:900; border:none;">備份數據</button><button onclick="importData()" style="flex:1; padding:20px; border-radius:30px; background:var(--morandi-teal); color:white; font-weight:900; border:none;">恢復數據</button></div>
+        <div style="display:flex; gap:15px;"><button onclick="exportData()" style="flex:1; padding:20px; border-radius:30px; background:var(--primary); color:white; font-weight:900; border:none;">備份</button><button onclick="importData()" style="flex:1; padding:20px; border-radius:30px; background:var(--morandi-teal); color:white; font-weight:900; border:none;">恢復</button></div>
     </div>
 </div>
 
@@ -136,10 +130,9 @@
 
 <script>
     let calendar;
-    const STORAGE_KEY = 'SALON_PRO_V51_FINAL';
+    const STORAGE_KEY = 'SALON_PRO_V52_FINAL';
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
-        bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [{name:'剪髮', color:'#A3B8B8'}], 
-        tags: [], offDays: [], weeklyOff: [], offColor: '#ffeaa7', startTime: '09:00', endTime: '21:00'
+        bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [], tags: [], offDays: [], weeklyOff: [], offColor: '#ffeaa7', startTime: '09:00', endTime: '21:00'
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -152,14 +145,14 @@
 
     function initCalendar() {
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'timeGridDay', headerToolbar: false, locale: 'zh-tw', height: 'auto', allDaySlot: false, firstDay: 1, navLinks: true,
-            navLinkDayClick: (date) => { calendar.changeView('timeGridDay', date); document.getElementById('viewSlider').style.transform = `translateX(200%)`; },
+            initialView: 'timeGridDay', headerToolbar: false, locale: 'zh-tw', height: 'auto', allDaySlot: false, firstDay: 1,
             slotMinTime: salonData.startTime+':00', slotMaxTime: salonData.endTime+':00',
             events: (info, success) => {
                 const f = document.getElementById('stylist-filter').value;
                 let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => {
-                    const svcText = b.service ? ` (${b.service})` : "";
-                    return { id: b.id, title: `${b.stylist}: ${b.customer}${svcText}`, start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent' };
+                    // 備忘錄內容直接拼進標題，解決項目顯示問題
+                    const noteText = b.note ? ` (${b.note})` : "";
+                    return { id: b.id, title: `${b.stylist}: ${b.customer}${noteText}`, start: b.start, end: b.end, backgroundColor: b.color, borderColor: 'transparent' };
                 });
                 salonData.offDays.forEach(d => evts.push({ start: d, display: 'background', backgroundColor: salonData.offColor }));
                 let d = new Date(info.start); while(d < info.end) { if(salonData.weeklyOff.includes(d.getDay())) evts.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: salonData.offColor }); d.setDate(d.getDate() + 1); }
@@ -175,11 +168,11 @@
         calendar.render();
     }
 
-    // 顧客搜尋修復
+    // 搜尋顧客
     window.searchC = (val) => {
         const res = document.getElementById('search-results');
         if(!val) { res.style.display = 'none'; return; }
-        const matches = salonData.customers.filter(c => c.name.includes(val)).slice(0, 5);
+        const matches = salonData.customers.filter(c => c.name.includes(val) || (c.phone && c.phone.includes(val))).slice(0, 5);
         if(matches.length > 0) {
             res.innerHTML = matches.map(c => `<div class="search-item" onclick="window.selectC('${c.name}', '${c.phone||''}')">${c.name}</div>`).join('');
             res.style.display = 'block';
@@ -191,7 +184,7 @@
         document.getElementById('search-results').style.display = 'none';
     };
 
-    // 終極顯像視窗
+    // 預約彈窗
     async function openBookingModal(date, time, editId = null) {
         let b = editId ? salonData.bookings.find(x => x.id == editId) : null;
         const { value: f, isDenied } = await Swal.fire({
@@ -201,55 +194,40 @@
                     <div class="swal-row"><div style="padding:0 10px;">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名" value="${b?b.customer:''}" oninput="window.searchC(this.value)"><div id="search-results"></div></div>
                     <div class="swal-row"><div style="padding:0 10px;">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${b?b.phone||'':''}"></div>
                     <div class="swal-row"><div style="padding:0 10px;">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div>
-                    <div class="glass-svc-container" id="sw-svc-display"></div>
-                    <div class="drawer-btn" onclick="document.getElementById('sw-svc-d').classList.toggle('open')"><span>💇 服務多選</span><i class="fas fa-chevron-down"></i></div>
-                    <div class="svc-drawer" id="sw-svc-d">
-                        <div class="pill-grid">${salonData.services.map(s=>`<div class="pill-chip ${b&&b.service.includes(s.name)?'active':''}" onclick="this.classList.toggle('active'); window.updateUI();">${s.name}</div>`).join('')}</div>
-                    </div>
-                    <textarea id="sw-o" class="swal-input-round" style="width:100%; margin-top:10px; height:60px; border:1px solid #eee !important; border-radius:20px; padding:10px;" placeholder="備註...">${b?b.note:''}</textarea>
-                    <input id="sw-d" type="hidden" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"><input id="sw-t" type="hidden" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}">
+                    <p style="font-weight:900; margin-bottom:5px;">📝 備忘錄 (內容將顯示於日曆)：</p>
+                    <textarea id="sw-o" class="swal-input-round" style="width:100%; height:120px; border:1px solid #eee !important; border-radius:20px; padding:15px;" placeholder="請在此輸入服務項目或細節...">${b?b.note:''}</textarea>
+                    <input id="sw-d" type="hidden" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}">
+                    <input id="sw-t" type="hidden" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}">
                 </div>
             `,
-            didOpen: () => { window.updateUI(); },
             preConfirm: () => {
-                const svcs = Array.from(document.querySelectorAll('.pill-chip.active')).map(el => el.innerText);
-                return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, stylist: document.getElementById('sw-s').value, service: svcs.join(', '), note: document.getElementById('sw-o').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value };
+                return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, stylist: document.getElementById('sw-s').value, note: document.getElementById('sw-o').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value };
             }
         });
         if(isDenied) { salonData.bookings = salonData.bookings.filter(x => x.id != editId); save(); refreshAll(); }
         else if(f && f.name) {
             const [sN, sC] = f.stylist.split('|');
-            const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, note: f.note };
+            const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, note: f.note };
             if(editId) salonData.bookings[salonData.bookings.findIndex(x=>x.id==editId)] = data; else salonData.bookings.push(data);
-            if(!salonData.customers.find(c => c.name === f.name)) salonData.customers.push({ id: Date.now(), name: f.name, phone: f.phone });
             save(); refreshAll();
         }
     }
 
-    window.updateUI = () => {
-        const svcs = Array.from(document.querySelectorAll('.pill-chip.active')).map(el => el.innerText);
-        const container = document.getElementById('sw-svc-display');
-        if(container) container.innerHTML = svcs.length > 0 ? svcs.map(s => `<span class="glass-tag">${s}</span>`).join('') : '<span style="color:#aaa; font-size:0.8rem;">尚未選擇項目</span>';
-    };
-
-    function refreshAll() { renderSettingsUI(); updateStylistFilter(); if(calendar) calendar.refetchEvents(); }
+    function refreshAll() { renderCustomers(); renderSettingsUI(); updateStylistFilter(); if(calendar) calendar.refetchEvents(); }
 
     function renderSettingsUI() {
-        ['stylists', 'services'].forEach(type => {
-            const area = document.getElementById(`${type === 'stylists' ? 'stylist' : 'service'}-manage-render`);
-            area.innerHTML = salonData[type].map((it, i) => `<div class="manage-item"><span class="editable-label" onclick="editMeta('${type}', ${i})"><div style="background:${it.color}; width:12px; height:12px; border-radius:50%; margin-right:10px;"></div>${it.name}</span><i class="fas fa-times" onclick="salonData.${type}.splice(${i},1); save(); refreshAll();" style="color:red; cursor:pointer; padding:8px;"></i></div>`).join('');
+        ['stylists', 'services', 'tags'].forEach(type => {
+            const area = document.getElementById(`${type === 'tags' ? 'tag' : (type === 'stylists' ? 'stylist' : 'service')}-manage-render`);
+            area.innerHTML = salonData[type].map((it, i) => `<div class="manage-item"><span onclick="editMeta('${type}', ${i})" style="cursor:pointer; font-weight:900;">${it.name}</span><i class="fas fa-trash" onclick="salonData.${type}.splice(${i},1); save(); refreshAll();" style="color:red; cursor:pointer;"></i></div>`).join('');
         });
-        document.querySelectorAll('.off-btn').forEach((b, i) => {
-            b.style.background = salonData.weeklyOff.includes(i) ? '#ff7675' : '#fff';
-            b.style.color = salonData.weeklyOff.includes(i) ? '#fff' : '#444';
-        });
+        document.querySelectorAll('.off-btn').forEach((b, i) => { b.style.background = salonData.weeklyOff.includes(i) ? '#ff7675' : '#fff'; b.style.color = salonData.weeklyOff.includes(i) ? '#fff' : '#444'; });
         const offList = document.getElementById('temp-off-list-render');
-        if(offList) offList.innerHTML = salonData.offDays.map((date, index) => `<div class="manage-item"><span>📅 ${date}</span><i class="fas fa-trash-alt" onclick="salonData.offDays.splice(${index},1); save(); refreshAll();" style="color:red; cursor:pointer;"></i></div>`).join('');
+        if(offList) offList.innerHTML = salonData.offDays.map((date, index) => `<div class="manage-item"><span>📅 ${date}</span><i class="fas fa-trash" onclick="salonData.offDays.splice(${index},1); save(); refreshAll();" style="color:red; cursor:pointer;"></i></div>`).join('');
     }
 
     async function editMeta(type, index) {
         const item = salonData[type][index];
-        const { value: f } = await Swal.fire({ title: '修改資料', customClass: { popup: 'glass-swal' }, html: `<input id="edit-n" class="swal2-input" value="${item.name}"><input type="color" id="edit-c" value="${item.color}" style="width:100%; height:50px; border:none; margin-top:10px;">`, preConfirm: () => ({ name: document.getElementById('edit-n').value, color: document.getElementById('edit-c').value }) });
+        const { value: f } = await Swal.fire({ title: '修改', html: `<input id="e-n" class="swal2-input" value="${item.name}"><input type="color" id="e-c" value="${item.color}" style="width:100%; height:50px;">`, preConfirm: () => ({ name: document.getElementById('e-n').value, color: document.getElementById('e-c').value }) });
         if(f && f.name) { salonData[type][index] = f; save(); refreshAll(); }
     }
 
@@ -274,25 +252,24 @@
     function toggleWeeklyOff(day) { salonData.weeklyOff.includes(day) ? salonData.weeklyOff = salonData.weeklyOff.filter(d => d !== day) : salonData.weeklyOff.push(day); save(); refreshAll(); }
     function addTempOff(v) { if(v && !salonData.offDays.includes(v)) { salonData.offDays.push(v); save(); refreshAll(); } }
     async function openMetaModal(type) {
-        const { value: f } = await Swal.fire({ title: '新增', html: `<input id="meta-n" class="swal2-input" placeholder="名稱"><input type="color" id="meta-c" value="#A3B8B8" style="width:100%; height:50px; border:none; margin-top:10px;">`, preConfirm: () => ({ name: document.getElementById('meta-n').value, color: document.getElementById('meta-c').value }) });
+        const { value: f } = await Swal.fire({ title: '新增', html: `<input id="m-n" class="swal2-input" placeholder="名稱"><input type="color" id="m-c" value="#A3B8B8" style="width:100%; height:50px;">`, preConfirm: () => ({ name: document.getElementById('m-n').value, color: document.getElementById('m-c').value }) });
         if(f && f.name) { salonData[type].push(f); save(); refreshAll(); }
-    }
-    function exportData() { const blob = new Blob([JSON.stringify(salonData)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `SALON_BACKUP.json`; a.click(); }
-    function importData() {
-        Swal.fire({ title: '恢復', input: 'file', inputAttributes: { accept: '.json' } }).then(res => {
-            if(res.value) { const reader = new FileReader(); reader.onload = e => { salonData = JSON.parse(e.target.result); save(); location.reload(); }; reader.readAsText(res.value); }
-        });
-    }
-    function initFlipSwipe() {
-        const el = document.getElementById('calendar-container'); let sX = 0;
-        el.addEventListener('touchstart', (e) => sX = e.touches[0].clientX, { passive: true });
-        el.addEventListener('touchend', (e) => { let diff = e.changedTouches[0].clientX - sX; if (Math.abs(diff) > 80) { if (diff < 0) calendar.next(); else calendar.prev(); } }, { passive: true });
     }
     function renderCustomers() {
         const q = document.getElementById('custSearch').value.toLowerCase();
         const area = document.getElementById('customer-list-render'); area.innerHTML = '';
         salonData.customers.filter(c => c.name.includes(q)).forEach(c => {
-            area.innerHTML += `<div class="manage-section"><strong>${c.name}</strong><br><small>${c.phone || '無電話'}</small></div>`;
+            area.innerHTML += `<div class="cust-card"><strong>👤 ${c.name}</strong><br><small>📞 ${c.phone || '無電話'}</small></div>`;
+        });
+    }
+    async function openCustomerEditModal() {
+        const { value: f } = await Swal.fire({ title: '新增顧客', html: `<input id="nc-n" class="swal2-input" placeholder="姓名"><input id="nc-p" class="swal2-input" placeholder="電話">`, preConfirm: () => ({ name: document.getElementById('nc-n').value, phone: document.getElementById('nc-p').value }) });
+        if(f && f.name) { salonData.customers.push({ id: Date.now(), ...f }); save(); renderCustomers(); }
+    }
+    function exportData() { const blob = new Blob([JSON.stringify(salonData)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `SALON_BACKUP.json`; a.click(); }
+    function importData() {
+        Swal.fire({ title: '恢復', input: 'file', inputAttributes: { accept: '.json' } }).then(res => {
+            if(res.value) { const reader = new FileReader(); reader.onload = e => { salonData = JSON.parse(e.target.result); save(); location.reload(); }; reader.readAsText(res.value); }
         });
     }
 </script>
