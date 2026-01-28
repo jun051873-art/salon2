@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>專屬空間沙龍 V33.0 Final</title>
+    <title>專屬空間沙龍 V33.1 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -37,14 +37,11 @@
         #calendar-container { background: #fff; border-radius: 35px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); transition: 0.4s; }
 
         /* 預約表內部藥丸樣式 */
-        .fc-event-main-frame { padding: 4px !important; }
-        .fc-event-title-container { overflow: visible !important; }
-        .calendar-pill-row { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+        .calendar-pill-row { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; pointer-events: none; }
         .calendar-pill { 
-            background: rgba(255,255,255,0.9); color: var(--primary); 
-            padding: 1px 7px; border-radius: 10px; font-size: 0.65rem; 
-            font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            pointer-events: none; /* 穿透點擊到背景以利修改 */
+            background: #ffffff; color: var(--primary); 
+            padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; 
+            font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .fab-gold { background: #fff !important; border: 2px solid #D4AF37 !important; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -62,8 +59,8 @@
         .svc-drawer.open { max-height: 250px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
         
         .pill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .pill-chip { border: 1.5px solid #ddd; padding: 8px 12px; border-radius: 25px; font-size: 0.8rem; text-align: center; font-weight: 700; background: #fff; cursor: pointer; transition: 0.2s; color: #555; }
-        .pill-chip.active { color: white; border-color: transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .pill-chip { border: 1.5px solid #ddd; padding: 10px; border-radius: 25px; font-size: 0.8rem; text-align: center; font-weight: 700; background: #fff; cursor: pointer; transition: 0.2s; color: #555; }
+        .pill-chip.active { color: white; border-color: transparent; }
 
         .cust-card { background: rgba(255, 255, 255, 0.7); border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.6); }
         .mini-tag { background: #f1f2f6; color: #576574; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
@@ -140,7 +137,7 @@
 
 <script>
     let calendar;
-    const STORAGE_KEY = 'SALON_PRO_V33_FINAL';
+    const STORAGE_KEY = 'SALON_PRO_V33_1_FINAL';
     let notifiedIds = new Set();
 
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
@@ -175,7 +172,7 @@
                         }
                         salonData = Object.assign(salonData, imported);
                         save();
-                        Swal.fire({ title: '恢復成功', icon: 'success', timer: 1200, showConfirmButton: false }).then(() => location.reload());
+                        location.reload();
                     } catch(err) { Swal.fire('錯誤', '檔案格式不符', 'error'); }
                 };
                 reader.readAsText(res.value);
@@ -193,7 +190,7 @@
                 let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => ({ 
                     id: b.id, 
                     title: `${b.stylist}: ${b.customer}`, 
-                    extendedProps: { service: b.service || b.note || "預約" },
+                    extendedProps: { service: b.service || b.note || "預約" }, // 強制顯影數據源
                     start: b.start, end: b.end, 
                     backgroundColor: b.color, borderColor: 'transparent' 
                 }));
@@ -202,23 +199,28 @@
                 success(evts);
             },
             eventContent: function(arg) {
-                // 核心修復：使用 HTML 手動繪製日曆上的藥丸，並確保不遮擋點擊
+                // 總統級渲染核心：手動生成 HTML 節點，確保字體清晰、藥丸顯示，且不遮擋點擊
                 let container = document.createElement('div');
-                container.style.overflow = 'hidden';
+                container.style.cssText = "display:flex; flex-direction:column; width:100%; height:100%; overflow:hidden;";
+                
                 let title = document.createElement('div');
-                title.style.fontWeight = '900';
-                title.style.fontSize = '0.85rem';
+                title.style.cssText = "font-weight:900; font-size:0.85rem; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;";
                 title.innerText = arg.event.title;
                 
                 let pillRow = document.createElement('div');
                 pillRow.className = 'calendar-pill-row';
-                let services = arg.event.extendedProps.service.split(', ');
-                services.forEach(s => {
-                    let p = document.createElement('span');
-                    p.className = 'calendar-pill';
-                    p.innerText = s;
-                    pillRow.appendChild(p);
-                });
+                
+                // 獲取服務內容並轉為藥丸
+                let svcText = arg.event.extendedProps.service;
+                if (svcText) {
+                    let svcs = svcText.split(', ');
+                    svcs.forEach(s => {
+                        let p = document.createElement('span');
+                        p.className = 'calendar-pill';
+                        p.innerText = s;
+                        pillRow.appendChild(p);
+                    });
+                }
                 
                 container.appendChild(title);
                 container.appendChild(pillRow);
@@ -275,22 +277,31 @@
         if (prefillName) { const c = salonData.customers.find(x => x.name === prefillName); if(c){ phone = c.phone; note = c.note; selectedTags = c.tags || []; } } 
         else if (b) { phone = b.phone; note = b.note; }
 
-        const { value: f } = await Swal.fire({
+        const { value: f, isDenied } = await Swal.fire({
             title: b ? '📝 編輯預約' : '✨ 新增預約', confirmButtonColor: '#A3B8B8', showDenyButton: !!b, denyButtonText: '刪除', customClass: { popup: 'glass-swal' },
-            html: `<div style="text-align:left;"><div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名" value="${name}" oninput="searchCustomers(this.value)"><label style="margin-right:15px; font-size:0.8rem; white-space:nowrap;"><input type="checkbox" id="sw-save" checked> 存客資</label><div id="search-results"></div></div><div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${phone}"></div><div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">👥</div><select id="sw-c" class="swal-input-round"><option value="1" ${b&&b.count=='1'?'selected':''}>1人</option><option value="2" ${b&&b.count=='2'?'selected':''}>2人</option><option value="3" ${b&&b.count=='3'?'selected':''}>3人</option></select></div></div><div class="swal-row"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div><div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><div class="drawer-btn" onclick="toggleDrawer('sw-svc-d')"><span>💇 服務多選</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-svc-d"><div class="pill-grid">${salonData.services.map(s=>`<div class="pill-chip ${selectedSvcs.includes(s.name)?'active':''}" style="${selectedSvcs.includes(s.name)?'background:'+s.color+'; border-color:'+s.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${s.color}')">${s.name}</div>`).join('')}</div></div><div class="drawer-btn" onclick="toggleDrawer('sw-tag-d')" style="background:var(--primary);"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-tag-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${selectedTags.includes(t.name)?'active':''}" style="${selectedTags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註...">${note}</textarea></div></div>`,
-            preConfirm: () => { const svcs = Array.from(document.querySelectorAll('#sw-svc-d .pill-chip.active')).map(el => el.innerText); const tags = Array.from(document.querySelectorAll('#sw-tag-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, count: document.getElementById('sw-c').value, stylist: document.getElementById('sw-s').value, service: svcs.join(', '), tags: tags, note: document.getElementById('sw-o').value, saveCust: document.getElementById('sw-save').checked }; },
-            showDenyButton: !!b
-        }).then(res => {
-            if(res.isDenied) { salonData.bookings = salonData.bookings.filter(x => x.id != editId); syncVisitHistory(); save(); refreshAll(); }
-            else if(res.value) { const f = res.value; const [sN, sC] = f.stylist.split('|'); const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, count: f.count, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, tags: f.tags, note: f.note }; if(editId) salonData.bookings[salonData.bookings.findIndex(x=>x.id==editId)] = data; else salonData.bookings.push(data); if(f.saveCust) { let ex = salonData.customers.find(c => c.name === f.name); if(!ex) salonData.customers.push({ id: Date.now(), name: f.name, phone: f.phone, stylist: sN, note: f.note, tags: f.tags, visits: [] }); else { ex.stylist = sN; ex.phone = f.phone; ex.tags = f.tags; } } syncVisitHistory(); save(); refreshAll(); }
+            html: `<div style="text-align:left;"><div class="swal-row"><div class="swal-icon">👤</div><input id="sw-n" class="swal-input-round" placeholder="姓名" value="${name}" oninput="searchCustomers(this.value)"><label style="margin-right:15px; font-size:0.8rem; white-space:nowrap; display:flex; align-items:center;"><input type="checkbox" id="sw-save" checked> 存客資</label><div id="search-results"></div></div><div class="swal-row"><div class="swal-icon">📞</div><input id="sw-p" class="swal-input-round" placeholder="電話" value="${phone}"></div><div style="display:flex; gap:10px;"><div class="swal-row" style="flex:1;"><div class="swal-icon">📅</div><input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"></div><div class="swal-row" style="flex:1;"><div class="swal-icon">👥</div><select id="sw-c" class="swal-input-round"><option value="1" ${b&&b.count=='1'?'selected':''}>1人</option><option value="2" ${b&&b.count=='2'?'selected':''}>2人</option><option value="3" ${b&&b.count=='3'?'selected':''}>3人</option></select></div></div><div class="swal-row"><div class="swal-icon">⏰</div><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'10:00')}"></div><div class="swal-row"><div class="swal-icon">✂️</div><select id="sw-s" class="swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}|${s.color}" ${b&&b.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select></div><div class="drawer-btn" onclick="toggleDrawer('sw-svc-d')"><span>💇 服務多選</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-svc-d"><div class="pill-grid">${salonData.services.map(s=>`<div class="pill-chip ${selectedSvcs.includes(s.name)?'active':''}" style="${selectedSvcs.includes(s.name)?'background:'+s.color+'; border-color:'+s.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${s.color}')">${s.name}</div>`).join('')}</div></div><div class="drawer-btn" onclick="toggleDrawer('sw-tag-d')" style="background:var(--primary);"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="sw-tag-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${selectedTags.includes(t.name)?'active':''}" style="${selectedTags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><div class="swal-row"><div class="swal-icon">📝</div><textarea id="sw-o" class="swal-input-round" placeholder="備註...">${note}</textarea></div></div>`,
+            preConfirm: () => { const svcs = Array.from(document.querySelectorAll('#sw-svc-d .pill-chip.active')).map(el => el.innerText); const tags = Array.from(document.querySelectorAll('#sw-tag-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, count: document.getElementById('sw-c').value, stylist: document.getElementById('sw-s').value, service: svcs.join(', '), tags: tags, note: document.getElementById('sw-o').value, saveCust: document.getElementById('sw-save').checked }; }
         });
+        if(isDenied) { salonData.bookings = salonData.bookings.filter(x => x.id != editId); syncVisitHistory(); save(); refreshAll(); }
+        else if(f && f.name) {
+            const [sN, sC] = f.stylist.split('|');
+            const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, count: f.count, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, tags: f.tags, note: f.note };
+            if(editId) salonData.bookings[salonData.bookings.findIndex(x=>x.id==editId)] = data;
+            else salonData.bookings.push(data);
+            if(f.saveCust) {
+                let ex = salonData.customers.find(c => c.name === f.name);
+                if(!ex) salonData.customers.push({ id: Date.now(), name: f.name, phone: f.phone, stylist: sN, note: f.note, tags: f.tags, visits: [] });
+                else { ex.stylist = sN; ex.phone = f.phone; ex.tags = f.tags; }
+            }
+            syncVisitHistory(); save(); refreshAll();
+        }
     }
 
     async function openCustomerEditModal(id = null) {
         const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '', birthday: '', tags: [] };
         const { value: f } = await Swal.fire({ 
             title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, 
-            html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="document.getElementById('c-t-d').classList.toggle('open')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, 
+            html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="toggleDrawer('c-t-d')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, 
             preConfirm: () => { const m = document.getElementById('c-b-m').value; const d = document.getElementById('c-b-d').value; const tags = Array.from(document.querySelectorAll('#c-t-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: (m && d) ? `${m}-${d}` : '', stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value, tags: tags } }
         });
         if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f }); save(); refreshAll(); }
