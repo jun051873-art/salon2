@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>專屬空間沙龍 V34.1 Final</title>
+    <title>專屬空間沙龍 V35.0 Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -31,22 +31,22 @@
         .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         .main-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 15px 160px 15px; }
-        .page { display: none; } .page.active { display: block; animation: fadeIn 0.2s ease; }
+        .page { display: none; } .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #calendar-container { background: #fff; border-radius: 35px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); }
 
-        /* 日曆內部藥丸顯像 */
+        /* 日曆內部藥丸標籤：顯影技術 */
         .calendar-pill-row { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; pointer-events: none; }
         .calendar-pill { 
-            background: rgba(255,255,255,0.95); color: var(--primary); 
-            padding: 2px 7px; border-radius: 10px; font-size: 0.65rem; 
+            background: rgba(255,255,255,0.92); color: var(--primary); 
+            padding: 1px 7px; border-radius: 10px; font-size: 0.65rem; 
             font-weight: 900; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: inline-block; white-space: nowrap;
         }
-        /* 店休背景文字 */
-        .off-day-text { color: rgba(0,0,0,0.3); font-weight: 900; font-size: 0.8rem; padding: 5px; }
+        .off-day-label { color: rgba(0,0,0,0.25); font-weight: 900; font-size: 0.8rem; padding: 5px; }
 
-        .fab-gold { background: #fff !important; border: 2px solid #D4AF37 !important; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .fab-gold { background: #fff !important; border: 2px solid #D4AF37 !important; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .fab-gold-inline { background: var(--gold-gradient); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s infinite linear; font-weight: 900; }
 
         .glass-swal { background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(35px) saturate(180%) !important; border-radius: 40px !important; width: 95% !important; max-width: 500px !important; }
@@ -63,8 +63,9 @@
 
         .cust-card { background: rgba(255, 255, 255, 0.7); border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.6); }
         .mini-tag { background: #f1f2f6; color: #576574; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
-        .custom-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; color: white; margin: 2px; }
+        .custom-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; color: white; margin: 2px; }
 
+        /* 設定頁面排版修復 */
         .manage-section { background: #fff; border-radius: 25px; padding: 20px; margin-bottom: 15px; border: 1px solid #eee; position: relative; }
         .manage-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #f5f5f5; }
 
@@ -111,15 +112,12 @@
     <div id="page-settings" class="page">
         <div class="manage-section"><h4>⏰ 營業時間</h4><div style="display:flex; gap:10px; align-items:center;"><input type="time" id="set-start-time" onchange="updateBusinessTime()" style="padding:10px; border-radius:12px; border:1px solid #ddd;"><span>至</span><input type="time" id="set-end-time" onchange="updateBusinessTime()" style="padding:10px; border-radius:12px; border:1px solid #ddd;"></div></div>
         
-        <div class="manage-section">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><h4>🏷️ 標籤管理</h4><button onclick="openMetaModal('tags')" style="background:var(--morandi-teal); border:none; color:white; padding:5px 12px; border-radius:10px; font-weight:700;">+ 新增</button></div>
-            <div id="tag-manage-render"></div>
-        </div>
+        <div class="manage-section"><div style="display:flex; justify-content:space-between; align-items:center;"><h4>🏷️ 標籤管理</h4><button onclick="openMetaModal('tags')" style="background:var(--morandi-teal); border:none; color:white; padding:5px 12px; border-radius:10px; font-weight:700;">+ 新增</button></div><div id="tag-manage-render"></div></div>
         
         <div class="manage-section">
             <h4>智慧排休設定</h4>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:0.9rem; color:#888;">店休顏色：</span><input type="color" id="off-color-picker" onchange="updateOffColor(this.value)" style="border:none; width:45px; height:45px; background:transparent; cursor:pointer;"></div>
-            <div style="display:flex; gap:4px; margin-bottom:15px; overflow-x: auto;"><button class="off-btn" style="padding:8px 5px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(0)">日</button><button class="off-btn" style="padding:8px 5px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(1)">一</button><button class="off-btn" style="padding:8px 5px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(2)">二</button><button class="off-btn" style="padding:8px 5px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(3)">三</button><button class="off-btn" style="padding:8px 5px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(4)">四</button><button class="off-btn" style="padding:8px 5px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(5)">五</button><button class="off-btn" style="padding:8px 5px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(6)">六</button></div>
+            <div style="display:flex; gap:4px; margin-bottom:15px; overflow-x: auto;"><button class="off-btn" style="padding:8px 10px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(0)">日</button><button class="off-btn" style="padding:8px 10px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(1)">一</button><button class="off-btn" style="padding:8px 10px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(2)">二</button><button class="off-btn" style="padding:8px 10px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(3)">三</button><button class="off-btn" style="padding:8px 10px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(4)">四</button><button class="off-btn" style="padding:8px 10px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(5)">五</button><button class="off-btn" style="padding:8px 10px; border-radius:12px; border:1px solid #ddd; background:#fff; font-weight:900; flex:1;" onclick="toggleWeeklyOff(6)">六</button></div>
             <p style="font-size:0.85rem; font-weight:900; color:var(--primary); margin-bottom:8px;">新增臨時排休：</p>
             <input type="date" onchange="addTempOff(this.value)" style="width:100%; padding:12px; border-radius:15px; border:1px solid #ddd; margin-bottom:15px;">
             <div id="temp-off-list-render"></div>
@@ -145,7 +143,7 @@
 
 <script>
     let calendar;
-    const STORAGE_KEY = 'SALON_PRO_V34_1_FINAL';
+    const STORAGE_KEY = 'SALON_PRO_V35_FINAL';
     let notifiedIds = new Set();
 
     let salonData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
@@ -165,7 +163,6 @@
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(salonData)); if(calendar) calendar.refetchEvents(); }
 
-    // 核心修復：匯入校準，確保日週視圖同步
     function importData() {
         Swal.fire({ title: '恢復資料', input: 'file', inputAttributes: { accept: '.json' }, customClass: { popup: 'glass-swal' } }).then(res => {
             if(res.value) {
@@ -181,8 +178,8 @@
                         }
                         salonData = Object.assign(salonData, imported);
                         save();
-                        Swal.fire({ title: '恢復成功', icon: 'success', timer: 1000, showConfirmButton: false }).then(() => location.reload());
-                    } catch(err) { Swal.fire('錯誤', '檔案無效', 'error'); }
+                        location.reload();
+                    } catch(err) { Swal.fire('錯誤', '檔案內容損壞', 'error'); }
                 };
                 reader.readAsText(res.value);
             }
@@ -199,59 +196,54 @@
                 let evts = salonData.bookings.filter(b => f==='all' || b.stylist===f).map(b => ({ 
                     id: b.id, 
                     title: `${b.stylist}: ${b.customer}`, 
-                    pillContent: b.service || b.note || "預約", 
+                    extendedProps: { service: b.service || b.note || "預約" }, 
                     start: b.start, end: b.end, 
-                    backgroundColor: b.color, borderColor: 'transparent',
-                    type: 'booking'
+                    backgroundColor: b.color, borderColor: 'transparent' 
                 }));
-                // 店休背景校正
-                salonData.offDays.forEach(d => evts.push({ start: d, display: 'background', backgroundColor: salonData.offColor, type: 'off' }));
-                let d = new Date(info.start); while(d < info.end) { if(salonData.weeklyOff.includes(d.getDay())) evts.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: salonData.offColor, type: 'off' }); d.setDate(d.getDate() + 1); }
+                salonData.offDays.forEach(d => evts.push({ start: d, display: 'background', backgroundColor: salonData.offColor, extendedProps: { isOff: true } }));
+                let d = new Date(info.start); while(d < info.end) { if(salonData.weeklyOff.includes(d.getDay())) evts.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: salonData.offColor, extendedProps: { isOff: true } }); d.setDate(d.getDate() + 1); }
                 success(evts);
             },
             eventContent: function(arg) {
                 let wrap = document.createElement('div');
                 if (arg.event.display === 'background') {
-                    wrap.className = 'off-day-text';
-                    wrap.innerText = '店休'; // 強制顯示店休
+                    wrap.className = 'off-day-label';
+                    wrap.innerText = '店休'; // 強制校正店休文字
                     return { domNodes: [wrap] };
                 }
-                
-                wrap.style.cssText = "display:flex; flex-direction:column; overflow:hidden;";
+                wrap.style.cssText = "display:flex; flex-direction:column; width:100%; height:100%; overflow:hidden;";
                 let title = document.createElement('div');
-                title.style.cssText = "font-weight:900; font-size:0.82rem; color:#fff; white-space:nowrap; text-overflow:ellipsis;";
+                title.style.cssText = "font-weight:900; font-size:0.85rem; color:#fff; white-space:nowrap; text-overflow:ellipsis;";
                 title.innerText = arg.event.title;
-                
-                let pillRow = document.createElement('div');
-                pillRow.className = 'calendar-pill-row';
-                let content = arg.event.extendedProps.pillContent || "";
+                let row = document.createElement('div');
+                row.className = 'calendar-pill-row';
+                let content = arg.event.extendedProps.service || "";
                 if(content) {
                     content.split(', ').forEach(t => {
                         let p = document.createElement('span');
                         p.className = 'calendar-pill';
                         p.innerText = t;
-                        pillRow.appendChild(p);
+                        row.appendChild(p);
                     });
                 }
                 wrap.appendChild(title);
-                wrap.appendChild(pillRow);
+                wrap.appendChild(row);
                 return { domNodes: [wrap] };
             },
             eventClick: (info) => { if(info.event.display !== 'background') openBookingModal(null, null, info.event.id); },
-            datesSet: (info) => { const dp = document.getElementById('datePicker'); if(dp) dp.value = calendar.view.title; }
+            datesSet: () => { const dp = document.getElementById('datePicker'); if(dp) dp.value = calendar.view.title; }
         });
         calendar.render();
     }
 
     function refreshAll() { renderCustomers(); renderOffDaysList(); renderSettingsUI(); updateStylistFilter(); if(calendar) calendar.refetchEvents(); }
 
-    // 設定頁面修復
     function renderSettingsUI() {
         ['stylists', 'services', 'tags'].forEach(type => {
             const area = document.getElementById(`${type === 'tags' ? 'tag' : (type === 'stylists' ? 'stylist' : 'service')}-manage-render`);
             if(!area) return; area.innerHTML = '';
             salonData[type].forEach((it, i) => {
-                area.innerHTML += `<div class="manage-item"><span><div style="background:${it.color}; width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:8px;"></div>${it.name}</span><i class="fas fa-times" onclick="salonData.${type}.splice(${i},1); save(); refreshAll();" style="color:red; cursor:pointer; padding:5px;"></i></div>`;
+                area.innerHTML += `<div class="manage-item"><span><div style="background:${it.color}; width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:8px;"></div>${it.name}</span><i class="fas fa-times" onclick="salonData.${type}.splice(${i},1); save(); refreshAll();" style="color:red; cursor:pointer;"></i></div>`;
             });
         });
         document.querySelectorAll('.off-btn').forEach((b, i) => {
@@ -265,34 +257,11 @@
         if(!area) return;
         area.innerHTML = salonData.offDays.length === 0 ? '<p style="color:#aaa; font-size:0.8rem;">無臨時排休</p>' : '';
         salonData.offDays.sort().forEach((date, index) => {
-            area.innerHTML += `<div class="off-date-item"><span>📅 ${date}</span><i class="fas fa-trash-alt" onclick="salonData.offDays.splice(${index},1); save(); refreshAll();" style="color:#ff7675; cursor:pointer; padding:5px;"></i></div>`;
+            area.innerHTML += `<div class="off-date-item"><span>📅 ${date}</span><i class="fas fa-trash-alt" onclick="salonData.offDays.splice(${index},1); save(); refreshAll();" style="color:#ff7675; cursor:pointer;"></i></div>`;
         });
     }
 
-    // 其他穩定功能 (搜尋、彈窗、名片)
-    function searchCustomers(val) { const res = document.getElementById('search-results'); if(!val) { res.style.display='none'; return; } const matches = salonData.customers.filter(c => c.name.includes(val) || (c.phone && c.phone.includes(val))).slice(0, 5); if(matches.length > 0) { res.innerHTML = matches.map(c => `<div class="search-item" onclick="selectCustomer('${c.name}', '${c.phone||''}', '${c.note||''}')"><i class="fas fa-user-check" style="margin-right:8px;"></i>${c.name}</div>`).join(''); res.style.display = 'block'; } else res.style.display = 'none'; }
-    function selectCustomer(n, p, o) { document.getElementById('sw-n').value=n; document.getElementById('sw-p').value=p; document.getElementById('sw-o').value=o; document.getElementById('search-results').style.display='none'; }
-    function syncVisitHistory() { salonData.customers.forEach(cust => { const h = salonData.bookings.filter(b => b.customer === cust.name).map(b => b.start.split('T')[0]).sort((a,b) => new Date(b) - new Date(a)); cust.visits = [...new Set(h)].slice(0, 3); cust.visitCount = h.length; }); }
-    function renderCustomers() {
-        syncVisitHistory(); const q = document.getElementById('custSearch').value.toLowerCase();
-        const fStylist = document.getElementById('stylist-filter').value;
-        const area = document.getElementById('customer-list-render'); area.innerHTML = '';
-        salonData.customers.filter(c => (c.name.includes(q) || (c.phone && c.phone.includes(q))) && (fStylist==='all' || c.stylist===fStylist)).forEach(c => {
-            const h = c.visits && c.visits.length ? c.visits.map(v => `<div class="mini-tag" style="background:#fff; border: 1px solid #D4AF37; color:#D4AF37;">📅 ${v}</div>`).join('') : '<div class="mini-tag">無紀錄</div>';
-            const tags = (c.tags || []).map(tn => { const t = salonData.tags.find(x => x.name === tn); return `<span class="custom-badge" style="background:${t?t.color:'#ddd'}">${tn}</span>`; }).join('');
-            area.innerHTML += `<div class="cust-card"><div class="cust-header" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div style="display:flex; align-items:center;"><strong style="font-size:1.2rem;">${c.name}</strong><div class="cust-action-btn" onclick="openBookingModal(null, null, null, '${c.name}')"><i class="fas fa-calendar-plus"></i></div>${c.phone?`<a href="tel:${c.phone}" class="cust-action-btn"><i class="fas fa-phone"></i></a>`:''}</div>
-                    <div><i class="fas fa-edit" onclick="openCustomerEditModal(${c.id})" style="color:var(--morandi-teal); margin-right:15px; cursor:pointer;"></i><i class="fas fa-trash-alt" onclick="deleteCust(${c.id})" style="color:#ff7675; cursor:pointer;"></i></div></div>
-                <div style="display:flex; gap:6px; flex-wrap: wrap; margin-top:5px;"><div class="mini-tag">📞 ${c.phone||'無'}</div><div class="mini-tag">🎂 ${c.birthday||'未設'}</div><div class="mini-tag">✂️ ${c.stylist||'無'}</div><div class="mini-tag">🔥 共 ${c.visitCount||0} 次</div></div>
-                <div style="margin-top:5px;">${tags}</div><div style="display:flex; gap:4px; margin-top:5px; flex-wrap:wrap;">${h}</div>
-                <div style="background:rgba(0,0,0,0.03); padding:8px 12px; border-radius:12px; font-size:0.8rem; margin-top:5px;">備註: ${c.note||'無'}</div></div>`;
-        });
-    }
-
-    // 彈窗系統
-    function toggleDrawer(id) { const d = document.getElementById(id); if(d) d.classList.toggle('open'); }
-    function handlePillClick(el, color) { el.classList.toggle('active'); el.style.background = el.classList.contains('active') ? color : '#fff'; el.style.borderColor = el.classList.contains('active') ? color : '#ddd'; el.style.color = el.classList.contains('active') ? '#fff' : '#555'; }
-    function getBirthdayPicker(current) { const [m, d] = current ? current.split('-') : ['', '']; let mH = `<select id="c-b-m" class="swal-input-round" style="flex:1;"><option value="">月</option>`; for(let i=1; i<=12; i++) mH += `<option value="${i.toString().padStart(2,'0')}" ${m==i?'selected':''}>${i}月</option>`; let dH = `<select id="c-b-d" class="swal-input-round" style="flex:1;"><option value="">日</option>`; for(let i=1; i<=31; i++) dH += `<option value="${i.toString().padStart(2,'0')}" ${d==i?'selected':''}>${i}日</option>`; return `<div style="display:flex; gap:10px; background:rgba(255,255,255,0.6); border-radius:20px; border:1px solid #eee; margin-bottom:10px; padding:0 10px;"><div style="padding:12px 5px; color:var(--morandi-teal);">🎂</div>${mH}</select>${dH}</select></div>`; }
+    // 核心預約視窗
     async function openBookingModal(date, time, editId = null, prefillName = null) {
         let b = editId ? salonData.bookings.find(x => x.id == editId) : null;
         let selectedSvcs = b ? b.service.split(', ') : [];
@@ -305,20 +274,28 @@
         if(isDenied) { salonData.bookings = salonData.bookings.filter(x => x.id != editId); syncVisitHistory(); save(); refreshAll(); }
         else if(f && f.name) { const [sN, sC] = f.stylist.split('|'); const data = { id: editId||Date.now(), customer: f.name, phone: f.phone, count: f.count, start: `${f.date}T${f.time}`, end: `${f.date}T${f.time}`, stylist: sN, color: sC, service: f.service, tags: f.tags, note: f.note }; if(editId) salonData.bookings[salonData.bookings.findIndex(x=>x.id==editId)] = data; else salonData.bookings.push(data); if(f.saveCust) { let ex = salonData.customers.find(c => c.name === f.name); if(!ex) salonData.customers.push({ id: Date.now(), name: f.name, phone: f.phone, stylist: sN, note: f.note, tags: f.tags, visits: [] }); else { ex.stylist = sN; ex.phone = f.phone; ex.tags = f.tags; } } syncVisitHistory(); save(); refreshAll(); }
     }
-    async function openCustomerEditModal(id = null) { const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '', birthday: '', tags: [] }; const { value: f } = await Swal.fire({ title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="toggleDrawer('c-t-d')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, preConfirm: () => { const m = document.getElementById('c-b-m').value; const d = document.getElementById('c-b-d').value; const tags = Array.from(document.querySelectorAll('#c-t-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: (m && d) ? `${m}-${d}` : '', stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value, tags: tags } } }); if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f }); save(); refreshAll(); } }
+
+    // 基礎穩定區
+    function toggleDrawer(id) { const d = document.getElementById(id); if(d) d.classList.toggle('open'); }
+    function handlePillClick(el, color) { el.classList.toggle('active'); el.style.background = el.classList.contains('active') ? color : '#fff'; el.style.borderColor = el.classList.contains('active') ? color : '#ddd'; el.style.color = el.classList.contains('active') ? '#fff' : '#555'; }
+    function searchCustomers(val) { const res = document.getElementById('search-results'); if(!val) { res.style.display='none'; return; } const matches = salonData.customers.filter(c => c.name.includes(val) || (c.phone && c.phone.includes(val))).slice(0, 5); if(matches.length > 0) { res.innerHTML = matches.map(c => `<div class="search-item" onclick="selectCustomer('${c.name}', '${c.phone||''}', '${c.note||''}')"><i class="fas fa-user-check" style="margin-right:8px;"></i>${c.name}</div>`).join(''); res.style.display = 'block'; } else res.style.display = 'none'; }
+    function selectCustomer(n, p, o) { document.getElementById('sw-n').value=n; document.getElementById('sw-p').value=p; document.getElementById('sw-o').value=o; document.getElementById('search-results').style.display='none'; }
+    function syncVisitHistory() { salonData.customers.forEach(cust => { const h = salonData.bookings.filter(b => b.customer === cust.name).map(b => b.start.split('T')[0]).sort((a,b) => new Date(b) - new Date(a)); cust.visits = [...new Set(h)].slice(0, 3); cust.visitCount = h.length; }); }
     function updateStylistFilter() { const fs = document.getElementById('stylist-filter'); if(!fs) return; const cur = fs.value; fs.innerHTML = '<option value="all">設計師</option>'; salonData.stylists.forEach(s => { const opt = document.createElement('option'); opt.value = s.name; opt.innerText = s.name; if(s.name === cur) opt.selected = true; fs.appendChild(opt); }); }
-    function initFlipSwipe() { const el = document.getElementById('calendar-container'); let sX = 0; el.addEventListener('touchstart', (e) => sX = e.touches[0].clientX, { passive: true }); el.addEventListener('touchend', (e) => { let diff = e.changedTouches[0].clientX - sX; if (Math.abs(diff) > 80) { const n = diff < 0; el.classList.add(n ? 'page-flip-right' : 'page-flip-left'); setTimeout(() => { if (n) calendar.next(); else calendar.prev(); el.classList.remove('page-flip-right', 'page-flip-left'); }, 250); } }, { passive: true }); }
+    function initFlipSwipe() { const el = document.getElementById('calendar-container'); let sX = 0; el.addEventListener('touchstart', (e) => sX = e.touches[0].clientX, { passive: true }); el.addEventListener('touchend', (e) => { let diff = e.changedTouches[0].clientX - sX; if (Math.abs(diff) > 80) { const next = diff < 0; el.classList.add(next ? 'page-flip-right' : 'page-flip-left'); setTimeout(() => { if (next) calendar.next(); else calendar.prev(); el.classList.remove('page-flip-right', 'page-flip-left'); }, 250); } }, { passive: true }); }
     function updateBusinessTime() { salonData.startTime = document.getElementById('set-start-time').value; salonData.endTime = document.getElementById('set-end-time').value; save(); calendar.setOption('slotMinTime', salonData.startTime+':00'); calendar.setOption('slotMaxTime', salonData.endTime+':00'); }
     function updateOffColor(c) { salonData.offColor = c; save(); refreshAll(); }
     function toggleWeeklyOff(day) { salonData.weeklyOff.includes(day) ? salonData.weeklyOff = salonData.weeklyOff.filter(d => d !== day) : salonData.weeklyOff.push(day); save(); refreshAll(); }
     function addTempOff(v) { if(v && !salonData.offDays.includes(v)) { salonData.offDays.push(v); save(); refreshAll(); } }
     function deleteCust(id) { if(confirm('確定刪除？')) { salonData.customers = salonData.customers.filter(x => x.id !== id); save(); renderCustomers(); } }
     function exportData() { const blob = new Blob([JSON.stringify(salonData)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `SALON_BACKUP.json`; a.click(); }
-    async function openMetaModal(type) { const { value: f } = await Swal.fire({ title: '新增項目', html: `<input id="meta-name" class="swal2-input swal-input-round" placeholder="名稱"><div style="margin-top:15px; text-align:center;"><input type="color" id="meta-color" value="#A3B8B8" style="width:80px; height:80px; border:none; background:transparent;"></div>`, preConfirm: () => ({ name: document.getElementById('meta-name').value, color: document.getElementById('meta-color').value }) }); if(f && f.name) { salonData[type].push(f); save(); refreshAll(); } }
+    async function openMetaModal(type) { const { value: f } = await Swal.fire({ title: '新增項目', html: `<input id="meta-name" class="swal2-input swal-input-round" placeholder="名稱"><div style="margin-top:15px; text-align:center;"><input type="color" id="meta-color" value="#A3B8B8" style="width:80px; height:80px; border:none; background:transparent; cursor:pointer;"></div>`, preConfirm: () => ({ name: document.getElementById('meta-name').value, color: document.getElementById('meta-color').value }) }); if(f && f.name) { salonData[type].push(f); save(); refreshAll(); } }
     function switchPage(p, b, i) { document.querySelectorAll('.page').forEach(x => x.classList.remove('active')); document.getElementById(p).classList.add('active'); document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active')); b.classList.add('active'); document.getElementById('navIndicator').style.transform = `translateX(${i * 100}%)`; if(p === 'page-calendar') setTimeout(() => calendar.render(), 100); if(p === 'page-customers') renderCustomers(); updateStylistFilter(); }
     function changeView(v, i) { document.getElementById('viewSlider').style.transform = `translateX(${i * 100}%)`; calendar.changeView(v); }
     function goToday() { calendar.today(); }
     function checkUpcomingAppointments() { const now = new Date(); const t = new Date(now.getTime() + 15 * 60000); salonData.bookings.forEach(b => { const a = new Date(b.start); if (a > now && a <= t && !notifiedIds.has(b.id)) { notifiedIds.add(b.id); if('speechSynthesis' in window){ const u = new SpeechSynthesisUtterance(`下一位預約是 ${b.customer}`); u.lang = 'zh-TW'; window.speechSynthesis.speak(u); } Swal.fire({ title: '🔔 提醒', text: `15 分鐘後：${b.customer}`, toast: true, position: 'top-end', showConfirmButton: false, timer: 6000 }); } }); }
+    function getBirthdayPicker(current) { const [m, d] = current ? current.split('-') : ['', '']; let mH = `<select id="c-b-m" class="swal-input-round" style="flex:1;"><option value="">月</option>`; for(let i=1; i<=12; i++) mH += `<option value="${i.toString().padStart(2,'0')}" ${m==i?'selected':''}>${i}月</option>`; let dH = `<select id="c-b-d" class="swal-input-round" style="flex:1;"><option value="">日</option>`; for(let i=1; i<=31; i++) dH += `<option value="${i.toString().padStart(2,'0')}" ${d==i?'selected':''}>${i}日</option>`; return `<div style="display:flex; gap:10px; background:rgba(255,255,255,0.6); border-radius:20px; border:1px solid #eee; margin-bottom:10px; padding:0 10px;"><div style="padding:12px 5px; color:var(--morandi-teal);">🎂</div>${mH}</select>${dH}</select></div>`; }
+    async function openCustomerEditModal(id = null) { const c = id ? salonData.customers.find(x => x.id === id) : { name: '', phone: '', stylist: '', note: '', birthday: '', tags: [] }; const { value: f } = await Swal.fire({ title: id ? '修改名片' : '新增客資', customClass: { popup: 'glass-swal' }, html: `<input id="c-n" class="swal2-input swal-input-round" placeholder="姓名" value="${c.name}"><input id="c-p" class="swal2-input swal-input-round" placeholder="電話" value="${c.phone}">${getBirthdayPicker(c.birthday)}<select id="c-s" class="swal2-input swal-input-round">${salonData.stylists.map(s=>`<option value="${s.name}" ${c.stylist===s.name?'selected':''}>${s.name}</option>`).join('')}</select><div class="drawer-btn" onclick="toggleDrawer('c-t-d')" style="background:var(--primary); margin-top:10px;"><span>🏷️ 特色標籤</span><i class="fas fa-chevron-down"></i></div><div class="svc-drawer" id="c-t-d"><div class="pill-grid">${salonData.tags.map(t=>`<div class="pill-chip ${c.tags && c.tags.includes(t.name)?'active':''}" style="${c.tags && c.tags.includes(t.name)?'background:'+t.color+'; border-color:'+t.color+'; color:#fff;':''}" onclick="handlePillClick(this, '${t.color}')">${t.name}</div>`).join('')}</div></div><textarea id="c-o" class="swal2-input swal-input-round" placeholder="備註">${c.note}</textarea>`, preConfirm: () => { const m = document.getElementById('c-b-m').value; const d = document.getElementById('c-b-d').value; const tags = Array.from(document.querySelectorAll('#c-t-d .pill-chip.active')).map(el => el.innerText); return { name: document.getElementById('c-n').value, phone: document.getElementById('c-p').value, birthday: (m && d) ? `${m}-${d}` : '', stylist: document.getElementById('c-s').value, note: document.getElementById('c-o').value, tags: tags } } }); if(f && f.name) { if(id) Object.assign(salonData.customers.find(x=>x.id===id), f); else salonData.customers.push({ id: Date.now(), ...f }); save(); refreshAll(); } }
 </script>
 </body>
 </html>
