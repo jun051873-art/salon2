@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V169</title>
+    <title>專屬空間 Salon Elite V170</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #1d1d1f; --gold: #D4AF37; --bg: #ffffff; --sub: #86868b; --border: #f2f2f2; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; min-height: 100vh; color: var(--primary); padding-bottom: 100px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; min-height: 100vh; color: var(--primary); padding-bottom: 110px; }
         
         /* 標題與視覺核心 */
-        .header { padding: 30px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; background: #fff; z-index: 3000; position: sticky; top: 0; }
+        .header { padding: 30px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; background: #fff; z-index: 3000; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
         .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
@@ -23,31 +24,40 @@
 
         .page { display: none; width: 100%; padding: 5px 20px; }
         .page.active { display: block; animation: appleFade 0.4s ease; }
-        @keyframes appleFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes appleFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 排休數字流：書籤質感 */
-        .off-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 10px; }
-        .off-tag { padding: 8px; border-radius: 8px; background: #fff; border: 1px solid #eee; text-align: center; font-size: 0.85rem; font-weight: 900; color: var(--primary); }
+        /* 白金質感輸入框與按鈕 */
+        .apple-box { 
+            background: #fff; border: 1px solid var(--gold); border-radius: 12px; 
+            padding: 10px 15px; font-size: 1rem; font-weight: 300; color: #000; 
+            margin-bottom: 10px; transition: 0.3s; 
+        }
+        .apple-input-inline { border: none; background: transparent; font-size: 1rem; font-weight: 800; color: #000; width: 80px; text-align: center; }
+        
+        .apple-btn { background: #fff; border: 1.2px solid var(--gold); border-radius: 20px; padding: 8px 18px; font-size: 0.85rem; font-weight: 700; color: #000; cursor: pointer; }
+        .apple-btn:active { transform: scale(0.95); opacity: 0.5; }
 
-        /* 原地展開選擇器：避開手指衝突 */
-        #inline-selector { height: 0; overflow: hidden; transition: 0.3s; background: #fafafa; border-radius: 15px; margin-top: 10px; }
-        #inline-selector.open { height: 350px; padding: 10px; border: 1px solid #eee; }
-
-        /* 指尖優化日曆 */
-        .fc-daygrid-day-number { font-size: 0.95rem !important; color: #000 !important; font-weight: 300 !important; padding: 8px !important; text-decoration: none !important; }
-        .fc-day-selected { background: #fff !important; }
-        .fc-day-selected .fc-daygrid-day-number { border: 1.5px solid var(--gold) !important; border-radius: 50%; padding: 6px !important; color: var(--gold) !important; }
-
-        /* 按鈕：極簡白金 */
-        .apple-btn { background: #fff; border: 1px solid var(--gold); border-radius: 12px; padding: 8px 18px; font-size: 0.8rem; font-weight: 700; color: #000; cursor: pointer; transition: 0.2s; }
-        .apple-btn:active { transform: scale(0.92); opacity: 0.6; }
-
-        /* 選色：物理圓點 */
-        .picker-dot { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; position: relative; overflow: hidden; display: inline-block; vertical-align: middle; }
+        /* 物理選色圓點 */
+        .picker-dot { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.1); cursor: pointer; position: relative; overflow: hidden; display: inline-block; vertical-align: middle; }
         .native-input { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; border: none; cursor: pointer; }
 
+        /* 設定標籤與流動列表 */
+        .setting-section { padding: 25px 0; border-bottom: 1px solid var(--border); }
+        .setting-label { font-size: 0.75rem; color: var(--sub); font-weight: 700; margin-bottom: 15px; letter-spacing: 1.5px; display: block; }
+        
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border: 1px solid var(--gold); border-radius: 12px; margin-bottom: 8px; background: #fff; }
+
+        /* 排休數字方塊 */
+        .off-tag { display: inline-block; padding: 6px 12px; border-radius: 10px; border: 1px solid var(--gold); margin: 3px; font-size: 0.85rem; font-weight: 900; color: #000; }
+
+        #inline-selector { height: 0; overflow: hidden; transition: 0.3s; background: #fafafa; border-radius: 15px; margin-top: 10px; }
+        #inline-selector.open { height: 380px; padding: 10px; border: 1px solid var(--gold); }
+
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; }
-        .fab { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .fab { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        .fc-bg-event { opacity: 1 !important; z-index: 1 !important; display: flex !important; align-items: center; justify-content: center; }
+        .fc-bg-event::after { content: "店休"; color: rgba(255,255,255,0.85); font-size: 0.75rem; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -69,36 +79,47 @@
     <div class="page" id="page-1"><div id="client-list-area"></div></div>
     
     <div class="page" id="page-2">
-        <div style="padding:20px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:0.8rem; font-weight:700; color:var(--sub);">⏰ 服務時段</div>
-            <div style="display:flex; gap:5px; align-items:center;">
-                <input type="time" id="openT" value="11:00" style="border:none; font-size:1rem; font-weight:900;" onchange="updateSys()">
-                <span style="color:#ddd;">-</span>
-                <input type="time" id="closeT" value="21:00" style="border:none; font-size:1rem; font-weight:900;" onchange="updateSys()">
+        <div class="setting-section" style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="setting-label">⏰ 服務時段時程</span>
+            <div class="apple-box" style="margin-bottom:0; padding:5px 10px;">
+                <input type="time" id="openT" class="apple-input-inline" onchange="updateSettings()">
+                <span style="color:var(--gold);">至</span>
+                <input type="time" id="closeT" class="apple-input-inline" onchange="updateSettings()">
             </div>
         </div>
 
-        <div style="padding:25px 0; border-bottom:1px solid #eee;">
+        <div class="setting-section">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="font-size:0.8rem; font-weight:700; color:var(--sub);">📅 排修日子</div>
-                <button class="apple-btn" onclick="toggleSelector()">+ 設定日期</button>
+                <span class="setting-label">📅 自訂店休日期</span>
+                <button class="apple-btn" onclick="toggleSelector()">設定日期</button>
             </div>
-            
             <div id="inline-selector">
                 <div id="mini-cal-area"></div>
-                <div style="display:flex; gap:10px; align-items:center; margin-top:10px; padding:10px;">
+                <div style="display:flex; gap:12px; align-items:center; margin-top:15px; padding:0 10px;">
                     <div class="picker-dot" id="off-color-display" style="background:#34495e;">
                         <input type="color" id="off-color-input" class="native-input" value="#34495e" oninput="document.getElementById('off-color-display').style.background=this.value">
                     </div>
-                    <button class="apple-btn" style="flex:1;" onclick="confirmOff()">確定排休並收起</button>
+                    <button class="apple-btn" style="flex:1;" onclick="confirmOff()">確認並儲存</button>
                 </div>
             </div>
-            <div class="off-grid" id="off-display-area"></div>
+            <div id="off-display-area" style="margin-top:15px;"></div>
         </div>
 
-        <div style="padding:25px 0;">
-            <button class="apple-btn" style="width:100%; margin-bottom:20px;" onclick="addSty()">+ 新增團隊成員</button>
+        <div class="setting-section">
+            <span class="setting-label">✂️ 設計師管理</span>
+            <button class="apple-btn" style="width:100%; margin-bottom:15px;" onclick="addSty()">+ 新增團隊成員</button>
             <div id="stylist-list-area"></div>
+        </div>
+
+        <div class="setting-section" style="border-bottom:none;">
+            <span class="setting-label">🏷️ 項目標籤管理</span>
+            <button class="apple-btn" style="width:100%; margin-bottom:15px; border-color:#eee; color:var(--sub);" onclick="addTag()">+ 新增服務標籤</button>
+            <div id="tag-list-area" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:20px; padding-bottom:40px;">
+            <button class="apple-btn" style="flex:1; border-color:#eee; color:var(--sub);" onclick="exportData()">備份</button>
+            <button class="apple-btn" style="flex:1; border-color:#eee; color:var(--sub);" onclick="importData()">恢復</button>
         </div>
     </div>
 </div>
@@ -107,21 +128,25 @@
 
 <div class="nav-container">
     <div class="nav-bar" style="display:flex; height:100%; align-items:center; justify-content:space-around;">
-        <button class="nav-item active" onclick="slideTo(0)" style="border:none; background:none; color:var(--sub); display:flex; flex-direction:column; align-items:center;"><i class="fas fa-calendar-alt"></i><span style="font-size:0.7rem; margin-top:4px;">SCHEDULE</span></button>
-        <button class="nav-item" onclick="slideTo(1)" style="border:none; background:none; color:var(--sub); display:flex; flex-direction:column; align-items:center;"><i class="fas fa-user-circle"></i><span style="font-size:0.7rem; margin-top:4px;">CLIENTS</span></button>
-        <button class="nav-item" onclick="slideTo(2)" style="border:none; background:none; color:var(--sub); display:flex; flex-direction:column; align-items:center;"><i class="fas fa-cog"></i><span style="font-size:0.7rem; margin-top:4px;">SETTINGS</span></button>
+        <button class="nav-item active" onclick="slideTo(0)" style="border:none; background:none; color:var(--sub); display:flex; flex-direction:column; align-items:center;"><i class="fas fa-calendar-alt"></i><span style="font-size:0.7rem;">SCHEDULE</span></button>
+        <button class="nav-item" onclick="slideTo(1)" style="border:none; background:none; color:var(--sub); display:flex; flex-direction:column; align-items:center;"><i class="fas fa-user-circle"></i><span style="font-size:0.7rem;">CLIENTS</span></button>
+        <button class="nav-item" onclick="slideTo(2)" style="border:none; background:none; color:var(--sub); display:flex; flex-direction:column; align-items:center;"><i class="fas fa-cog"></i><span style="font-size:0.7rem;">SETTINGS</span></button>
     </div>
 </div>
 
 <script>
     let calendar, miniCal;
-    let tempDates = [];
-    let store = JSON.parse(localStorage.getItem('SALON_V169_PURE')) || {
+    let tempOffDates = [];
+    let store = JSON.parse(localStorage.getItem('SALON_V170_FINAL')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
-        offDays: [], offColor: "#34495e", appointments: []
+        tags: [{id: 1, name: '剪髮'}],
+        offDays: [], offColor: "#34495e", appointments: [],
+        openT: "11:00", closeT: "21:00"
     };
 
     document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('openT').value = store.openT;
+        document.getElementById('closeT').value = store.closeT;
         initCalendar();
         renderAll();
     });
@@ -130,6 +155,8 @@
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto',
             allDaySlot: false, showNonCurrentDates: false, fixedWeekCount: false,
+            slotMinTime: store.openT + ":00", slotMaxTime: store.closeT + ":00",
+            slotDuration: '01:00:00',
             dayCellContent: (e) => e.dayNumberText.replace('日', ''),
             events: (info, success) => {
                 let evs = store.appointments.map(a => ({ title: `${a.name}`, start: a.time, extendedProps: {sId: a.sId} }));
@@ -149,41 +176,75 @@
                 locale: 'zh-tw', height: 280,
                 dayCellContent: (e) => e.dayNumberText.replace('日', ''),
                 dateClick: (info) => {
-                    const idx = tempDates.indexOf(info.dateStr);
-                    if(idx > -1) { tempDates.splice(idx, 1); info.dayEl.classList.remove('fc-day-selected'); }
-                    else { tempDates.push(info.dateStr); info.dayEl.classList.add('fc-day-selected'); }
+                    const idx = tempOffDates.indexOf(info.dateStr);
+                    idx > -1 ? tempOffDates.splice(idx, 1) : tempOffDates.push(info.dateStr);
+                    renderMiniCalSelection();
                 }
             });
             miniCal.render();
         }
     }
+    
+    function renderMiniCalSelection() {
+        document.querySelectorAll('.fc-daygrid-day').forEach(el => {
+            const date = el.getAttribute('data-date');
+            el.classList.toggle('fc-day-selected', tempOffDates.includes(date));
+        });
+    }
 
     function confirmOff() {
-        store.offDays = [...tempDates];
+        store.offDays = [...tempOffDates];
         store.offColor = document.getElementById('off-color-input').value;
         document.getElementById('inline-selector').classList.remove('open');
         renderAll();
     }
 
     function renderAll() {
-        localStorage.setItem('SALON_V169_PURE', JSON.stringify(store));
-        // 排休數字流
+        localStorage.setItem('SALON_V170_FINAL', JSON.stringify(store));
+        // 排休數字
         document.getElementById('off-display-area').innerHTML = store.offDays.sort().map(d => `<div class="off-tag">${d.slice(5).replace('-', '/')}</div>`).join('');
-        // 設計師清單
+        // 設計師
         document.getElementById('stylist-list-area').innerHTML = store.stylists.map(s => `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #f9f9f9;">
-                <span style="font-weight:900;">${s.name}</span>
-                <div class="picker-dot" style="background:${s.color}">
-                    <input type="color" class="native-input" value="${s.color}" oninput="updateStyColor(${s.id}, this.value)">
+            <div class="item-row">
+                <span style="font-weight:800; font-size:1.1rem;">${s.name}</span>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <div class="picker-dot" style="background:${s.color}"><input type="color" class="native-input" value="${s.color}" oninput="updateStyCol(${s.id}, this.value)"></div>
+                    <i class="fas fa-trash-alt" style="color:#eee; font-size:0.9rem;" onclick="delSty(${s.id})"></i>
                 </div>
+            </div>
+        `).join('');
+        // 標籤
+        document.getElementById('tag-list-area').innerHTML = store.tags.map(t => `
+            <div class="apple-btn" style="display:flex; align-items:center; gap:8px; border-radius:10px; padding:5px 12px; font-weight:400;">
+                ${t.name} <i class="fas fa-times" style="font-size:0.7rem; color:#ccc;" onclick="delTag(${t.id})"></i>
             </div>
         `).join('');
         if(calendar) calendar.refetchEvents();
     }
 
-    function updateStyColor(id, color) { const s = store.stylists.find(x => x.id == id); if(s) s.color = color; renderAll(); }
+    function updateSettings() {
+        store.openT = document.getElementById('openT').value;
+        store.closeT = document.getElementById('closeT').value;
+        calendar.setOption('slotMinTime', store.openT + ":00");
+        calendar.setOption('slotMaxTime', store.closeT + ":00");
+        renderAll();
+    }
+
+    function updateStyCol(id, col) { const s = store.stylists.find(x => x.id == id); if(s) s.color = col; renderAll(); }
+    async function addSty() {
+        const { value: n } = await Swal.fire({ title: '設計師姓名', input: 'text', confirmButtonColor: '#D4AF37' });
+        if(n) { store.stylists.push({id: Date.now(), name: n, color: '#2c3e50'}); renderAll(); }
+    }
+    async function addTag() {
+        const { value: n } = await Swal.fire({ title: '新增服務項目', input: 'text', confirmButtonColor: '#D4AF37' });
+        if(n) { store.tags.push({id: Date.now(), name: n}); renderAll(); }
+    }
+    function delSty(id) { store.stylists = store.stylists.filter(x=>x.id!==id); renderAll(); }
+    function delTag(id) { store.tags = store.tags.filter(x=>x.id!==id); renderAll(); }
     function slideTo(idx) { document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx)); if(idx === 0) setTimeout(()=>calendar.render(), 50); }
     function changeView(v, i) { calendar.changeView(v); document.getElementById('viewSlider').style.transform = `translateX(${i * 100}%)`; }
+    function exportData() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(store)], {type:'application/json'})); a.download = `SALON.json`; a.click(); }
+    function importData() { Swal.fire({ title: '恢復', input: 'file' }).then(res => { if(res.value) { const reader = new FileReader(); reader.onload = e => { store = JSON.parse(e.target.result); renderAll(); location.reload(); }; reader.readAsText(res.value); } }); }
 </script>
 </body>
 </html>
