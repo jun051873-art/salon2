@@ -3,82 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V147</title>
+    <title>專屬空間 Salon Elite V148</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #2c3e50; --gold: #D4AF37; --bg: #ffffff; --border: #eeeeee; }
+        :root { --primary: #2c3e50; --gold: #D4AF37; --grey-btn: #A3B8B8; --bg: #ffffff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Noto Sans TC', sans-serif; background: #fafafa; margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; padding-bottom: 110px; }
         
-        /* 101 經典光影呼吸效果 */
-        .breathe-box { border: 2px solid var(--gold); border-radius: 20px; box-shadow: 0 0 10px rgba(212,175,55,0.1); animation: breathe 4s infinite alternate; }
-        @keyframes breathe { from { box-shadow: 0 0 5px rgba(212,175,55,0.05); } to { box-shadow: 0 0 15px rgba(212,175,55,0.25); } }
-
-        .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 3000; border-bottom: 3px solid var(--gold); position: sticky; top: 0; }
+        /* 統一按鈕風格：灰色底金色邊框 */
+        .unified-btn { background: var(--grey-btn) !important; color: #fff !important; border: 1.5px solid var(--gold) !important; border-radius: 12px; font-weight: 900; transition: 0.2s; cursor: pointer; }
+        
+        .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 3000; border-bottom: 2px solid var(--gold); position: sticky; top: 0; }
         .app-title { font-size: 1.5rem; font-weight: 900; background: linear-gradient(120deg, #2c3e50 20%, var(--gold) 40%, #2c3e50 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 5s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        #top-view-switcher { display: flex; background: #eee; border-radius: 12px; margin: 10px auto; width: 92%; padding: 4px; position: relative; z-index: 2000; }
+        #top-view-switcher { display: flex; background: #eee; border-radius: 12px; margin: 10px auto; width: 92%; padding: 4px; border: 1px solid var(--gold); position: relative; z-index: 2000; }
         .view-btn { flex: 1; border: none; background: transparent; padding: 10px; font-weight: 900; color: #555; cursor: pointer; z-index: 5; font-size: 0.9rem; }
-        .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: 0.3s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: 0.3s; z-index: 1; }
 
-        /* 物理翻頁頁面容器 */
         .page-container { width: 100%; position: relative; }
         .page { display: none; width: 100%; padding: 10px 15px; }
-        .page.active { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .page.active { display: block; }
 
-        /* 預約塊視覺：白底金側邊 */
-        .fc-event { background-color: #fff !important; border-left: 10px solid var(--event-color, var(--gold)) !important; border-radius: 8px !important; margin: 1px 4px !important; box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important; border-top:1px solid #eee; border-right:1px solid #eee; border-bottom:1px solid #eee; }
+        /* 預約塊視覺：側條 */
+        .fc-event { background-color: #fff !important; border-left: 10px solid var(--event-color, var(--gold)) !important; border-radius: 8px !important; margin: 2px 4px !important; box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important; border-top:1px solid #eee; border-right:1px solid #eee; border-bottom:1px solid #eee; }
         .fc-event-main { color: #2c3e50 !important; padding: 6px 8px !important; font-weight: 900; font-size: 0.95rem; }
         .fc-event-time { display: none !important; }
-        .fc-bg-event { opacity: 1 !important; z-index: 1 !important; }
+        .fc-bg-event { opacity: 1 !important; z-index: 1 !important; border: none !important; }
 
-        .cust-card { background: #fff; border-radius: 25px; padding: 20px; margin-bottom: 12px; border: 2px solid #f0f0f0; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: 0.2s; }
-        .hist-box { margin-top: 10px; padding: 10px; background: #fcfcfc; border-radius: 12px; font-size: 0.8rem; color: #666; border: 1px solid #f0f0f0; }
+        .cust-card { background: #fff; border-radius: 25px; padding: 20px; margin-bottom: 12px; border: 2px solid var(--gold); position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .card-edit-btn { position: absolute; top: 15px; right: 15px; width: 50px; height: 50px; background: #f8f8f8; border-radius: 50%; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; color: var(--primary); z-index: 100; cursor: pointer; }
         
         #calendar-container { background: #fff; border-radius: 20px; padding: 4px; border: 2px solid #eee; }
 
-        /* 預約視窗微縮卡片 */
-        .glass-swal { border-radius: 30px !important; width: 95% !important; padding: 10px 15px !important; background: #fff !important; border: 3px solid var(--gold) !important; }
-        .swal-input-round, select.swal-input-round { border: 2px solid #eee !important; background: #fafafa !important; padding: 10px !important; border-radius: 12px !important; font-size: 0.95rem !important; font-weight: 800 !important; color: #000 !important; margin-bottom: 5px !important; width: 100%; }
-        .swal2-actions { margin-top: 5px !important; }
+        /* 視窗顏色統一 */
+        .glass-swal { border-radius: 30px !important; width: 95% !important; background: #fff !important; border: 3px solid var(--gold) !important; }
+        .swal2-confirm { background: var(--grey-btn) !important; color: #fff !important; border: 1.5px solid var(--gold) !important; border-radius: 15px !important; }
+        .swal-input-round, select.swal-input-round { border: 2px solid #eee !important; background: #fafafa !important; padding: 10px !important; border-radius: 12px !important; font-size: 0.95rem !important; font-weight: 800; color: #000 !important; width: 100%; margin-bottom: 6px; }
 
-        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid var(--gold); z-index: 4000; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
+        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid var(--gold); z-index: 4000; }
         .nav-bar { display: flex; height: 85px; align-items: center; }
         .nav-item { flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #7f8c8d; font-weight: 900; gap: 4px; font-size: 0.85rem; }
         .nav-item.active { color: var(--gold); background: #fcfcfc; }
         
-        .fab { position: fixed; bottom: 100px; right: 20px; width: 75px; height: 75px; z-index: 1500; background: var(--gold); color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 10px 20px rgba(212,175,55,0.3); }
+        .fab { position: fixed; bottom: 100px; right: 20px; width: 75px; height: 75px; z-index: 1500; background: var(--grey-btn); color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 3px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         
-        .color-bar-container { width: 110px; height: 45px; border-radius: 12px; position: relative; overflow: hidden; border: 2px solid #ddd; display: flex; align-items: center; justify-content: center; background: #fff; }
+        .color-bar-container { width: 110px; height: 45px; border-radius: 12px; position: relative; overflow: hidden; border: 2px solid #ddd; }
         .color-bar-input { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; cursor: pointer; }
     </style>
 </head>
 <body>
-<div class="header"><div class="app-title">專屬空間</div><button onclick="calendar.today()" style="background:#A3B8B8; color:#fff; border:none; padding:8px 18px; border-radius:10px; font-weight:900; font-size:0.85rem;">今天</button></div>
+<div class="header"><div class="app-title">專屬空間</div><button onclick="calendar.today()" class="unified-btn" style="padding:8px 18px;">今天</button></div>
 <div id="top-view-switcher"><div id="viewSlider" class="view-slider"></div><button class="view-btn" onclick="changeView('dayGridMonth', 0)">月</button><button class="view-btn" onclick="changeView('timeGridWeek', 1)">週</button><button class="view-btn" onclick="changeView('timeGridDay', 2)">日</button></div>
 
 <div class="page-container">
-    <div class="page active" id="page-0"><div id="calendar-container" class="breathe-box"><div id='calendar'></div></div></div>
-    <div class="page" id="page-1"><div style="display:flex; gap:10px; padding-bottom:12px;"><input type="text" id="custSearch" placeholder="🔍 搜尋姓名或電話..." oninput="renderCustomers()" style="flex:1; padding:15px; border-radius:15px; border:2px solid #eee; font-weight:700;"><button onclick="addCustModal()" style="padding:10px 20px; background:var(--primary); color:#fff; border:none; border-radius:15px; font-weight:900;">+ 新增</button></div><div id="customer-list-render"></div></div>
+    <div class="page active" id="page-0"><div id="calendar-container"><div id='calendar'></div></div></div>
+    <div class="page" id="page-1"><div style="display:flex; gap:10px; padding-bottom:12px;"><input type="text" id="custSearch" placeholder="🔍 搜尋姓名..." oninput="renderCustomers()" style="flex:1; padding:15px; border-radius:15px; border:2px solid #eee; font-weight:700;"><button onclick="addCustModal()" class="unified-btn" style="padding:10px 20px;">+ 新增</button></div><div id="customer-list-render"></div></div>
     <div class="page" id="page-2">
-        <div style="background:#fff; padding:20px; border-radius:15px; border:2px solid #eee; margin-bottom:15px;"><h4>⏰ 營業時間</h4><div style="display:flex; gap:5px;"><input type="time" id="set-start-time" class="swal-input-round"><input type="time" id="set-end-time" class="swal-input-round"><button onclick="updateHours()" style="padding:8px 20px; background:var(--gold); color:#fff; border:none; border-radius:10px;">存</button></div></div>
-        <div style="background:#fff; padding:20px; border-radius:15px; border:2px solid #eee; margin-bottom:15px;"><h4>📅 固定週休 (點擊切換)</h4><div id="weekly-off-btns" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:15px;"></div><h4>📅 臨時排休 (點擊長條換色)</h4><div style="display:flex; gap:10px; align-items:center;"><input type="date" id="offDate" class="swal-input-round" style="flex:1;"><div class="color-bar-container" id="off-box" style="background:#34495e;"><input type="color" id="offColor" class="color-bar-input" value="#34495e" oninput="document.getElementById('off-box').style.background=this.value"></div><button onclick="addOff()" style="padding:15px 25px; background:var(--primary); color:#fff; border:none; border-radius:15px; font-weight:900;">確定</button></div><div id="off-list-render"></div></div>
-        <div style="background:#fff; padding:20px; border-radius:15px; border:2px solid #eee;"><h4>✂️ 設計師管理 (連動選色)</h4><button onclick="openMetaModal('stylists')" style="width:100%; padding:15px; margin-bottom:10px; background:var(--gold); color:#fff; border:none; border-radius:15px; font-weight:900;">+ 新增</button><div id="stylist-manage-render"></div></div>
-        <div style="background:#fff; padding:20px; border-radius:15px; border:2px solid #eee; margin-top:15px;"><h4>🏷️ 標籤管理 (移除色選)</h4><button onclick="openMetaModal('services')" style="width:100%; padding:15px; border:none; background:#f0f0f0; border-radius:15px; font-weight:900;">+ 新增項目</button><div id="tag-manage-render" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div></div>
-        <div style="display:flex; gap:10px; margin-top:15px;"><button onclick="exportData()" style="flex:1; padding:20px; background:#2c3e50; color:#fff; border-radius:15px; font-weight:900; border:none;">💾 備份</button><button onclick="importData()" style="flex:1; padding:20px; background:var(--gold); color:#fff; border-radius:15px; font-weight:900; border:none;">📥 恢復</button></div>
+        <div style="background:#fff; padding:15px; border-radius:15px; border:2px solid #eee; margin-bottom:10px;"><h4>⏰ 營業時間</h4><div style="display:flex; gap:5px;"><input type="time" id="set-start-time" class="swal-input-round"><input type="time" id="set-end-time" class="swal-input-round"><button onclick="updateHours()" class="unified-btn" style="padding:8px 20px;">存</button></div></div>
+        <div style="background:#fff; padding:15px; border-radius:15px; border:2px solid #eee; margin-bottom:10px;"><h4>📅 固定週休</h4><div id="weekly-off-btns" style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:15px;"></div><h4>📅 臨時排休</h4><div style="display:flex; gap:10px; align-items:center;"><input type="date" id="offDate" class="swal-input-round" style="flex:1;"><div class="color-bar-container" id="off-box" style="background:#34495e;"><input type="color" id="offColor" class="color-bar-input" value="#34495e" oninput="document.getElementById('off-box').style.background=this.value"></div><button onclick="addOff()" class="unified-btn" style="padding:12px 25px;">確定</button></div><div id="off-list-render"></div></div>
+        <div style="background:#fff; padding:15px; border-radius:15px; border:2px solid #eee;"><h4>✂️ 設計師管理</h4><button onclick="openMetaModal('stylists')" class="unified-btn" style="width:100%; padding:12px; margin-bottom:10px;">+ 新增</button><div id="stylist-manage-render"></div></div>
+        <div style="background:#fff; padding:15px; border-radius:15px; border:2px solid #eee; margin-top:10px;"><h4>🏷️ 標籤管理</h4><button onclick="openMetaModal('services')" class="unified-btn" style="width:100%; padding:12px; margin-bottom:10px;">+ 新增標籤</button><div id="tag-manage-render" style="display:flex; flex-wrap:wrap; gap:6px;"></div></div>
+        <div style="display:flex; gap:10px; margin-top:15px;"><button onclick="exportData()" class="unified-btn" style="flex:1; padding:15px;">💾 備份</button><button onclick="importData()" class="unified-btn" style="flex:1; padding:15px;">📥 恢復</button></div>
     </div>
 </div>
 <button class="fab" onclick="openBookingModal()"><i class="fas fa-plus" style="font-size:2rem;"></i></button>
 <div class="nav-container"><div class="nav-bar"><button class="nav-item active" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button><button class="nav-item" onclick="slideTo(1)"><i class="fas fa-address-book"></i><span>客資</span></button><button class="nav-item" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button></div></div>
 
 <script>
-    let calendar; const KEY = 'SALON_V147_STABLE';
+    let calendar; const KEY = 'SALON_V148_UNIFIED';
     let data = JSON.parse(localStorage.getItem(KEY)) || { bookings: [], customers: [], stylists: [{name:'Tonny', color:'#2c3e50'}], services: [{name:'剪髮'}], offDays: [], weeklyOff: [], startTime:'11:00', endTime:'21:00' };
     document.addEventListener('DOMContentLoaded', () => { initCalendar(); renderSettings(); initSwipe(); document.getElementById('set-start-time').value = data.startTime; document.getElementById('set-end-time').value = data.endTime; });
     function save() { localStorage.setItem(KEY, JSON.stringify(data)); if(calendar) calendar.refetchEvents(); }
@@ -114,15 +110,14 @@
                 <div style="display:flex; gap:6px; margin-bottom:5px;"><select id="sw-b-m" class="swal-input-round" style="flex:1;"><option value="">月</option>${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}月</option>`).join('')}</select><select id="sw-b-d" class="swal-input-round" style="flex:1;"><option value="">日</option>${Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}日</option>`).join('')}</select></div>
                 <select id="sw-tag" class="swal-input-round" onchange="window.appendTag(this.value)"><option value="">快速標籤...</option>${data.services.map(s=>`<option value="${s.name}">${s.name}</option>`).join('')}</select>
                 <textarea id="sw-o" class="swal-input-round" style="height:45px;" placeholder="備註...">${b?b.note:''}</textarea>
-                <div style="margin-bottom:5px; font-weight:900; font-size:0.85rem;"><input type="checkbox" id="sw-save"> 同步存入客資</div>
                 <input id="sw-d" type="date" class="swal-input-round" value="${b?b.start.split('T')[0]:(date||new Date().toLocaleDateString('sv'))}"><input id="sw-t" type="time" class="swal-input-round" value="${b?b.start.split('T')[1].substring(0,5):(time||'11:00')}">
             </div>`,
-            preConfirm: () => ({ name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, stylist: document.getElementById('sw-s').value, note: document.getElementById('sw-o').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value, sync: document.getElementById('sw-save').checked, bday: document.getElementById('sw-b-m').value ? `${document.getElementById('sw-b-m').value}-${document.getElementById('sw-b-d').value}` : '' })
+            preConfirm: () => ({ name: document.getElementById('sw-n').value, phone: document.getElementById('sw-p').value, stylist: document.getElementById('sw-s').value, note: document.getElementById('sw-o').value, date: document.getElementById('sw-d').value, time: document.getElementById('sw-t').value })
         });
         if(isDenied) { data.bookings = data.bookings.filter(x => x.id != editId); save(); } else if(res && res.name) {
             const bData = { id: editId||Date.now(), customer: res.name, phone: res.phone, start: `${res.date}T${res.time}`, stylist: res.stylist, note: res.note };
             if(editId) { let i = data.bookings.findIndex(x=>x.id==editId); if(i!==-1) data.bookings[i]=bData; } else data.bookings.push(bData);
-            if(res.sync && !data.customers.some(c=>c.name===res.name)) data.customers.push({name:res.name, phone:res.phone, bday:res.bday}); save();
+            if(!data.customers.some(c=>c.name===res.name)) data.customers.push({name:res.name, phone:res.phone}); save();
         }
     }
     window.appendTag = (v) => { if(v) document.getElementById('sw-o').value += v + ' '; };
@@ -134,9 +129,8 @@
             const sD = hist[0] ? data.stylists.find(s=>s.name===hist[0].stylist) : null;
             area.innerHTML += `<div class="cust-card" style="border-left: 10px solid ${sD?sD.color:'#ddd'}">
                 <div class="card-edit-btn" onclick="editCustModal('${c.name}', '${c.phone}')"><i class="fas fa-pen"></i></div>
-                <div><strong style="font-size:1.4rem;">${c.name}</strong><br>📞 ${c.phone}<br><small>🎂 生日: ${c.bday||'未設'}</small></div>
-                <div class="hist-box">🕰 歷史：${hist.length?hist.map(h=>h.start.split('T')[0]).join(' / '):'無紀錄'}</div>
-                <div style="display:flex; gap:8px; margin-top:12px;"><a href="tel:${c.phone}" style="flex:1; background:#e1f5fe; color:#03a9f4; padding:12px; border-radius:12px; text-align:center; text-decoration:none; font-weight:900;">撥打</a><button onclick='openBookingModal(null, null, null, ${JSON.stringify(c)})' style="flex:1; background:var(--gold); color:#fff; border:none; padding:12px; border-radius:12px; font-weight:900;">預約</button></div>
+                <div><strong style="font-size:1.4rem;">${c.name}</strong><br>📞 ${c.phone}</div>
+                <div style="display:flex; gap:8px; margin-top:12px;"><a href="tel:${c.phone}" style="flex:1; background:#e1f5fe; color:#03a9f4; padding:12px; border-radius:12px; text-align:center; text-decoration:none; font-weight:900;">撥打</a><button onclick='openBookingModal(null, null, null, ${JSON.stringify(c)})' class="unified-btn" style="flex:1; padding:12px; border-radius:12px;">預約</button></div>
             </div>`;
         });
     }
@@ -162,33 +156,15 @@
     function importData() { Swal.fire({ title: '恢復', input: 'file' }).then(res => { if(res.value) { const reader = new FileReader(); reader.onload = e => { data = JSON.parse(e.target.result); save(); location.reload(); }; reader.readAsText(res.value); } }); }
     
     function renderSettings() { 
-        document.getElementById('weekly-off-btns').innerHTML = ['日','一','二','三','四','五','六'].map((l, i) => `<button style="padding:10px; border-radius:10px; border:1px solid #ddd; background:${data.weeklyOff.includes(i)?'red':'#fff'}; color:${data.weeklyOff.includes(i)?'#fff':'#000'}; font-weight:900; font-size:0.85rem;" onclick="toggleWeeklyOff(${i})">${l}</button>`).join('');
-        document.getElementById('off-list-render').innerHTML = data.offDays.map((d,i)=>`<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;"><span>📅 ${d.date} <i class="fas fa-square" style="color:${d.color}"></i></span><button onclick="data.offDays.splice(${i},1); save(); renderSettings();" style="color:red; border:none; background:none; font-weight:900;">移除</button></div>`).join(''); 
-        document.getElementById('stylist-manage-render').innerHTML = data.stylists.map((it, i) => `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee;"><span style="font-weight:900;">${it.name}</span><div class="color-bar-container" style="background:${it.color};" onclick="document.getElementById('s-c-${i}').click()"><input id="s-c-${i}" type="color" class="color-bar-input" value="${it.color}" oninput="window.updateSColor(${i}, this.value)"></div><button onclick="data.stylists.splice(${it.name==='Tony'?100:i},1); save(); renderSettings();" style="color:red; border:none; background:none;">移除</button></div>`).join(''); 
+        document.getElementById('weekly-off-btns').innerHTML = ['日','一','二','三','四','五','六'].map((l, i) => `<button class="unified-btn" style="padding:10px; flex:1; background:${data.weeklyOff.includes(i)?'red':'var(--grey-btn)'} !important;" onclick="toggleWeeklyOff(${i})">${l}</button>`).join('');
+        document.getElementById('off-list-render').innerHTML = data.offDays.map((d,i)=>`<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span>📅 ${d.date} <i class="fas fa-square" style="color:${d.color}"></i></span><button onclick="data.offDays.splice(${i},1); save(); renderSettings();" style="color:red; border:none; background:none;">移除</button></div>`).join(''); 
+        document.getElementById('stylist-manage-render').innerHTML = data.stylists.map((it, i) => `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee;"><span style="font-weight:900;">${it.name}</span><div class="color-bar-container" style="background:${it.color};" onclick="document.getElementById('s-c-${i}').click()"><input id="s-c-${i}" type="color" class="color-bar-input" value="${it.color}" oninput="data.stylists[${i}].color=this.value; save(); renderSettings(); renderCustomers();"></div></div>`).join(''); 
         document.getElementById('tag-manage-render').innerHTML = data.services.map((it, i) => `<div style="background:#fff; border:1px solid #eee; padding:10px 20px; border-radius:20px; font-weight:900; font-size:0.85rem;"><span>${it.name}</span><i class="fas fa-times" style="color:red; margin-left:10px;" onclick="data.services.splice(i,1); save(); renderSettings();"></i></div>`).join(''); 
     }
-    window.updateSColor = (i, v) => { data.stylists[i].color = v; save(); renderSettings(); renderCustomers(); };
-    function updateStylistFilter() { 
-        const s = document.getElementById('stylist-filter'); if(s) s.innerHTML = '<option value="all">設計師</option>' + data.stylists.map(x=>`<option value="${x.name}">${x.name}</option>`).join(''); 
-    }
-    async function openMetaModal(type) { if(type==='services'){ const { value: res } = await Swal.fire({ title: '新增標籤', input: 'text' }); if(res) { data.services.push({name:res}); save(); renderSettings(); } return; } const { value: res } = await Swal.fire({ title: '新增人員', html: `<input id="m-n" class="swal-input-round" placeholder="名稱"><div class="color-bar-container" id="new-bar" style="background:#D4AF37;" onclick="document.getElementById('m-c').click()"><input type="color" id="m-c" class="color-bar-input" value="#D4AF37" oninput="document.getElementById('new-bar').style.backgroundColor=this.value"></div>`, preConfirm: () => ({ name: document.getElementById('m-n').value, color: document.getElementById('m-c').value }) }); if(res && res.name) { data[type].push(res); save(); updateStylistFilter(); renderSettings(); } }
     function applyGlobalFilter() { calendar.refetchEvents(); renderCustomers(); }
     window.searchC = (val) => { const res = document.getElementById('search-results'); if(!val) { res.style.display='none'; return; } const m = data.customers.filter(c => c.name.includes(val)).slice(0, 5); if(m.length) { res.innerHTML = m.map(c=>`<div class="search-item" style="padding:15px; border-bottom:1px solid #eee; font-weight:900;" onclick="window.selectC('${c.name}', '${c.phone||''}')">${c.name}</div>`).join(''); res.style.display='block'; } else res.style.display='none'; };
     window.selectC = (n, p) => { document.getElementById('sw-n').value=n; if(p) document.getElementById('sw-p').value=p; document.getElementById('search-results').style.display='none'; };
-
-    /* 物理翻頁手勢：鎖定日曆，不觸發功能跳轉 */
-    function initSwipe() {
-        let sX = 0; const el = document.getElementById('calendar-container');
-        el.addEventListener('touchstart', e => sX = e.touches[0].clientX, {passive:true});
-        el.addEventListener('touchend', e => {
-            let diff = e.changedTouches[0].clientX - sX;
-            if(Math.abs(diff) > 80) {
-                const harness = document.querySelector('.fc-view-harness');
-                harness.style.opacity = '0.1';
-                setTimeout(() => { if(diff > 0) calendar.prev(); else calendar.next(); harness.style.opacity = '1'; }, 150);
-            }
-        }, {passive:true});
-    }
+    function initSwipe() { let sX = 0; const el = document.getElementById('calendar-container'); el.addEventListener('touchstart', e => sX = e.touches[0].clientX, {passive:true}); el.addEventListener('touchend', e => { let diff = e.changedTouches[0].clientX - sX; if(Math.abs(diff) > 80) { if(diff > 0) calendar.prev(); else calendar.next(); } }, {passive:true}); }
 </script>
 </body>
 </html>
