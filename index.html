@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon V150 骨架重整</title>
+    <title>專屬空間 Salon V151 月份淨化版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -18,38 +18,34 @@
         .app-title { font-size: 1.5rem; font-weight: 900; background: linear-gradient(120deg, #2c3e50 20%, var(--gold) 40%, #2c3e50 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 5s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        /* 頂部切換滑軌 */
-        #top-view-switcher { display: flex; background: #eee; border-radius: 12px; margin: 10px auto; width: 92%; padding: 4px; border: 2px solid var(--gold); position: relative; z-index: 2000; }
+        /* 頂部切換 */
+        #top-view-switcher { display: flex; background: #f0f0f0; border-radius: 12px; margin: 10px auto; width: 92%; padding: 4px; border: 2px solid var(--gold); position: relative; z-index: 2000; }
         .view-btn { flex: 1; border: none; background: transparent; padding: 10px; font-weight: 900; color: #555; cursor: pointer; z-index: 5; font-size: 0.9rem; }
         .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: 0.3s; z-index: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 分頁容器 */
         .page-container { width: 100%; position: relative; }
         .page { display: none; width: 100%; padding: 10px 15px; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .page.active { display: block; }
 
-        /* 日曆呼吸邊框 */
-        #calendar-container { background: #fff; border-radius: 20px; padding: 5px; border: 2px solid var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.1); }
+        /* 日曆呼吸邊框與淨化設定 */
+        #calendar-container { background: #fff; border-radius: 20px; padding: 5px; border: 2.5px solid var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.1); }
+        
+        /* 物理級：隱藏非本月格子的邊框 */
+        .fc-day-other { visibility: hidden !important; border: none !important; }
+        .fc-daygrid-day-top { font-weight: 900; font-size: 0.9rem; color: var(--primary); }
 
         /* 導覽列 */
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid var(--gold); z-index: 4000; }
         .nav-bar { display: flex; height: 85px; align-items: center; }
         .nav-item { flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #7f8c8d; font-weight: 900; gap: 4px; font-size: 0.85rem; }
         .nav-item.active { color: var(--gold); background: #fcfcfc; }
-        
-        /* 懸浮按鈕 */
-        .fab { position: fixed; bottom: 100px; right: 20px; width: 75px; height: 75px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 3px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-
-        /* 骨架卡片樣式 */
-        .skeleton-card { background: #fff; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1.5px solid var(--gold); }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="app-title">專屬空間</div>
-    <button onclick="calendar.today()" style="background:#f0f0f0; border:1.5px solid var(--gold); border-radius:10px; padding:8px 15px; font-weight:900;">今天</button>
+    <button onclick="calendar.today()" style="background:#fff; border:1.5px solid var(--gold); border-radius:10px; padding:8px 18px; font-weight:900; color:var(--primary);">今天</button>
 </div>
 
 <div id="top-view-switcher">
@@ -65,29 +61,9 @@
             <div id='calendar'></div>
         </div>
     </div>
-
-    <div class="page" id="page-1">
-        <div style="display:flex; gap:10px; padding-bottom:15px;">
-            <input type="text" placeholder="🔍 搜尋顧客..." style="flex:1; padding:15px; border-radius:15px; border:1px solid #ddd;">
-            <button style="padding:10px 20px; background:#fff; border:1.5px solid var(--gold); border-radius:15px; font-weight:900;">新增</button>
-        </div>
-        <div id="customer-list-render">
-            <div class="skeleton-card">顧客資料準備中...</div>
-        </div>
-    </div>
-
-    <div class="page" id="page-2">
-        <div class="skeleton-card"><h4>⏰ 營業時間</h4><p>設定功能重整中...</p></div>
-        <div class="skeleton-card"><h4>📅 排休設定</h4><p>設定功能重整中...</p></div>
-        <div class="skeleton-card"><h4>✂️ 人員管理</h4><p>設定功能重整中...</p></div>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button style="flex:1; padding:20px; background:#f0f0f0; border:1.5px solid var(--gold); border-radius:15px; font-weight:900;">備份</button>
-            <button style="flex:1; padding:20px; background:#f0f0f0; border:1.5px solid var(--gold); border-radius:15px; font-weight:900;">恢復</button>
-        </div>
-    </div>
+    <div class="page" id="page-1"><div style="text-align:center; padding:50px;">客資功能準備中...</div></div>
+    <div class="page" id="page-2"><div style="text-align:center; padding:50px;">設定功能準備中...</div></div>
 </div>
-
-<button class="fab" onclick="alert('準備加入預約功能')"><i class="fas fa-plus" style="font-size:2rem;"></i></button>
 
 <div class="nav-container">
     <div class="nav-bar">
@@ -106,8 +82,11 @@
             headerToolbar: false,
             locale: 'zh-tw',
             height: 'auto',
+            showNonCurrentDates: false, // 物理級修復：不顯示非本月日期
+            fixedWeekCount: false,      // 自動調整月份高度，不留多餘空白格
             dateClick: function(info) {
-                alert('點擊了日期：' + info.dateStr + '，準備加入自動跳轉');
+                // 預留跳轉功能
+                console.log('點擊日期：' + info.dateStr);
             }
         });
         calendar.render();
