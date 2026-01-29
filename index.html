@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V166</title>
+    <title>專屬空間 Salon Elite V167</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -13,7 +13,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; min-height: 100vh; color: var(--primary); padding-bottom: 110px; }
         
-        /* 標題與視角切換器 */
         .header { padding: 30px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; background: #fff; z-index: 3000; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
         .app-title { font-size: 1.8rem; font-weight: 900; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
@@ -26,22 +25,27 @@
         .page.active { display: block; animation: appleFade 0.4s ease; }
         @keyframes appleFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 月份純數字設定 */
+        /* 月份純數字 */
         .fc-daygrid-day-number { font-size: 0.95rem !important; color: #000 !important; font-weight: 300 !important; padding: 10px !important; text-decoration: none !important; }
-        
-        /* 備忘錄整點格柵：移除細線 */
-        .fc-timegrid-slot-minor { border-top-style: none !important; } /* 隱藏 30 分鐘線 */
-        .fc-timegrid-slot { height: 60px !important; } /* 增加整點格子高度，使其像筆記本 */
+        /* 備忘錄格柵 */
+        .fc-timegrid-slot-minor { border-top-style: none !important; }
+        .fc-timegrid-slot { height: 65px !important; }
 
-        /* 物理選色圓點 */
+        /* 排休多選視窗 */
+        .off-select-box { background: #fff; border: 1px solid var(--gold); border-radius: 25px; padding: 15px; margin-top: 10px; }
+        .fc-day-selected { background: rgba(212, 175, 55, 0.2) !important; border: 2px solid var(--gold) !important; border-radius: 8px !important; }
+
         .picker-circle { width: 42px; height: 42px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; overflow: hidden; position: relative; display: inline-block; vertical-align: middle; }
         .hidden-input { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; border: none; cursor: pointer; }
+        
+        .apple-btn { background: #fff; border: 1.5px solid var(--gold); border-radius: 20px; padding: 8px 25px; font-weight: 900; color: #000; cursor: pointer; transition: 0.2s; }
+        .apple-btn:active { transform: scale(0.95); opacity: 0.7; }
 
-        .apple-btn { background: #fff; border: 1.5px solid var(--gold); border-radius: 20px; padding: 10px 25px; font-weight: 900; color: #000; cursor: pointer; }
-
-        /* 導航欄 */
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; }
         .fab { position: fixed; bottom: 100px; right: 25px; width: 65px; height: 65px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+
+        .fc-bg-event { opacity: 1 !important; z-index: 1 !important; display: flex !important; align-items: center; justify-content: center; }
+        .fc-bg-event::after { content: "店休"; color: rgba(255,255,255,0.85); font-size: 0.75rem; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -63,30 +67,27 @@
     <div class="page" id="page-1"><div id="client-list-area"></div></div>
     <div class="page" id="page-2">
         <div style="padding:20px 0; border-bottom:1px solid #eee;">
-            <div style="font-size:0.75rem; color:var(--sub); margin-bottom:10px;">⏰ 營業時段自訂</div>
+            <div style="font-size:0.8rem; font-weight:700; color:var(--sub); margin-bottom:15px; letter-spacing:1px;">⏰ 營業時段</div>
             <div style="display:flex; gap:10px; align-items:center;">
                 <input type="time" id="openTime" style="flex:1; border:none; border-bottom:1.5px solid #eee; padding:10px; font-size:1.1rem; font-weight:900;" onchange="updateBusinessHours()">
                 <span style="color:#ccc;">至</span>
                 <input type="time" id="closeTime" style="flex:1; border:none; border-bottom:1.5px solid #eee; padding:10px; font-size:1.1rem; font-weight:900;" onchange="updateBusinessHours()">
             </div>
         </div>
-        <div style="padding:20px 0; border-bottom:1px solid #eee;">
-            <div style="font-size:0.75rem; color:var(--sub); margin-bottom:10px;">📅 固定週休</div>
-            <div id="weekly-off-area" style="display:flex; gap:6px;"></div>
-        </div>
-        <div style="padding:20px 0; border-bottom:1px solid #eee;">
-            <div style="font-size:0.75rem; color:var(--sub); margin-bottom:10px;">📅 臨時排休</div>
-            <div style="display:flex; gap:12px; align-items:center;">
-                <input type="date" id="tempOffDate" style="flex:1; border:none; border-bottom:1.5px solid #eee; padding:10px; font-size:1.1rem; font-weight:900;">
-                <label class="picker-circle" id="tempOffDisplay" style="background:#34495e;">
-                    <input type="color" id="tempOffColor" class="hidden-input" value="#34495e" oninput="document.getElementById('tempOffDisplay').style.background=this.value">
+        <div style="padding:25px 0; border-bottom:1px solid #eee;">
+            <div style="font-size:0.8rem; font-weight:700; color:var(--sub); margin-bottom:5px;">📅 多選排休系統</div>
+            <div style="font-size:0.7rem; color:#ccc; margin-bottom:15px;">點擊日期多選，再選顏色點確定</div>
+            <div id="mini-calendar" style="font-size:0.8rem;"></div>
+            <div style="display:flex; gap:12px; align-items:center; margin-top:15px;">
+                <label class="picker-circle" id="batchOffDisplay" style="background:#34495e;">
+                    <input type="color" id="batchOffColor" class="hidden-input" value="#34495e" oninput="document.getElementById('batchOffDisplay').style.background=this.value">
                 </label>
-                <button class="apple-btn" onclick="addTempOff()">確定</button>
+                <button class="apple-btn" style="flex:1;" onclick="applyBatchOff()">確定排休</button>
             </div>
-            <div id="temp-off-list" style="margin-top:20px;"></div>
+            <div id="off-list-render" style="margin-top:15px;"></div>
         </div>
-        <div style="padding:20px 0;">
-            <button class="apple-btn" style="width:100%; margin-bottom:20px;" onclick="addStylist()">+ 新增團隊成員</button>
+        <div style="padding:25px 0;">
+            <button class="apple-btn" style="width:100%; margin-bottom:20px;" onclick="addStylist()">+ 新增成員</button>
             <div id="stylist-list-area"></div>
         </div>
     </div>
@@ -103,10 +104,11 @@
 </div>
 
 <script>
-    let calendar;
-    let store = JSON.parse(localStorage.getItem('SALON_V166_FINAL')) || {
+    let calendar, miniCalendar;
+    let selectedDates = [];
+    let store = JSON.parse(localStorage.getItem('SALON_V167_EFFICIENT')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
-        appointments: [], clients: [], weeklyOff: [], tempOff: [],
+        appointments: [], clients: [], offDays: [],
         openTime: "11:00", closeTime: "21:00"
     };
 
@@ -114,27 +116,53 @@
         document.getElementById('openTime').value = store.openTime;
         document.getElementById('closeTime').value = store.closeTime;
         
-        const calendarEl = document.getElementById('calendar');
-        calendar = new FullCalendar.Calendar(calendarEl, {
+        calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto',
             allDaySlot: false, showNonCurrentDates: false, fixedWeekCount: false,
             slotMinTime: store.openTime + ":00", slotMaxTime: store.closeTime + ":00",
-            slotDuration: '01:00:00', // 物理級：一小時顯示為一格
-            dayCellContent: (e) => e.dayNumberText.replace('日', ''), // 月份移除日字
+            slotDuration: '01:00:00',
+            dayCellContent: (e) => e.dayNumberText.replace('日', ''),
             events: (info, success) => {
                 let evs = store.appointments.map(a => ({ title: `${a.name}`, start: a.time, extendedProps: {stylistId: a.stylistId} }));
-                store.tempOff.forEach(off => evs.push({ start: off.date, display: 'background', backgroundColor: off.color }));
-                let d = new Date(info.start);
-                while(d < info.end) {
-                    if(store.weeklyOff.includes(d.getDay())) evs.push({ start: d.toLocaleDateString('sv'), display: 'background', backgroundColor: '#f2f2f2' });
-                    d.setDate(d.getDate() + 1);
-                }
+                store.offDays.forEach(off => evs.push({ start: off.date, display: 'background', backgroundColor: off.color }));
                 success(evs);
+            },
+            eventDidMount: (info) => {
+                if(info.event.display !== 'background') {
+                    const s = store.stylists.find(x => x.id == info.event.extendedProps.stylistId);
+                    if(s) info.el.style.setProperty('--event-color', s.color);
+                }
             }
         });
         calendar.render();
+        initMiniCalendar();
         renderAll();
     });
+
+    function initMiniCalendar() {
+        miniCalendar = new FullCalendar.Calendar(document.getElementById('mini-calendar'), {
+            initialView: 'dayGridMonth', headerToolbar: { left: 'prev', center: 'title', right: 'next' },
+            locale: 'zh-tw', height: 'auto', contentHeight: 280,
+            dayCellContent: (e) => e.dayNumberText.replace('日', ''),
+            dateClick: (info) => {
+                const idx = selectedDates.indexOf(info.dateStr);
+                if(idx > -1) { selectedDates.splice(idx, 1); info.dayEl.classList.remove('fc-day-selected'); }
+                else { selectedDates.push(info.dateStr); info.dayEl.classList.add('fc-day-selected'); }
+            }
+        });
+        miniCalendar.render();
+    }
+
+    function applyBatchOff() {
+        const color = document.getElementById('batchOffColor').value;
+        if(selectedDates.length === 0) return Swal.fire('請先在小日曆點選日期');
+        selectedDates.forEach(date => {
+            if(!store.offDays.some(o => o.date === date)) store.offDays.push({date, color});
+        });
+        selectedDates = [];
+        document.querySelectorAll('.fc-day-selected').forEach(el => el.classList.remove('fc-day-selected'));
+        renderAll();
+    }
 
     function updateBusinessHours() {
         store.openTime = document.getElementById('openTime').value;
@@ -145,29 +173,22 @@
     }
 
     function renderAll() {
-        localStorage.setItem('SALON_V166_FINAL', JSON.stringify(store));
-        // ... (其餘渲染邏輯維持 V165 穩定代碼)
-        const days = ['日','一','二','三','四','五','六'];
-        document.getElementById('weekly-off-area').innerHTML = days.map((d, i) => `
-            <button class="off-btn ${store.weeklyOff.includes(i)?'active':''}" onclick="toggleWeekly(${i})">${d}</button>
+        localStorage.setItem('SALON_V167_EFFICIENT', JSON.stringify(store));
+        document.getElementById('off-list-render').innerHTML = store.offDays.map((off, i) => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f9f9f9; font-size:0.9rem;">
+                <span style="font-weight:900;">📅 ${off.date} <i class="fas fa-circle" style="color:${off.color}; font-size:0.6rem;"></i></span>
+                <button onclick="removeOff(${i})" style="border:none; background:none; color:#ff3b30; font-weight:900;">移除</button>
+            </div>
         `).join('');
-        document.getElementById('temp-off-list').innerHTML = store.tempOff.map((off, i) => `<div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid #f9f9f9;"><span>📅 ${off.date} <i class="fas fa-circle" style="color:${off.color}; font-size:0.7rem;"></i></span><button onclick="removeOff(${i})" style="border:none; background:none; color:#ff3b30; font-weight:900;">移除</button></div>`).join('');
         document.getElementById('stylist-list-area').innerHTML = store.stylists.map(s => `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #f9f9f9;"><span style="font-weight:900; font-size:1.1rem;">${s.name}</span><label class="picker-circle" style="background:${s.color}"><input type="color" class="hidden-input" value="${s.color}" oninput="updateStylistColor(${s.id}, this.value)"></label></div>
         `).join('');
         if(calendar) calendar.refetchEvents();
     }
 
-    function toggleWeekly(d) { store.weeklyOff.includes(d) ? store.weeklyOff = store.weeklyOff.filter(x => x !== d) : store.weeklyOff.push(d); renderAll(); }
-    function addTempOff() { const date = document.getElementById('tempOffDate').value; const color = document.getElementById('tempOffColor').value; if(date) { store.tempOff.push({date, color}); renderAll(); } }
-    function removeOff(i) { store.tempOff.splice(i, 1); renderAll(); }
+    function removeOff(i) { store.offDays.splice(i, 1); renderAll(); }
     function updateStylistColor(id, color) { const s = store.stylists.find(x => x.id == id); if(s) s.color = color; renderAll(); }
-    
-    function slideTo(idx) {
-        document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx));
-        document.querySelectorAll('.nav-item').forEach((btn, i) => btn.classList.toggle('active', i === idx));
-        if(idx === 0) setTimeout(()=>calendar.render(), 50);
-    }
+    function slideTo(idx) { document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx)); if(idx === 0) setTimeout(()=>calendar.render(), 50); if(idx === 2) setTimeout(()=>miniCalendar.render(), 50); }
     function changeView(v, i) { calendar.changeView(v); document.getElementById('viewSlider').style.transform = `translateX(${i * 100}%)`; }
 </script>
 </body>
