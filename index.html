@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V161</title>
+    <title>專屬空間 Salon Elite V162</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -13,62 +13,58 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; min-height: 100vh; color: var(--primary); padding-bottom: 110px; }
         
-        /* 標題與視覺切換 */
-        .header { padding: 25px 20px 10px 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 3000; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
-        .app-title { font-size: 1.7rem; font-weight: 900; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
+        /* 101 經典標題與呼吸感 */
+        .header { padding: 30px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; background: #fff; z-index: 3000; position: sticky; top: 0; }
+        .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        #top-view-switcher { display: flex; background: #fff; margin: 10px auto; width: 92%; border-bottom: 1px solid var(--border); position: relative; z-index: 2000; }
-        .view-btn { flex: 1; border: none; background: transparent; padding: 15px; font-weight: 300; color: var(--sub); cursor: pointer; font-size: 0.95rem; }
-        .view-slider { position: absolute; bottom: -1px; left: 0; height: 1.5px; width: 33.33%; background: var(--gold); transition: 0.4s; }
+        #top-view-switcher { display: flex; background: #fff; margin: 15px auto; width: 92%; border-bottom: 1px solid #f2f2f2; position: relative; z-index: 2000; }
+        .view-btn { flex: 1; border: none; background: transparent; padding: 15px; font-weight: 300; color: var(--sub); cursor: pointer; font-size: 0.9rem; letter-spacing: 2px; }
+        .view-slider { position: absolute; bottom: -1px; left: 0; height: 1.5px; width: 33.33%; background: var(--gold); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
         .page-container { width: 100%; position: relative; }
         .page { display: none; width: 100%; padding: 5px 20px; }
-        .page.active { display: block; animation: appleFade 0.4s ease; }
-        @keyframes appleFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .page.active { display: block; animation: appleFade 0.5s ease; }
+        @keyframes appleFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 人員設定：物理圓點 */
-        .stylist-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid #f9f9f9; }
-        .picker-label { position: relative; width: 42px; height: 42px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.15); cursor: pointer; overflow: hidden; }
-        .native-color-input { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; border: none; padding: 0; cursor: pointer; }
-
-        /* 賈伯斯式輸入框：純黑數字 */
-        .apple-input { width: 100%; border: 1px solid #ddd; padding: 12px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; color: #000; margin-bottom: 10px; background: #fff; }
-        .apple-label { font-size: 0.8rem; color: var(--sub); margin-bottom: 4px; display: block; padding-left: 5px; }
-
-        /* 日曆與事件 */
-        .fc-event { background: #fff !important; border-left: 8px solid var(--event-color) !important; border-radius: 5px !important; color: #000 !important; padding: 2px 5px !important; box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important; font-weight: 700 !important; }
-        .fc-day-today { background: rgba(212, 175, 55, 0.03) !important; }
-
-        /* 導航欄 */
-        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; }
-        .nav-bar { display: flex; height: 100%; align-items: center; justify-content: space-around; }
-        .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: var(--sub); font-size: 0.8rem; }
-        .nav-item.active { color: var(--gold); font-weight: 700; }
+        /* 預約視窗：賈伯斯式的流動線條 */
+        .apple-modal { border-radius: 35px !important; width: 95% !important; background: #fff !important; padding: 10px 20px !important; border: 1px solid var(--gold) !important; box-shadow: 0 20px 80px rgba(0,0,0,0.1) !important; }
+        .zen-input { width: 100%; border: none; border-bottom: 1px solid #eee; padding: 15px 5px; font-size: 1.2rem; font-weight: 300; color: #000; margin-bottom: 15px; background: transparent; transition: 0.3s; letter-spacing: 1px; }
+        .zen-input:focus { border-bottom: 1px solid var(--gold); }
+        .zen-label { font-size: 0.75rem; color: var(--sub); letter-spacing: 1.5px; margin-bottom: -5px; display: block; }
         
-        .fab { position: fixed; bottom: 105px; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        /* 避開按鈕衝突：修正 FAB 位置 */
+        .fab { position: fixed; bottom: 100px; right: 25px; width: 65px; height: 65px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--gold); box-shadow: 0 8px 30px rgba(0,0,0,0.05); transition: 0.3s; }
+        .fab:active { transform: scale(0.9); }
+
+        /* 日曆事件質感 */
+        .fc-event { background: #fff !important; border: none !important; border-left: 4px solid var(--event-color) !important; color: #000 !important; font-weight: 400 !important; font-size: 0.85rem !important; box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important; margin: 1px 2px !important; border-radius: 4px !important; }
+        .fc-day-other { visibility: hidden !important; }
+
+        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.98); border-top: 1px solid var(--border); z-index: 4000; height: 85px; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-bar { display: flex; height: 100%; align-items: center; justify-content: space-around; }
+        .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: var(--sub); font-weight: 300; gap: 5px; font-size: 0.8rem; }
+        .nav-item.active { color: var(--gold); font-weight: 500; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="app-title">專屬空間</div>
-    <button style="background:#fff; border:1px solid var(--gold); border-radius:15px; padding:5px 12px; font-weight:700;" onclick="calendar.today()">今日</button>
+    <button style="background:none; border:1px solid var(--gold); border-radius:20px; padding:6px 16px; font-size:0.8rem; color:var(--gold); font-weight:500;" onclick="calendar.today()">TODAY</button>
 </div>
 
 <div id="top-view-switcher">
     <div id="viewSlider" class="view-slider"></div>
-    <button class="view-btn" onclick="changeView('dayGridMonth', 0)">月份</button>
-    <button class="view-btn" onclick="changeView('timeGridWeek', 1)">週預約</button>
-    <button class="view-btn" onclick="changeView('timeGridDay', 2)">日行程</button>
+    <button class="view-btn" onclick="changeView('dayGridMonth', 0)" style="font-weight:700; color:#000;">月份</button>
+    <button class="view-btn" onclick="changeView('timeGridWeek', 1)">週</button>
+    <button class="view-btn" onclick="changeView('timeGridDay', 2)">日</button>
 </div>
 
 <div class="page-container">
     <div class="page active" id="page-0"><div id='calendar'></div></div>
     <div class="page" id="page-1"><div id="client-list-area"></div></div>
     <div class="page" id="page-2">
-        <div style="font-size:1rem; color:var(--sub); margin-bottom:15px; border-bottom:1px solid #eee;">團隊管理</div>
-        <button onclick="addStylist()" style="width:100%; background:#fff; border:1.5px solid var(--gold); border-radius:20px; padding:12px; font-weight:700; margin-bottom:20px;">+ 新增成員</button>
         <div id="stylist-list-area"></div>
     </div>
 </div>
@@ -77,15 +73,15 @@
 
 <div class="nav-container">
     <div class="nav-bar">
-        <button class="nav-item active" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button>
-        <button class="nav-item" onclick="slideTo(1)"><i class="fas fa-address-book"></i><span>客資</span></button>
-        <button class="nav-item" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button>
+        <button class="nav-item active" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>SCHEDULE</span></button>
+        <button class="nav-item" onclick="slideTo(1)"><i class="fas fa-user-circle"></i><span>CLIENTS</span></button>
+        <button class="nav-item" onclick="slideTo(2)"><i class="fas fa-sliders-h"></i><span>SETTINGS</span></button>
     </div>
 </div>
 
 <script>
     let calendar;
-    let store = JSON.parse(localStorage.getItem('SALON_V161_PRO')) || {
+    let store = JSON.parse(localStorage.getItem('SALON_ZEN_PRO')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
         appointments: [],
         clients: []
@@ -94,110 +90,81 @@
     document.addEventListener('DOMContentLoaded', () => {
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto',
+            allDaySlot: false, showNonCurrentDates: false, fixedWeekCount: false,
             events: (info, success) => {
                 const evs = store.appointments.map(a => ({
-                    title: `${a.name}-${a.service}`, start: a.time, extendedProps: {stylistId: a.stylistId}
+                    title: `${a.name} | ${a.service}`, start: a.time, extendedProps: {stylistId: a.stylistId}
                 }));
                 success(evs);
             },
             eventDidMount: (info) => {
                 const s = store.stylists.find(x => x.id == info.event.extendedProps.stylistId);
                 if(s) info.el.style.setProperty('--event-color', s.color);
-            }
+            },
+            dateClick: (info) => { calendar.changeView('timeGridDay', info.dateStr); moveSlider(2); }
         });
         calendar.render();
-        renderStylists();
+        renderAll();
     });
 
-    // 核心預約視窗
     async function openBookingModal() {
         const stylistOptions = store.stylists.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
         
-        const { value: formValues } = await Swal.fire({
-            title: '新增預約',
+        const { value: res } = await Swal.fire({
+            title: 'NEW BOOKING',
+            customClass: { popup: 'apple-modal' },
+            confirmButtonText: '確定預約',
+            confirmButtonColor: '#D4AF37',
             html: `
-                <div style="text-align:left;">
-                    <span class="apple-label">顧客姓名</span>
-                    <input id="swal-name" class="apple-input" placeholder="請輸入姓名">
-                    <span class="apple-label">聯絡電話</span>
-                    <input id="swal-phone" class="apple-input" type="tel" placeholder="09xx-xxx-xxx">
-                    <span class="apple-label">選擇設計師</span>
-                    <select id="swal-stylist" class="apple-input">${stylistOptions}</select>
-                    <span class="apple-label">預約日期與時間</span>
-                    <input id="swal-time" class="apple-input" type="datetime-local">
-                    <span class="apple-label">服務項目</span>
-                    <select id="swal-service" class="apple-input">
+                <div style="text-align:left; padding-top:10px;">
+                    <span class="zen-label">顧客姓名</span>
+                    <input id="z-name" class="zen-input" placeholder="Name">
+                    <span class="zen-label">聯絡電話</span>
+                    <input id="z-phone" class="zen-input" type="tel" placeholder="Phone">
+                    <span class="zen-label">設計師</span>
+                    <select id="z-stylist" class="zen-input" style="height:55px;">${stylistOptions}</select>
+                    <span class="zen-label">預約時間</span>
+                    <input id="z-time" class="zen-input" type="datetime-local">
+                    <span class="zen-label">服務項目</span>
+                    <select id="z-service" class="zen-input" style="height:55px;">
                         <option>剪髮</option><option>染髮</option><option>燙髮</option><option>護髮</option>
                     </select>
                 </div>
             `,
-            focusConfirm: false,
-            confirmButtonText: '確定預約',
-            confirmButtonColor: '#D4AF37',
-            preConfirm: () => {
-                return {
-                    name: document.getElementById('swal-name').value,
-                    phone: document.getElementById('swal-phone').value,
-                    stylistId: document.getElementById('swal-stylist').value,
-                    time: document.getElementById('swal-time').value,
-                    service: document.getElementById('swal-service').value
-                }
-            }
+            preConfirm: () => ({
+                name: document.getElementById('z-name').value,
+                phone: document.getElementById('z-phone').value,
+                stylistId: document.getElementById('z-stylist').value,
+                time: document.getElementById('z-time').value,
+                service: document.getElementById('z-service').value
+            })
         });
 
-        if (formValues && formValues.name) {
-            store.appointments.push(formValues);
-            // 同步加入客資系統
-            if(!store.clients.find(c => c.phone === formValues.phone)) {
-                store.clients.push({name: formValues.name, phone: formValues.phone, stylistId: formValues.stylistId});
+        if (res && res.name) {
+            store.appointments.push(res);
+            if(!store.clients.find(c => c.phone === res.phone)) {
+                store.clients.push({name: res.name, phone: res.phone, stylistId: res.stylistId});
             }
             saveAndRefresh();
         }
     }
 
     function saveAndRefresh() {
-        localStorage.setItem('SALON_V161_PRO', JSON.stringify(store));
+        localStorage.setItem('SALON_ZEN_PRO', JSON.stringify(store));
         calendar.refetchEvents();
-        renderStylists();
         renderClients();
-    }
-
-    function renderStylists() {
-        const area = document.getElementById('stylist-list-area');
-        area.innerHTML = store.stylists.map((s) => `
-            <div class="stylist-item">
-                <span style="font-weight:700;">${s.name}</span>
-                <label class="picker-label" style="background:${s.color}">
-                    <input type="color" class="native-color-input" value="${s.color}" oninput="updateStylistColor(${s.id}, this.value)">
-                </label>
-            </div>
-        `).join('');
-    }
-
-    function updateStylistColor(id, color) {
-        const s = store.stylists.find(x => x.id == id);
-        if(s) s.color = color;
-        saveAndRefresh();
     }
 
     function renderClients() {
         const area = document.getElementById('client-list-area');
         area.innerHTML = store.clients.map(c => {
             const sc = store.stylists.find(s => s.id == c.stylistId)?.color || '#ddd';
-            return `<div style="padding:15px; border-bottom:1px solid #f2f2f2; border-left:5px solid ${sc}">
-                <div style="font-weight:700;">${c.name}</div>
-                <div style="font-size:0.8rem; color:#888;">${c.phone}</div>
+            return `<div style="padding:25px 0; border-bottom:1px solid #f2f2f2; position:relative;">
+                <div style="position:absolute; left:-20px; top:30%; height:40%; width:3px; background:${sc}; border-radius:0 5px 5px 0;"></div>
+                <div style="font-size:1.3rem; font-weight:700; color:#000;">${c.name}</div>
+                <div style="font-size:0.85rem; color:#86868b; font-weight:300; letter-spacing:1px;">📞 ${c.phone}</div>
             </div>`;
         }).join('');
-    }
-
-    function addStylist() {
-        Swal.fire({ title: '新增設計師', input: 'text', confirmButtonColor: '#D4AF37' }).then(res => {
-            if(res.value) {
-                store.stylists.push({id: Date.now(), name: res.value, color: '#D4AF37'});
-                saveAndRefresh();
-            }
-        });
     }
 
     function slideTo(idx) {
@@ -210,6 +177,8 @@
         calendar.changeView(view);
         document.getElementById('viewSlider').style.transform = `translateX(${idx * 100}%)`;
     }
+
+    function renderAll() { renderClients(); }
 </script>
 </body>
 </html>
