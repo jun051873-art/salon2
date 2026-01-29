@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V159</title>
+    <title>專屬空間 Salon Elite V160</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -26,29 +26,32 @@
         .page.active { display: block; animation: appleFade 0.4s ease; }
         @keyframes appleFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 客資卡片：邊條顏色連動核心 */
+        /* 客資卡片：邊條顏色物理連動 */
         .client-card { background: #fff; padding: 20px 0; border-bottom: 1px solid var(--border); position: relative; }
         .client-side-mark { position: absolute; left: -20px; top: 25%; height: 50%; width: 4px; border-radius: 0 5px 5px 0; transition: background 0.2s; }
         .client-name { font-size: 1.25rem; font-weight: 700; color: #000; }
         .client-info { font-size: 0.85rem; color: var(--sub); margin-top: 4px; }
 
-        /* 人員設定：選色物理核心 */
+        /* 核心修復：物理調色盤圓點 */
         .stylist-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid #f9f9f9; }
-        .color-dot { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; }
-        .color-dot:active { transform: scale(0.9); }
+        .picker-label { position: relative; width: 42px; height: 42px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.15); cursor: pointer; overflow: hidden; }
+        .native-color-input { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; border: none; padding: 0; cursor: pointer; }
 
-        .apple-btn { background: #fff; border: 1px solid var(--gold); border-radius: 20px; padding: 10px 20px; font-size: 0.85rem; font-weight: 700; color: var(--primary); cursor: pointer; }
+        .apple-btn { background: #fff; border: 1.5px solid var(--gold); border-radius: 20px; padding: 10px 20px; font-size: 0.85rem; font-weight: 700; color: var(--primary); cursor: pointer; }
 
-        /* 視窗：確保數字清晰 */
-        .glass-swal { border-radius: 30px !important; width: 95% !important; background: #fff !important; border: 2px solid var(--gold) !important; }
-        .swal-input-round, select.swal-input-round { border: 1px solid #ddd !important; background: #fdfdfd !important; padding: 10px !important; border-radius: 12px !important; font-size: 1.1rem !important; font-weight: 800 !important; color: #000 !important; width: 100%; margin-bottom: 8px; }
+        /* 視窗：確保數字純黑清晰 */
+        .glass-swal { border-radius: 30px !important; width: 95% !important; background: #fff !important; border: 2.5px solid var(--gold) !important; }
+        .swal-input-round, select.swal-input-round { 
+            border: 1px solid #ddd !important; background: #ffffff !important; padding: 10px !important; border-radius: 12px !important; font-size: 1.1rem !important; font-weight: 800 !important; color: #000000 !important; margin-bottom: 8px !important; width: 100%; 
+        }
+        select.swal-input-round option { color: #000000 !important; background: #ffffff !important; }
 
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; }
         .nav-bar { display: flex; height: 100%; align-items: center; justify-content: space-around; }
         .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: var(--sub); font-weight: 300; font-size: 0.8rem; }
         .nav-item.active { color: var(--gold); font-weight: 700; }
         
-        .fab { position: fixed; bottom: 105px; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .fab { position: fixed; bottom: 105px; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
 
         #calendar-container { background: #fff; border: none; }
         .fc-day-other { visibility: hidden !important; }
@@ -87,7 +90,7 @@
     </div>
 </div>
 
-<button class="fab" onclick="openBookingModal()"><i class="fas fa-plus"></i></button>
+<button class="fab" onclick="alert('色彩功能已解鎖，準備進入預約表單')"><i class="fas fa-plus"></i></button>
 
 <div class="nav-container">
     <div class="nav-bar">
@@ -99,9 +102,9 @@
 
 <script>
     let calendar;
-    let store = JSON.parse(localStorage.getItem('SALON_V159_PRO')) || {
-        stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
-        clients: [{name: '王小明', phone: '0912-345-678', stylistId: 1, last: '2026/01/20'}]
+    let store = JSON.parse(localStorage.getItem('SALON_V160_CORE')) || {
+        stylists: [{id: 101, name: 'Tonny', color: '#2c3e50'}],
+        clients: [{name: '王小明', phone: '0912-345-678', stylistId: 101}]
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -109,7 +112,7 @@
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto', allDaySlot: false, showNonCurrentDates: false, 
             events: (info, success) => {
-                let evs = [{title: '測試預約', start: new Date().toISOString().split('T')[0]+'T11:00:00', extendedProps: {stylistId: 1}}];
+                let evs = [{title: '示範預約', start: new Date().toISOString().split('T')[0]+'T11:00:00', extendedProps: {stylistId: 101}}];
                 success(evs);
             },
             eventDidMount: (info) => {
@@ -123,7 +126,7 @@
     });
 
     function renderAll() {
-        localStorage.setItem('SALON_V159_PRO', JSON.stringify(store));
+        localStorage.setItem('SALON_V160_CORE', JSON.stringify(store));
         renderStylists();
         renderClients();
         if(calendar) calendar.refetchEvents();
@@ -131,11 +134,12 @@
 
     function renderStylists() {
         const area = document.getElementById('stylist-list-area');
-        area.innerHTML = store.stylists.map((s, i) => `
+        area.innerHTML = store.stylists.map((s) => `
             <div class="stylist-item">
                 <span style="font-weight:700; font-size:1.1rem;">${s.name}</span>
-                <div class="color-dot" style="background:${s.color}" onclick="document.getElementById('c-input-${s.id}').click()"></div>
-                <input type="color" id="c-input-${s.id}" value="${s.color}" style="display:none;" oninput="updateStylistColor(${s.id}, this.value)">
+                <label class="picker-label" style="background:${s.color}">
+                    <input type="color" class="native-color-input" value="${s.color}" oninput="updateStylistColor(${s.id}, this.value)">
+                </label>
             </div>
         `).join('');
     }
@@ -143,7 +147,8 @@
     function updateStylistColor(id, color) {
         const s = store.stylists.find(x => x.id == id);
         if(s) s.color = color;
-        renderAll(); // 物理級強制重繪全系統
+        // 物理連動渲染：圓點、客資、預約表同步
+        renderAll(); 
     }
 
     function renderClients() {
@@ -155,14 +160,14 @@
             <div class="client-card">
                 <div class="client-side-mark" style="background:${sc}"></div>
                 <div class="client-name">${c.name}</div>
-                <div class="client-info">預約設計師：${s ? s.name : '未定'} | 📞 ${c.phone}</div>
+                <div class="client-info">設計師：${s ? s.name : '未定'} | 📞 ${c.phone}</div>
             </div>`;
         }).join('');
     }
 
     async function addStylist() {
         const { value: name } = await Swal.fire({
-            title: '新增成員', input: 'text', inputPlaceholder: '請輸入設計師姓名',
+            title: '新增成員', input: 'text', inputPlaceholder: '輸入姓名',
             confirmButtonText: '確定', confirmButtonColor: '#D4AF37'
         });
         if (name) {
@@ -187,8 +192,9 @@
     }
 
     function exportData() {
-        const blob = new Blob([JSON.stringify(store)], {type:'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `SALON_BACKUP.json`; a.click();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(store)], {type:'application/json'}));
+        a.download = `SALON_BACKUP.json`; a.click();
     }
 
     function importData() {
