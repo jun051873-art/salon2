@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V98</title>
+    <title>專屬空間 Salon Elite V99</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -19,7 +19,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* 特效層 */
         @keyframes goldBreath {
             0%, 100% { box-shadow: 0 0 5px rgba(212,175,55,0.2); border-color: rgba(212,175,55,0.4); }
             50% { box-shadow: 0 0 20px rgba(212,175,55,0.7); border-color: rgba(212,175,55,0.9); }
@@ -28,19 +27,30 @@
         .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.7); backdrop-filter: var(--glass); z-index: 2000; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .app-title { font-size: 1.6rem; font-weight: 900; background: linear-gradient(90deg, #2c3e50, var(--gold), #2c3e50); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* 核心修正：日曆預約塊視覺優化 (參考 image.png) */
+        /* --- 核心文字顯示修正：參考 image.png --- */
         .fc-event { 
             background: #fff !important; 
-            color: #333 !important; 
+            color: #2c3e50 !important; 
             border: none !important; 
             border-left: 8px solid var(--event-color, var(--gold)) !important; 
             border-radius: 12px !important; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
-            margin: 3px 0 !important;
+            margin: 2px 0 !important;
+            height: auto !important;
+            min-height: 25px !important;
         }
-        .fc-event-main { padding: 6px 10px !important; font-weight: 900 !important; }
+        .fc-event-main { 
+            padding: 4px 10px !important; 
+            font-weight: 900 !important; 
+            font-size: 0.85rem !important; 
+            overflow: visible !important; 
+            white-space: normal !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        /* 修復 FullCalendar 預設可能蓋住文字的樣式 */
+        .fc-v-event .fc-event-main-frame { flex-direction: row !important; }
 
-        /* 頂部月週日滑塊 */
         #top-view-switcher { display: flex; background: rgba(255, 255, 255, 0.5); border-radius: 20px; margin: 10px auto; width: 92%; max-width: 400px; padding: 4px; position: relative; }
         .view-btn { flex: 1; border: none; background: transparent; padding: 12px; font-weight: 900; color: #576574; cursor: pointer; z-index: 5; font-size: 0.95rem; }
         .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 15px; transition: 0.4s; z-index: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -58,7 +68,7 @@
         .swal-row { display: flex; align-items: center; background: #f5f5f5; border-radius: 25px; margin-bottom: 12px; border: 1px solid #eee; }
         .swal-input-round { border: none !important; background: transparent !important; flex: 1; padding: 15px !important; outline: none; font-size: 1.1rem; font-weight: 700; }
         
-        .tag-select { width: 100%; padding: 15px; border-radius: 25px; border: 1.5px solid var(--gold); background: #fff; font-weight: 900; -webkit-appearance: none; margin-bottom: 12px; outline: none; }
+        .tag-select { width: 100%; padding: 15px; border-radius: 25px; border: 1px solid var(--gold); background: #fff; font-weight: 900; -webkit-appearance: none; margin-bottom: 12px; outline: none; }
 
         .nav-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 3000; }
         .nav-bar { display: flex; background: rgba(255, 255, 255, 0.85); backdrop-filter: var(--glass); border-radius: 45px; height: 85px; align-items: center; border: 2px solid var(--gold); animation: goldBreath 3s infinite; }
@@ -130,7 +140,7 @@
             <div id="off-list-render" style="margin-top:10px;"></div>
         </div>
         <div class="manage-section">
-            <div style="display:flex; justify-content:space-between;"><h4>✂️ 設計師代表色</h4><button onclick="openMetaModal('stylists')" style="background:var(--morandi); color:white; border:none; padding:8px 15px; border-radius:12px; font-weight:900;">+ 新增</button></div>
+            <div style="display:flex; justify-content:space-between;"><h4>✂️ 設計師管理</h4><button onclick="openMetaModal('stylists')" style="background:var(--morandi); color:white; border:none; padding:8px 15px; border-radius:12px; font-weight:900;">+ 新增</button></div>
             <div id="stylist-manage-render"></div>
         </div>
         <div class="manage-section">
@@ -156,7 +166,7 @@
 
 <script>
     let calendar;
-    const KEY = 'SALON_V98_FINAL';
+    const KEY = 'SALON_V99_FINAL_STABLE';
     let data = JSON.parse(localStorage.getItem(KEY)) || {
         bookings: [], customers: [], stylists: [{name:'Tony', color:'#2c3e50'}], services: [{name:'洗髮'}, {name:'剪髮'}], offDays: [], weeklyOff: [], startTime:'11:00', endTime:'21:00'
     };
@@ -214,9 +224,9 @@
         const q = document.getElementById('custSearch').value.toLowerCase();
         const f = document.getElementById('stylist-filter').value;
         const area = document.getElementById('customer-list-render'); area.innerHTML = '';
-        data.customers.filter(c => (c.name.toLowerCase().includes(q) || c.phone.includes(q)) && (f==='all' || data.bookings.some(b=>b.customer===c.name && b.stylist===f))).forEach((c, idx) => {
+        data.customers.filter(c => (c.name.toLowerCase().includes(q) || (c.phone && c.phone.includes(q))) && (f==='all' || data.bookings.some(b=>b.customer===c.name && b.stylist===f))).forEach((c, idx) => {
             const history = data.bookings.filter(b => b.customer === c.name).sort((a,b)=>new Date(b.start)-new Date(a.start)).slice(0,3);
-            area.innerHTML += `<div class="cust-card" style="border-left: 10px solid ${c.color || '#ddd'}"><div><strong style="font-size:1.4rem;">${c.name}</strong><br><span style="color:var(--gold); font-weight:900;">📞 ${c.phone||'無'}</span><br><small>🎂 生日: ${c.bday||'未設'}</small></div><i class="fas fa-edit" style="position:absolute; top:25px; right:25px; color:var(--morandi); font-size:1.2rem; cursor:pointer;" onclick="editCustModal(${idx})"></i><div class="history-box"><strong>紀錄：</strong>${history.length?history.map(h=>`<div>📍 ${h.start.split('T')[0]} - ${h.note||'無'}</div>`).join(''):'<div>無預約紀錄</div>'}</div><div style="display:flex; gap:10px; margin-top:15px;">${c.phone ? `<a href="tel:${c.phone}" class="btn-call">撥打</a>` : ''}<button onclick='openBookingModal(null, null, null, ${JSON.stringify(c)})' class="btn-book">快約</button></div></div>`;
+            area.innerHTML += `<div class="cust-card" style="border-left: 10px solid ${c.color || '#ddd'}"><div><strong style="font-size:1.4rem;">${c.name}</strong><br><span style="color:var(--gold); font-weight:900;">📞 ${c.phone||'無'}</span><br><small>🎂 生日: ${c.bday||'未設'}</small></div><i class="fas fa-edit" style="position:absolute; top:25px; right:25px; color:var(--morandi); font-size:1.2rem; cursor:pointer;" onclick="editCustModal(${idx})"></i><div class="history-box"><strong>紀錄：</strong>${history.length?history.map(h=>`<div>📍 ${h.start.split('T')[0]} - ${h.note||'無'}</div>`).join(''):'<div>無預約紀錄</div>'}</div><div style="display:flex; gap:12px; margin-top:15px;">${c.phone ? `<a href="tel:${c.phone}" class="btn-call">撥打</a>` : ''}<button onclick='openBookingModal(null, null, null, ${JSON.stringify(c)})' class="btn-book">快約</button></div></div>`;
         });
     }
 
@@ -246,10 +256,7 @@
         if(idx === 1) renderCustomers();
         if(idx === 2) renderSettings();
     }
-    function changeView(v, i) { 
-        calendar.changeView(v); 
-        document.getElementById('viewSlider').style.transform = `translateX(${i * 100}%)`; 
-    }
+    function changeView(v, i) { calendar.changeView(v); document.getElementById('viewSlider').style.transform = `translateX(${i * 100}%)`; }
     function timeToView(v, i) { changeView(v, i); slideTo(0); }
     function toggleWeeklyOff(day) { if(data.weeklyOff.includes(day)) data.weeklyOff = data.weeklyOff.filter(d => d !== day); else data.weeklyOff.push(day); save(); renderSettings(); }
     function addOff(date, color) { if(date) { data.offDays.push({date, color}); save(); renderSettings(); } }
