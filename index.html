@@ -1,7 +1,131 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>專屬空間 Salon V152 純化版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #2c3e50; --gold: #D4AF37; --bg: #ffffff; --border: #eeeeee; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #fafafa; margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; padding-bottom: 110px; }
+        
+        /* 標題流動光影 */
+        .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 3000; border-bottom: 2px solid var(--gold); position: sticky; top: 0; }
+        .app-title { font-size: 1.5rem; font-weight: 900; background: linear-gradient(120deg, #2c3e50 20%, var(--gold) 40%, #2c3e50 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 5s linear infinite; }
+        @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+        /* 頂部切換 */
+        #top-view-switcher { display: flex; background: #eee; border-radius: 12px; margin: 10px auto; width: 92%; padding: 4px; border: 2px solid var(--gold); position: relative; z-index: 2000; }
+        .view-btn { flex: 1; border: none; background: transparent; padding: 10px; font-weight: 900; color: #555; cursor: pointer; z-index: 5; font-size: 0.9rem; }
+        .view-slider { position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(33.33% - 6px); background: #fff; border-radius: 10px; transition: 0.3s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .page-container { width: 100%; position: relative; }
+        .page { display: none; width: 100%; padding: 10px 15px; }
+        .page.active { display: block; }
+
+        /* 日曆容器呼吸效果 */
+        #calendar-container { background: #fff; border-radius: 20px; padding: 5px; border: 2.5px solid var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.1); }
+        
+        /* 視覺純化：隱藏非本月日期殘影 */
+        .fc-day-other { visibility: hidden !important; border: none !important; }
+        
+        /* 物理級：隱藏 All-Day 字樣與欄位 */
+        .fc-timegrid-allday { display: none !important; }
+        .fc-timegrid-slots { border-top: none !important; }
+
+        /* 導覽列 */
+        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid var(--gold); z-index: 4000; }
+        .nav-bar { display: flex; height: 85px; align-items: center; }
+        .nav-item { flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #7f8c8d; font-weight: 900; gap: 4px; font-size: 0.85rem; }
+        .nav-item.active { color: var(--gold); background: #fcfcfc; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="app-title">專屬空間</div>
+    <button onclick="calendar.today()" style="background:#fff; border:1.5px solid var(--gold); border-radius:10px; padding:8px 18px; font-weight:900; color:var(--primary);">今天</button>
+</div>
+
+<div id="top-view-switcher">
+    <div id="viewSlider" class="view-slider"></div>
+    <button class="view-btn" onclick="changeView('dayGridMonth', 0)">月</button>
+    <button class="view-btn" onclick="changeView('timeGridWeek', 1)">週</button>
+    <button class="view-btn" onclick="changeView('timeGridDay', 2)">日</button>
+</div>
+
+<div class="page-container">
+    <div class="page active" id="page-0">
+        <div id="calendar-container">
+            <div id='calendar'></div>
+        </div>
+    </div>
+    <div class="page" id="page-1"><div style="text-align:center; padding:50px; font-weight:900;">客資骨架準備中...</div></div>
+    <div class="page" id="page-2"><div style="text-align:center; padding:50px; font-weight:900;">設定骨架準備中...</div></div>
+</div>
+
+<div class="nav-container">
+    <div class="nav-bar">
+        <button class="nav-item active" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button>
+        <button class="nav-item" onclick="slideTo(1)"><i class="fas fa-address-book"></i><span>客資</span></button>
+        <button class="nav-item" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button>
+    </div>
+</div>
+
+<script>
+    let calendar;
+    document.addEventListener('DOMContentLoaded', () => {
+        const calendarEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: false,
+            locale: 'zh-tw',
+            height: 'auto',
+            allDaySlot: false,       // 物理級關閉：不再顯示 all-day
+            showNonCurrentDates: false, 
+            fixedWeekCount: false,
+            dateClick: function(info) {
+                // 點選月份日期，自動跳轉到該日的日視角
+                calendar.changeView('timeGridDay', info.dateStr);
+                document.getElementById('viewSlider').style.transform = `translateX(200%)`;
+            }
+        });
+        calendar.render();
+        initSwipe();
+    });
+
+    function slideTo(idx) {
+        document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx));
+        document.querySelectorAll('.nav-item').forEach((btn, i) => btn.classList.toggle('active', i === idx));
+        if(idx === 0) setTimeout(() => calendar.render(), 50);
+    }
+
+    function changeView(view, idx) {
+        calendar.changeView(view);
+        document.getElementById('viewSlider').style.transform = `translateX(${idx * 100}%)`;
+    }
+
+    function initSwipe() {
+        let sX = 0; const el = document.getElementById('calendar-container');
+        el.addEventListener('touchstart', e => sX = e.touches[0].clientX, {passive:true});
+        el.addEventListener('touchend', e => {
+            let diff = e.changedTouches[0].clientX - sX;
+            if(Math.abs(diff) > 80) {
+                if(diff > 0) calendar.prev(); else calendar.next();
+            }
+        }, {passive:true});
+    }
+</script>
+</body>
+</html>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>專屬空間 Salon V151 月份淨化版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
