@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V156</title>
+    <title>專屬空間 Salon Elite V157</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,107 +11,88 @@
     <style>
         :root { --primary: #1d1d1f; --gold: #D4AF37; --bg: #ffffff; --sub: #86868b; --border: #f2f2f2; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; min-height: 100vh; overflow-x: hidden; color: var(--primary); padding-bottom: 100px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; min-height: 100vh; overflow-x: hidden; color: var(--primary); padding-bottom: 110px; }
         
-        /* 標題與導覽視覺維持 V155 */
-        .header { padding: 25px 20px 10px 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 3000; position: sticky; top: 0; }
-        .app-title { font-size: 1.7rem; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
+        /* 101 標題光影 */
+        .header { padding: 25px 20px 10px 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 3000; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
+        .app-title { font-size: 1.7rem; font-weight: 900; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
         #top-view-switcher { display: flex; background: #fff; margin: 10px auto; width: 92%; border-bottom: 1px solid var(--border); position: relative; z-index: 2000; }
-        .view-btn { flex: 1; border: none; background: transparent; padding: 15px; font-weight: 300; color: var(--sub); cursor: pointer; font-size: 0.95rem; transition: 0.3s; letter-spacing: 2px; }
-        .view-slider { position: absolute; bottom: -1px; left: 0; height: 1.5px; width: 33.33%; background: var(--gold); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 6; }
+        .view-btn { flex: 1; border: none; background: transparent; padding: 15px; font-weight: 300; color: var(--sub); cursor: pointer; font-size: 0.95rem; letter-spacing: 2px; }
+        .view-slider { position: absolute; bottom: -1px; left: 0; height: 1.5px; width: 33.33%; background: var(--gold); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
         .page-container { width: 100%; position: relative; }
         .page { display: none; width: 100%; padding: 5px 20px; }
         .page.active { display: block; animation: appleFade 0.5s ease; }
         @keyframes appleFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 賈伯斯美學：無邊框客資卡片 */
-        .client-card { 
-            background: #fff; 
-            padding: 20px 0; 
-            border-bottom: 1px solid var(--border); 
-            position: relative; 
-            display: flex; 
-            flex-direction: column;
-            transition: 0.3s;
-        }
-        .client-side-mark { position: absolute; left: -20px; top: 20%; height: 60%; width: 3px; border-radius: 0 5px 5px 0; background: var(--gold); }
-        .client-info { display: flex; justify-content: space-between; align-items: flex-start; }
-        .client-name { font-size: 1.3rem; font-weight: 700; color: #000; }
-        .client-phone { font-size: 0.9rem; font-weight: 300; color: var(--sub); margin-top: 4px; }
-        .client-history { margin-top: 10px; font-size: 0.75rem; color: #d1d1d6; font-weight: 100; letter-spacing: 0.5px; }
-        
-        /* 極簡圖標按鈕組 */
-        .client-actions { display: flex; gap: 25px; margin-top: 15px; justify-content: flex-start; }
-        .action-icon { color: var(--sub); font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
-        .action-icon:active { color: var(--gold); transform: scale(0.9); }
+        /* 賈伯斯美學：客資卡片 */
+        .client-card { background: #fff; padding: 20px 0; border-bottom: 1px solid var(--border); position: relative; display: flex; flex-direction: column; }
+        .client-side-mark { position: absolute; left: -20px; top: 25%; height: 50%; width: 3px; border-radius: 0 5px 5px 0; }
+        .client-name { font-size: 1.2rem; font-weight: 700; color: #000; }
+        .client-phone { font-size: 0.85rem; font-weight: 300; color: var(--sub); }
+        .client-history { margin-top: 8px; font-size: 0.75rem; color: #d1d1d6; font-weight: 100; }
+        .client-actions { display: flex; gap: 25px; margin-top: 15px; color: var(--sub); font-size: 1rem; }
 
-        .search-wrap { padding: 10px 0; position: sticky; top: 0; background: #fff; z-index: 100; }
-        .search-input { width: 100%; border: none; border-bottom: 1px solid var(--border); padding: 15px 0; font-size: 1.2rem; font-weight: 100; color: #000; }
+        /* 設定區塊：極簡秩序 */
+        .setting-section { margin-bottom: 35px; }
+        .setting-title { font-size: 1.1rem; font-weight: 300; color: var(--sub); margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+        .stylist-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f9f9f9; }
+        .color-dot { width: 35px; height: 35px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* 導覽與 FAB */
-        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.98); border-top: 1px solid var(--border); z-index: 4000; height: 85px; padding-bottom: env(safe-area-inset-bottom); }
+        /* 統一白金按鈕 */
+        .apple-btn { background: #fff; border: 1px solid var(--gold); border-radius: 20px; padding: 10px 20px; font-size: 0.85rem; font-weight: 500; color: var(--primary); cursor: pointer; }
+        .apple-btn:active { opacity: 0.4; transform: scale(0.96); }
+
+        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.98); border-top: 1px solid var(--border); z-index: 4000; height: 85px; }
         .nav-bar { display: flex; height: 100%; align-items: center; justify-content: space-around; }
         .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: var(--sub); font-weight: 300; gap: 6px; font-size: 0.8rem; }
         .nav-item.active { color: var(--gold); font-weight: 500; }
         
         .fab { position: fixed; bottom: 105px; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
 
-        #calendar-container { background: #fff; padding: 0; border: none; }
+        #calendar-container { background: #fff; border: none; }
+        .fc-day-other { visibility: hidden !important; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="app-title">專屬空間</div>
-    <button style="background:none; border:1px solid var(--gold); border-radius:20px; padding:6px 16px; font-size:0.85rem; color:var(--gold); font-weight:500;" onclick="calendar.today()">今天</button>
+    <button class="apple-btn" style="padding:5px 15px;" onclick="calendar.today()">今天</button>
 </div>
 
 <div id="top-view-switcher">
     <div id="viewSlider" class="view-slider"></div>
-    <button class="view-btn" onclick="changeView('dayGridMonth', 0)" style="font-weight:700; color:#000;">月份</button>
+    <button class="view-btn" onclick="changeView('dayGridMonth', 0)">月份</button>
     <button class="view-btn" onclick="changeView('timeGridWeek', 1)">週視角</button>
     <button class="view-btn" onclick="changeView('timeGridDay', 2)">日行程</button>
 </div>
 
 <div class="page-container">
-    <div class="page active" id="page-0">
-        <div id="calendar-container"><div id='calendar'></div></div>
-    </div>
-
+    <div class="page active" id="page-0"><div id="calendar-container"><div id='calendar'></div></div></div>
     <div class="page" id="page-1">
-        <div class="search-wrap">
-            <input type="text" id="cSearch" class="search-input" placeholder="搜尋顧客..." oninput="renderClients()">
+        <input type="text" placeholder="尋找顧客..." style="width:100%; border:none; border-bottom:1px solid var(--border); padding:15px 0; font-size:1.2rem; font-weight:100;" oninput="renderClients(this.value)">
+        <div id="client-list-area" style="margin-top:15px;"></div>
+    </div>
+    <div class="page" id="page-2">
+        <div class="setting-section">
+            <div class="setting-title">設計師團隊</div>
+            <button class="apple-btn" style="width:100%; margin-bottom:15px;" onclick="addStylist()">+ 新增成員</button>
+            <div id="stylist-list-area"></div>
         </div>
-        <div id="client-list-area">
-            <div class="client-card">
-                <div class="client-side-mark"></div>
-                <div class="client-info">
-                    <div>
-                        <div class="client-name">王小明</div>
-                        <div class="client-phone">0912-345-678</div>
-                    </div>
-                    <div style="font-size:0.8rem; color:var(--gold); font-weight:500;">VIP</div>
-                </div>
-                <div class="client-history">🕰 最後消費：2026/01/20 (染髮)</div>
-                <div class="client-actions">
-                    <i class="fas fa-pen-nib action-icon" title="修改"></i>
-                    <i class="fas fa-calendar-plus action-icon" title="預約"></i>
-                    <i class="fas fa-phone-alt action-icon" title="撥打"></i>
-                    <i class="fas fa-trash-alt action-icon" style="margin-left:auto; font-size:0.9rem; opacity:0.3;"></i>
-                </div>
+        <div class="setting-section">
+            <div class="setting-title">資料管理</div>
+            <div style="display:flex; gap:15px;">
+                <button class="apple-btn" style="flex:1; border-color:#eee; color:#888;">備份資料</button>
+                <button class="apple-btn" style="flex:1; border-color:#eee; color:#888;">恢復資料</button>
             </div>
         </div>
     </div>
-
-    <div class="page" id="page-2">
-        <div style="text-align:center; padding:50px; color:var(--sub); font-weight:100;">系統設定載入中...</div>
-    </div>
 </div>
 
-<button class="fab" onclick="addClientModal()">
+<button class="fab" onclick="Swal.fire({title:'即將啟用', text:'準備植入預約表單', icon:'info', confirmButtonColor:'#D4AF37'})">
     <i class="fas fa-plus"></i>
 </button>
 
@@ -125,45 +106,68 @@
 
 <script>
     let calendar;
-    let mockClients = [
-        {name: '李安', phone: '0988-123-456', last: '2026/01/25', color: '#2c3e50'},
-        {name: '張艾嘉', phone: '0977-654-321', last: '2026/01/15', color: '#D4AF37'}
-    ];
+    let data = {
+        stylists: [{name: 'Tonny', color: '#2c3e50'}],
+        clients: [{name: '王小明', phone: '0912-345-678', last: '2026/01/20', stylist: 'Tonny'}]
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'dayGridMonth',
-            headerToolbar: false,
-            locale: 'zh-tw',
-            height: 'auto',
-            allDaySlot: false,
-            showNonCurrentDates: false, 
-            fixedWeekCount: false,
+            initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto', allDaySlot: false, showNonCurrentDates: false, 
             dateClick: (info) => { calendar.changeView('timeGridDay', info.dateStr); moveSlider(2); }
         });
         calendar.render();
+        renderStylists();
         renderClients();
     });
 
-    function renderClients() {
-        const area = document.getElementById('client-list-area');
-        area.innerHTML = mockClients.map(c => `
-            <div class="client-card">
-                <div class="client-side-mark" style="background:${c.color}"></div>
-                <div class="client-info">
-                    <div>
-                        <div class="client-name">${c.name}</div>
-                        <div class="client-phone">${c.phone}</div>
-                    </div>
-                </div>
-                <div class="client-history">🕰 歷史紀錄：${c.last}</div>
-                <div class="client-actions">
-                    <i class="fas fa-pen-nib action-icon"></i>
-                    <i class="fas fa-calendar-plus action-icon"></i>
-                    <i class="fas fa-phone-alt action-icon"></i>
-                </div>
+    function renderStylists() {
+        const area = document.getElementById('stylist-list-area');
+        area.innerHTML = data.stylists.map((s, i) => `
+            <div class="stylist-item">
+                <span style="font-weight:400; font-size:1.1rem;">${s.name}</span>
+                <div class="color-dot" style="background:${s.color}" onclick="document.getElementById('pick-${i}').click()"></div>
+                <input type="color" id="pick-${i}" value="${s.color}" style="display:none;" oninput="updateStylistColor(${i}, this.value)">
             </div>
         `).join('');
+    }
+
+    function updateStylistColor(index, color) {
+        data.stylists[index].color = color;
+        renderStylists();
+        renderClients();
+    }
+
+    function renderClients(keyword = '') {
+        const area = document.getElementById('client-list-area');
+        const filtered = data.clients.filter(c => c.name.includes(keyword));
+        area.innerHTML = filtered.map(c => {
+            const sColor = data.stylists.find(s => s.name === c.stylist)?.color || '#ddd';
+            return `
+            <div class="client-card">
+                <div class="client-side-mark" style="background:${sColor}"></div>
+                <div class="client-name">${c.name}</div>
+                <div class="client-phone">${c.phone}</div>
+                <div class="client-history">🕰 歷史紀錄：${c.last} (${c.stylist})</div>
+                <div class="client-actions">
+                    <i class="fas fa-pen-nib"></i>
+                    <i class="fas fa-calendar-plus"></i>
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function addStylist() {
+        const { value: name } = await Swal.fire({
+            title: '新增成員', input: 'text', inputPlaceholder: '設計師姓名',
+            confirmButtonText: '確定', confirmButtonColor: '#D4AF37',
+            customClass: { popup: 'apple-modal' }
+        });
+        if (name) {
+            data.stylists.push({name: name, color: '#D4AF37'});
+            renderStylists();
+        }
     }
 
     function slideTo(idx) {
