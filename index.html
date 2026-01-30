@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V192</title>
+    <title>專屬空間 Salon Elite V193</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,36 +11,47 @@
     <style>
         :root { --primary: #1d1d1f; --gold: #D4AF37; --bg: #ffffff; --sub: #86868b; --border: #f2f2f2; --red: #FF3B30; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: var(--primary); padding-bottom: 110px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: var(--primary); padding-bottom: 110px; overflow-x: hidden; }
         
+        /* 唯一的全局標題 */
         .header { padding: 30px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: #fff; z-index: 4500; border-bottom: 1px solid var(--border); }
         .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        .apple-btn-mini { background: #fff; border: 1.2px solid var(--gold); border-radius: 12px; padding: 6px 15px; font-size: 0.8rem; font-weight: 700; color: #000; cursor: pointer; }
-        .gold-wrap { border: 1.2px solid var(--gold); border-radius: 12px; padding: 8px 15px; font-weight: 800; background: #fff; display: inline-block; }
+        /* 暴力美學組件庫 */
+        .apple-btn-mini { background: #fff; border: 1.2px solid var(--gold); border-radius: 12px; padding: 6px 15px; font-size: 0.8rem; font-weight: 700; color: #000; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .gold-wrap { border: 1.2px solid var(--gold); border-radius: 12px; padding: 8px 15px; font-weight: 800; background: #fff; display: inline-block; white-space: nowrap; }
+        .gray-label { font-size: 0.75rem; color: var(--sub); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* 時段方塊：徹底去灰純白 */
+        /* 時段方塊：物理去灰 */
         .time-box { background: #fff !important; border: 1.2px solid var(--gold); border-radius: 10px; padding: 4px 8px; display: inline-flex; align-items: center; }
-        .time-box input { border: none !important; background: #fff !important; font-weight: 900; font-size: 1rem; width: 75px; text-align: center; color: #000; -webkit-appearance: none; }
+        .time-box input { border: none !important; background: transparent !important; font-weight: 900; font-size: 1rem; width: 75px; text-align: center; color: #000; -webkit-appearance: none; }
 
-        /* 預約塊渲染 */
-        .fc-event { background: #fff !important; border: 1px solid var(--border) !important; border-left: 5px solid var(--event-color) !important; color: #000 !important; font-weight: 700 !important; box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important; margin: 2px 0 !important; padding: 3px 6px !important; border-radius: 4px !important; font-size: 0.82rem !important; }
+        /* 預約塊視覺 */
+        .fc-event { background: #fff !important; border: 1px solid var(--border) !important; border-left: 5px solid var(--event-color) !important; color: #000 !important; font-weight: 700 !important; box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important; margin: 2px 0 !important; padding: 4px 6px !important; border-radius: 6px !important; font-size: 0.82rem !important; }
 
-        /* 客資與三代歷史 */
+        /* 客資卡片與歷史 */
         .client-card { padding: 25px 0; border-bottom: 1px solid var(--border); position: relative; }
         .client-side-mark { position: absolute; left: -20px; top: 25%; height: 50%; width: 4px; border-radius: 0 5px 5px 0; }
         .history-tag { font-size: 0.7rem; padding: 3px 8px; border: 1px solid #eee; border-radius: 6px; color: var(--sub); margin-right: 5px; margin-bottom: 5px; display: inline-block; }
         .history-tag.newest { border-color: var(--gold); color: #000; font-weight: 700; }
 
-        /* 彈窗多選標籤樣式 */
-        .swal-tag-btn { display: inline-block; padding: 8px 15px; border: 1.2px solid #eee; border-radius: 12px; margin: 4px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .swal-tag-btn.active { border-color: var(--gold); background: rgba(212,175,55,0.1); color: #000; box-shadow: 0 2px 8px rgba(212,175,55,0.2); }
+        /* 彈窗多選標籤 */
+        .swal-tag-btn { display: inline-block; padding: 8px 15px; border: 1.2px solid #eee; border-radius: 12px; margin: 4px; font-weight: 700; cursor: pointer; transition: 0.2s; background: #fff; }
+        .swal-tag-btn.active { border-color: var(--gold); background: rgba(212,175,55,0.05); color: #000; box-shadow: 0 2px 10px rgba(212,175,55,0.15); }
 
-        #inline-selector.open { height: 400px; border: 1.2px solid var(--gold); border-radius: 15px; margin-top: 10px; padding: 15px; }
+        /* 排休日曆容器 */
+        #inline-selector { height: 0; overflow: hidden; transition: 0.3s ease; background: #fff; width: 100%; }
+        #inline-selector.open { height: 400px; border: 1px solid var(--gold); border-radius: 15px; margin-top: 15px; padding: 15px; }
+
+        .page { display: none; width: 100%; padding: 10px 20px; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; display: flex; justify-content: space-around; align-items: center; }
-        .nav-item.active { color: var(--gold); font-weight: 700; }
-        .fab { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.2px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .nav-item { border:none; background:none; display:flex; flex-direction:column; align-items:center; color:var(--sub); font-size:0.7rem; gap:4px; opacity: 0.6; transition: 0.3s; }
+        .nav-item.active { color:var(--gold); font-weight:900; opacity: 1; transform: scale(1.1); }
+        .fab { position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.2px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.08); font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -55,15 +66,15 @@
     
     <div class="page" id="page-1">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; margin-top:10px;">
-            <input type="text" placeholder="搜尋顧客..." id="cSearch" style="border:none; border-bottom:1px solid var(--gold); padding:10px; flex:1; margin-right:15px;" oninput="renderAll()">
-            <div class="apple-btn-mini" onclick="addClient()">新增顧客</div>
+            <input type="text" placeholder="尋找顧客資料..." id="cSearch" style="border:none; border-bottom:1px solid var(--gold); padding:10px; flex:1; margin-right:15px; font-size: 1rem;" oninput="renderAll()">
+            <div class="apple-btn-mini" onclick="addClient()">+ 新增</div>
         </div>
         <div id="client-list-area"></div>
     </div>
     
     <div class="page" id="page-2">
         <div style="padding:20px 0; border-bottom:1px solid #f2f2f2; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:0.75rem; color:var(--sub); font-weight:700;">服務時段</span>
+            <span class="gray-label">服務時段</span>
             <div style="display:flex; align-items:center; gap:8px;">
                 <div class="time-box"><input type="time" id="openT" onchange="updateSys()"></div>
                 <span style="color:var(--gold); font-weight:700;">至</span>
@@ -73,19 +84,19 @@
 
         <div style="padding:25px 0; border-bottom:1px solid #f2f2f2;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.75rem; color:var(--sub); font-weight:700;">自訂排休</span>
+                <span class="gray-label">自訂店休</span>
                 <div class="apple-btn-mini" onclick="toggleOffCal()">選擇日期</div>
             </div>
-            <div id="off-days-display" style="margin-top:15px;"></div>
+            <div id="off-days-display" style="margin-top:15px; min-height: 20px;"></div>
             <div id="inline-selector"><div id="mini-cal"></div></div>
         </div>
 
         <div id="sty-section"></div>
         <div id="tag-section"></div>
 
-        <div style="padding:30px 0; display:flex; gap:10px;">
-            <div class="apple-btn-mini" style="flex:1; text-align:center;" onclick="exportData()">💾 備份</div>
-            <div class="apple-btn-mini" style="flex:1; text-align:center;" onclick="importData()">📥 恢復</div>
+        <div style="padding:30px 0; display:flex; gap:12px;">
+            <div class="apple-btn-mini" style="flex:1; padding:12px;" onclick="exportData()">💾 備份資料</div>
+            <div class="apple-btn-mini" style="flex:1; padding:12px;" onclick="importData()">📥 恢復資料</div>
         </div>
     </div>
 </div>
@@ -93,14 +104,14 @@
 <button class="fab" onclick="addBooking()"><i class="fas fa-plus"></i></button>
 
 <div class="nav-container">
-    <button class="nav-item active" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button>
-    <button class="nav-item" onclick="slideTo(1)"><i class="fas fa-user-circle"></i><span>客資</span></button>
-    <button class="nav-item" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button>
+    <button class="nav-item active" id="btn-nav-0" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button>
+    <button class="nav-item" id="btn-nav-1" onclick="slideTo(1)"><i class="fas fa-user-circle"></i><span>客資</span></button>
+    <button class="nav-item" id="btn-nav-2" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button>
 </div>
 
 <script>
     let calendar, mini, tempSelectedTags = [];
-    let store = JSON.parse(localStorage.getItem('SALON_V192_MULTI')) || {
+    let store = JSON.parse(localStorage.getItem('SALON_V193_IRON')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
         tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}],
         clients: [], offDays: [], offColor: "#34495e", openT: "11:00", closeT: "21:00", appointments: []
@@ -109,11 +120,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('openT').value = store.openT;
         document.getElementById('closeT').value = store.closeT;
-        initCal(); renderAll();
+        initCal(); 
+        renderAll();
     });
 
     function initCal() {
-        calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        const calEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calEl, {
             initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto',
             dayCellContent: e => e.dayNumberText.replace('日', ''),
             events: (i, s) => {
@@ -137,65 +150,26 @@
         calendar.render();
     }
 
-    // --- 暴力美學：多選標籤處理 ---
-    function toggleTag(el, tagName) {
-        const idx = tempSelectedTags.indexOf(tagName);
-        if(idx > -1) {
-            tempSelectedTags.splice(idx, 1);
-            el.classList.remove('active');
-        } else {
-            tempSelectedTags.push(tagName);
-            el.classList.add('active');
-        }
-    }
-
-    async function addBooking() {
-        tempSelectedTags = [];
-        const { value: res } = await Swal.fire({
-            title: '新增多項預約',
-            html: `
-                <select id="as" class="swal2-input" style="width:80%">${store.stylists.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
-                <input id="an" class="swal2-input" placeholder="顧客姓名" style="margin-top:10px;">
-                <input id="at" class="swal2-input" type="datetime-local" style="margin-top:10px;">
-                <div style="margin-top:15px; text-align:left;"><span style="font-size:0.8rem; color:#888;">選擇服務項目 (可多選)：</span></div>
-                <div style="margin-top:10px; text-align:left;">
-                    ${store.tags.map(t=>`<span class="swal-tag-btn" onclick="toggleTag(this, '${t.name}')">${t.name}</span>`).join('')}
-                </div>
-            `,
-            preConfirm: () => {
-                const n = document.getElementById('an').value;
-                if(!n || tempSelectedTags.length === 0) return Swal.showValidationMessage('請輸入姓名並至少選擇一項服務');
-                return { sId: document.getElementById('as').value, n: n, t: document.getElementById('at').value, tags: [...tempSelectedTags] };
-            }
-        });
-        if(res) { store.appointments.push({id: Date.now(), ...res}); renderAll(); }
-    }
-
-    async function editBooking(id) {
-        const a = store.appointments.find(x => x.id == id);
-        tempSelectedTags = [...a.tags];
-        const { value: res, isDenied } = await Swal.fire({
-            title: '預約詳情',
-            html: `
-                <input id="en" class="swal2-input" value="${a.n}">
-                <input id="et" class="swal2-input" type="datetime-local" value="${a.t}" style="margin-top:10px;">
-                <div style="margin-top:15px; text-align:left;">
-                    ${store.tags.map(t=>`<span class="swal-tag-btn ${tempSelectedTags.includes(t.name)?'active':''}" onclick="toggleTag(this, '${t.name}')">${t.name}</span>`).join('')}
-                </div>
-            `,
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: '更新',
-            denyButtonText: '刪除預約',
-            preConfirm: () => ({ n: document.getElementById('en').value, t: document.getElementById('et').value, tags: [...tempSelectedTags] })
-        });
-        if(res) { Object.assign(a, res); renderAll(); } 
-        else if (isDenied) { safeDelete('booking', id); }
-    }
-
     function renderAll() {
-        localStorage.setItem('SALON_V192_MULTI', JSON.stringify(store));
-        // 客資列表：顯示多項服務歷史
+        localStorage.setItem('SALON_V193_IRON', JSON.stringify(store));
+        
+        // 渲染排休
+        const offArea = document.getElementById('off-days-display');
+        offArea.innerHTML = store.offDays.sort().map(d => `<span class="apple-btn-mini" style="margin-right:5px; margin-bottom:5px;">${d.slice(5)}</span>`).join('');
+
+        // 渲染人員
+        document.getElementById('sty-section').innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;"><span class="gray-label">設計師管理</span><div class="apple-btn-mini" onclick="addSty()">+ 新增成員</div></div>` +
+            `<div style="padding:10px 0;">${store.stylists.map(s => `<div style="display:flex; align-items:center; gap:12px; margin:15px 0;">
+                <div class="gold-wrap">${s.name}</div>
+                <div style="width:35px; height:35px; border-radius:50%; background:${s.color}; border:1.5px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); position:relative; overflow:hidden;"><input type="color" value="${s.color}" style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; border:none; cursor:pointer;" oninput="updateStyCol(${s.id}, this.value)"></div>
+                <i class="fas fa-trash-alt" style="color:var(--red); cursor:pointer; font-size:0.9rem;" onclick="safeDelete('sty', ${s.id})"></i>
+            </div>`).join('')}</div>`;
+
+        // 渲染標籤
+        document.getElementById('tag-section').innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;"><span class="gray-label">服務標籤</span><div class="apple-btn-mini" onclick="addTag()">+ 新增標籤</div></div>` +
+            `<div style="display:flex; flex-wrap:wrap; gap:8px; padding:15px 0;">${store.tags.map(t => `<div class="apple-btn-mini">${t.name} <i class="fas fa-times" style="color:var(--red); margin-left:8px;" onclick="safeDelete('tag', ${t.id})"></i></div>`).join('')}</div>`;
+
+        // 渲染客資
         const kw = document.getElementById('cSearch')?.value || "";
         document.getElementById('client-list-area').innerHTML = store.clients.filter(c => c.n.includes(kw)).map(c => {
             const sc = store.stylists.find(s => s.id == c.sId)?.color || '#ddd';
@@ -205,47 +179,45 @@
                 <div class="client-side-mark" style="background:${sc}"></div>
                 <div style="display:flex; justify-content:space-between;">
                     <div class="gold-wrap" style="font-size:1.2rem;">${c.n}</div>
-                    <div style="display:flex; gap:15px;">
-                        <i class="fas fa-calendar-plus" style="color:var(--gold);" onclick="quickBook('${c.n}', ${c.sId})"></i>
-                        <a href="tel:${c.p}"><i class="fas fa-phone-alt" style="color:var(--gold);"></i></a>
-                        <i class="fas fa-trash-alt" style="color:var(--red);" onclick="safeDelete('client', ${c.id})"></i>
+                    <div style="display:flex; gap:18px; margin-top:8px;">
+                        <i class="fas fa-calendar-plus" style="color:var(--gold); font-size:1.1rem; cursor:pointer;" onclick="quickBook('${c.n}', ${c.sId})"></i>
+                        <a href="tel:${c.p}"><i class="fas fa-phone-alt" style="color:var(--gold); font-size:1.1rem;"></i></a>
+                        <i class="fas fa-pen" style="color:var(--gold); cursor:pointer;" onclick="editClient(${c.id})"></i>
+                        <i class="fas fa-trash-alt" style="color:var(--red); cursor:pointer;" onclick="safeDelete('client', ${c.id})"></i>
                     </div>
                 </div>
-                <div style="font-size:0.85rem; color:var(--sub); margin:5px 0;">📞 ${c.p} | 🎂 ${c.m}${c.d}</div>
-                <div style="margin-top:8px;">${history || '<span style="font-size:0.7rem; color:#ccc;">尚無紀錄</span>'}</div>
+                <div style="font-size:0.85rem; color:var(--sub); font-weight:700; margin-top:5px;">📞 ${c.p} | 🎂 ${c.m}${c.d}</div>
+                <div style="margin-top:12px;">${history || '<span style="font-size:0.7rem; color:#ccc;">尚無紀錄</span>'}</div>
             </div>`;
         }).join('');
-
-        // 設定：排休
-        document.getElementById('off-days-display').innerHTML = store.offDays.sort().map(d => `<span class="apple-btn-mini" style="margin-right:5px; margin-bottom:5px; display:inline-block;">${d.slice(5)}</span>`).join('');
-        // 設定：人員
-        document.getElementById('sty-section').innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;"><span style="font-size:0.75rem; color:var(--sub); font-weight:700;">人員管理</span><div class="apple-btn-mini" onclick="addSty()">新增成員</div></div>` +
-            store.stylists.map(s => `<div style="display:flex; align-items:center; gap:12px; margin:15px 0;">
-                <div class="gold-wrap">${s.name}</div>
-                <div style="width:35px; height:35px; border-radius:50%; background:${s.color}; border:1.5px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); position:relative; overflow:hidden;"><input type="color" value="${s.color}" style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; border:none;" oninput="updateStyCol(${s.id}, this.value)"></div>
-                <i class="fas fa-trash-alt" style="color:var(--red);" onclick="safeDelete('sty', ${s.id})"></i>
-            </div>`).join('');
-        // 設定：標籤
-        document.getElementById('tag-section').innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;"><span style="font-size:0.75rem; color:var(--sub); font-weight:700;">服務標籤</span><div class="apple-btn-mini" onclick="addTag()">新增標籤</div></div>` +
-            `<div style="display:flex; flex-wrap:wrap; gap:8px; padding:15px 0;">${store.tags.map(t => `<div class="apple-btn-mini">${t.name} <i class="fas fa-times" style="color:var(--red); margin-left:5px;" onclick="safeDelete('tag', ${t.id})"></i></div>`).join('')}</div>`;
-
+        
         if(calendar) calendar.refetchEvents();
     }
 
-    // --- 安全刪除提醒 ---
+    // --- 暴力美學：刪除二次確認 ---
     function safeDelete(type, id) {
-        Swal.fire({ title: '確定刪除？', text: "刪除後無法還原！", icon: 'warning', showCancelButton: true, confirmButtonColor: '#FF3B30', confirmButtonText: '刪除', cancelButtonText: '取消' }).then((r) => {
-            if (r.isConfirmed) {
+        Swal.fire({
+            title: '確定要刪除嗎？',
+            text: "這項資料將會永久消失！",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#FF3B30',
+            cancelButtonColor: '#86868b',
+            confirmButtonText: '是的，刪除',
+            cancelButtonText: '取消'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 if(type === 'sty') store.stylists = store.stylists.filter(x => x.id !== id);
                 if(type === 'tag') store.tags = store.tags.filter(x => x.id !== id);
                 if(type === 'client') store.clients = store.clients.filter(x => x.id !== id);
                 if(type === 'booking') store.appointments = store.appointments.filter(x => x.id !== id);
                 renderAll();
+                Swal.fire({ title: '已刪除', icon: 'success', timer: 1000, showConfirmButton: false });
             }
         });
     }
 
-    // --- 穩定邏輯區 ---
+    // --- 排休日曆重組渲染 ---
     function toggleOffCal() {
         const box = document.getElementById('inline-selector');
         box.classList.toggle('open');
@@ -255,19 +227,105 @@
             mini = new FullCalendar.Calendar(container, {
                 initialView: 'dayGridMonth', headerToolbar: { left: 'prev', right: 'next' }, locale: 'zh-tw', height: 350,
                 dayCellContent: e => e.dayNumberText.replace('日', ''),
-                dateClick: i => { const idx = store.offDays.indexOf(i.dateStr); idx > -1 ? store.offDays.splice(idx, 1) : store.offDays.push(i.dateStr); renderAll(); mini.render(); },
+                dateClick: i => {
+                    const idx = store.offDays.indexOf(i.dateStr);
+                    idx > -1 ? store.offDays.splice(idx, 1) : store.offDays.push(i.dateStr);
+                    renderAll();
+                    mini.render(); 
+                },
                 dayCellDidMount: i => { if(store.offDays.includes(i.date.toLocaleDateString('sv'))) i.el.style.background = 'rgba(212,175,55,0.2)'; }
             });
             mini.render();
         }
     }
-    async function quickBook(n, sId) { tempSelectedTags = []; const { value: res } = await Swal.fire({ title: `預約: ${n}`, html: `<input id="qbt" class="swal2-input" type="datetime-local"><div style="margin-top:15px;">${store.tags.map(t=>`<span class="swal-tag-btn" onclick="toggleTag(this, '${t.name}')">${t.name}</span>`).join('')}</div>`, preConfirm: () => ({ t: document.getElementById('qbt').value, tags: [...tempSelectedTags] }) }); if(res && res.t) { store.appointments.push({id: Date.now(), n: n, t: res.t, sId: sId, tags: res.tags}); renderAll(); slideTo(0); } }
-    async function addClient() { const { value: res } = await Swal.fire({ title: '新增顧客', html: `<input id="cn" class="swal2-input" placeholder="姓名"><input id="cp" class="swal2-input" placeholder="電話" style="margin-top:10px;"><div style="display:flex; justify-content:flex-end; gap:5px; margin-top:15px;"><select id="bm" class="mini-date-select">${Array.from({length:12},(_,i)=>`<option>${i+1}月</option>`).join('')}</select><select id="bd" class="mini-date-select">${Array.from({length:31},(_,i)=>`<option>${i+1}日</option>`).join('')}</select></div><select id="cs" class="swal2-input" style="width:80%;">${store.stylists.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>`, preConfirm: () => ({ n: document.getElementById('cn').value, p: document.getElementById('cp').value, m: document.getElementById('bm').value, d: document.getElementById('bd').value, sId: document.getElementById('cs').value }) }); if(res && res.n) { store.clients.push({id: Date.now(), ...res}); renderAll(); } }
-    function slideTo(idx) { document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx)); document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx)); if(idx === 0) setTimeout(()=>calendar.render(), 50); }
+
+    // --- 預約多選標籤邏輯 ---
+    function toggleTag(el, tagName) {
+        const idx = tempSelectedTags.indexOf(tagName);
+        if(idx > -1) { tempSelectedTags.splice(idx, 1); el.classList.remove('active'); }
+        else { tempSelectedTags.push(tagName); el.classList.add('active'); }
+    }
+
+    async function addBooking() {
+        tempSelectedTags = [];
+        const { value: res } = await Swal.fire({
+            title: '新增預約',
+            html: `<select id="as" class="swal2-input" style="width:85%">${store.stylists.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+                <input id="an" class="swal2-input" placeholder="顧客姓名" style="margin-top:10px; width:85%">
+                <input id="at" class="swal2-input" type="datetime-local" style="margin-top:10px; width:85%">
+                <div style="margin-top:15px; text-align:left; width:85%; margin-left:7.5%;"><span style="font-size:0.8rem; color:#888;">選擇服務項目 (多選)：</span></div>
+                <div style="margin-top:10px; text-align:left; width:85%; margin-left:7.5%;">
+                    ${store.tags.map(t=>`<span class="swal-tag-btn" onclick="toggleTag(this, '${t.name}')">${t.name}</span>`).join('')}
+                </div>`,
+            preConfirm: () => ({ sId: document.getElementById('as').value, n: document.getElementById('an').value, t: document.getElementById('at').value, tags: [...tempSelectedTags] })
+        });
+        if(res && res.n) { store.appointments.push({id: Date.now(), ...res}); renderAll(); }
+    }
+
+    async function editBooking(id) {
+        const a = store.appointments.find(x => x.id == id);
+        tempSelectedTags = [...a.tags];
+        const { value: res, isDenied } = await Swal.fire({
+            title: '預約詳情',
+            html: `<input id="en" class="swal2-input" value="${a.n}" style="width:85%">
+                <input id="et" class="swal2-input" type="datetime-local" value="${a.t}" style="margin-top:10px; width:85%">
+                <div style="margin-top:15px; text-align:left; width:85%; margin-left:7.5%;">
+                    ${store.tags.map(t=>`<span class="swal-tag-btn ${tempSelectedTags.includes(t.name)?'active':''}" onclick="toggleTag(this, '${t.name}')">${t.name}</span>`).join('')}
+                </div>`,
+            showCancelButton: true, showDenyButton: true, confirmButtonText: '更新', denyButtonText: '刪除',
+            preConfirm: () => ({ n: document.getElementById('en').value, t: document.getElementById('et').value, tags: [...tempSelectedTags] })
+        });
+        if(res) { Object.assign(a, res); renderAll(); } 
+        else if (isDenied) { safeDelete('booking', id); }
+    }
+
+    async function quickBook(n, sId) {
+        tempSelectedTags = [];
+        const { value: res } = await Swal.fire({
+            title: `快速預約: ${n}`,
+            html: `<input id="qbt" class="swal2-input" type="datetime-local" style="width:85%">
+                <div style="margin-top:15px; text-align:left; width:85%; margin-left:7.5%;">
+                    ${store.tags.map(t=>`<span class="swal-tag-btn" onclick="toggleTag(this, '${t.name}')">${t.name}</span>`).join('')}
+                </div>`,
+            preConfirm: () => ({ t: document.getElementById('qbt').value, tags: [...tempSelectedTags] })
+        });
+        if(res && res.t) { store.appointments.push({id: Date.now(), n: n, t: res.t, sId: sId, tags: res.tags}); renderAll(); slideTo(0); }
+    }
+
+    // --- 通用邏輯 ---
+    async function addClient() {
+        const { value: res } = await Swal.fire({
+            title: '新增顧客',
+            html: `<input id="cn" class="swal2-input" placeholder="姓名" style="width:85%"><input id="cp" class="swal2-input" placeholder="電話" style="margin-top:10px; width:85%">
+                <div style="display:flex; justify-content:center; align-items:center; gap:5px; margin-top:15px;">
+                <select id="bm" class="mini-date-select">${Array.from({length:12},(_,i)=>`<option>${i+1}月</option>`).join('')}</select>
+                <select id="bd" class="mini-date-select">${Array.from({length:31},(_,i)=>`<option>${i+1}日</option>`).join('')}</select></div>
+                <select id="cs" class="swal2-input" style="width:85%; margin-top:15px;">${store.stylists.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>`,
+            preConfirm: () => ({ n: document.getElementById('cn').value, p: document.getElementById('cp').value, m: document.getElementById('bm').value, d: document.getElementById('bd').value, sId: document.getElementById('cs').value })
+        });
+        if(res && res.n) { store.clients.push({id: Date.now(), ...res}); renderAll(); }
+    }
+    async function editClient(id) {
+        const c = store.clients.find(x=>x.id==id);
+        const { value: res } = await Swal.fire({
+            title: '修改顧客',
+            html: `<input id="un" class="swal2-input" value="${c.n}" style="width:85%"><input id="up" class="swal2-input" value="${c.p}" style="margin-top:10px; width:85%">
+                <div style="display:flex; justify-content:center; align-items:center; gap:5px; margin-top:15px;">
+                <select id="um" class="mini-date-select">${Array.from({length:12},(_,i)=>`<option ${c.m==(i+1+'月')?'selected':''}>${i+1}月</option>`).join('')}</select>
+                <select id="ud" class="mini-date-select">${Array.from({length:31},(_,i)=>`<option ${c.d==(i+1+'日')?'selected':''}>${i+1}日</option>`).join('')}</select></div>`,
+            preConfirm: () => ({ n: document.getElementById('un').value, p: document.getElementById('up').value, m: document.getElementById('um').value, d: document.getElementById('ud').value })
+        });
+        if(res) { Object.assign(c, res); renderAll(); }
+    }
     function updateStyCol(id, c) { const s = store.stylists.find(x=>x.id==id); if(s) s.color = c; renderAll(); }
     function updateSys() { store.openT = document.getElementById('openT').value; store.closeT = document.getElementById('closeT').value; renderAll(); }
     async function addSty() { const { value: n } = await Swal.fire({ title: '姓名', input: 'text' }); if(n) { store.stylists.push({id: Date.now(), name: n, color: '#D4AF37'}); renderAll(); } }
     async function addTag() { const { value: n } = await Swal.fire({ title: '標籤', input: 'text' }); if(n) { store.tags.push({id: Date.now(), name: n}); renderAll(); } }
+    function slideTo(idx) { 
+        document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx)); 
+        document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
+        if(idx === 0) setTimeout(()=>calendar.render(), 50); 
+    }
     function exportData() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(store)], {type: 'application/json'})); a.download = `SALON.json`; a.click(); }
     function importData() { Swal.fire({ title: '恢復', input: 'file' }).then(res => { if(res.value) { const reader = new FileReader(); reader.onload = e => { store = JSON.parse(e.target.result); renderAll(); location.reload(); }; reader.readAsText(res.value); } }); }
 </script>
