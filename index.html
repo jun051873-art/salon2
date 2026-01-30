@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V186</title>
+    <title>專屬空間 Salon Elite V187</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -17,27 +17,31 @@
         .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        /* 統一美學組件 */
+        /* 統一組件 */
         .apple-btn-mini { background: #fff; border: 1.2px solid var(--gold); border-radius: 12px; padding: 6px 15px; font-size: 0.8rem; font-weight: 700; color: #000; cursor: pointer; }
         .gold-wrap { border: 1.2px solid var(--gold); border-radius: 12px; padding: 8px 15px; font-weight: 800; background: #fff; display: inline-block; }
         .time-box { background: #fff; border: 1.2px solid var(--gold); border-radius: 10px; padding: 4px 8px; }
-        .time-box input { border: none; background: transparent; font-weight: 900; font-size: 1rem; width: 65px; text-align: center; color: #000; }
+        .time-box input { border: none; background: transparent; font-weight: 900; font-size: 1rem; width: 65px; text-align: center; }
         
-        /* 客資卡片 */
+        /* 客資卡片與歷史流 */
         .client-card { padding: 25px 0; border-bottom: 1px solid var(--border); position: relative; }
         .client-side-mark { position: absolute; left: -20px; top: 25%; height: 50%; width: 4px; border-radius: 0 5px 5px 0; }
-        .mini-date-select { border: 1.2px solid var(--gold) !important; background: #fff !important; padding: 6px !important; border-radius: 10px !important; width: 70px !important; font-size: 0.9rem !important; font-weight: 700 !important; }
+        .history-stream { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .history-tag { font-size: 0.7rem; padding: 3px 8px; border: 1px solid #eee; border-radius: 6px; color: var(--sub); font-weight: 300; }
+        .history-tag.newest { border-color: var(--gold); color: #000; font-weight: 700; }
 
         /* 物理選色 */
         .picker-dot { width: 35px; height: 35px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; overflow: hidden; cursor: pointer; }
         .native-input { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; border: none; cursor: pointer; }
 
-        .swal2-input, .swal2-select { border: none !important; background: #f5f5f7 !important; border-radius: 12px !important; }
-        #inline-selector.open { height: 360px; border: 1px solid var(--gold); border-radius: 15px; margin-top: 10px; padding: 10px; }
+        #inline-selector { height: 0; overflow: hidden; transition: 0.3s ease; }
+        #inline-selector.open { height: 380px; border: 1.2px solid var(--gold); border-radius: 15px; margin-top: 15px; padding: 10px; }
 
         .page { display: none; width: 100%; padding: 10px 20px; }
         .page.active { display: block; }
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; display: flex; justify-content: space-around; align-items: center; }
+        .nav-item { border:none; background:none; display:flex; flex-direction:column; align-items:center; color:var(--sub); font-size:0.7rem; gap:4px; }
+        .nav-item.active { color:var(--gold); font-weight:700; }
     </style>
 </head>
 <body>
@@ -52,7 +56,7 @@
     
     <div class="page" id="page-1">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; margin-top:10px;">
-            <input type="text" placeholder="搜尋顧客..." id="cSearch" style="border:none; border-bottom:1px solid var(--gold); padding:10px; flex:1; margin-right:15px;" oninput="renderAll()">
+            <input type="text" placeholder="尋找顧客..." id="cSearch" style="border:none; border-bottom:1px solid var(--gold); padding:10px; flex:1; margin-right:15px;" oninput="renderAll()">
             <div class="apple-btn-mini" onclick="addClient()">新增顧客</div>
         </div>
         <div id="client-list-area"></div>
@@ -60,7 +64,7 @@
     
     <div class="page" id="page-2">
         <div style="padding:20px 0; border-bottom:1px solid #f2f2f2; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:0.75rem; color:var(--sub); font-weight:700;">服務時段</span>
+            <span class="gray-label">服務時段</span>
             <div style="display:flex; align-items:center; gap:8px;">
                 <div class="time-box"><input type="time" id="openT" onchange="updateSys()"></div>
                 <span style="color:var(--gold); font-weight:700;">至</span>
@@ -70,35 +74,35 @@
 
         <div style="padding:25px 0; border-bottom:1px solid #f2f2f2;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.75rem; color:var(--sub); font-weight:700;">自訂排休</span>
-                <div class="apple-btn-mini" onclick="toggleOffCal()">選擇日期</div>
+                <span class="gray-label">自訂排休</span>
+                <div class="apple-btn-mini" id="off-cal-btn" onclick="toggleOffCal()">選擇日期</div>
             </div>
             <div style="display:flex; align-items:center; gap:15px; margin-top:10px;">
                 <div id="off-days-display" style="flex:1;"></div>
                 <div class="picker-dot" id="off-color-dot"><input type="color" class="native-input" id="off-c-in" oninput="updateOffCol(this.value)"></div>
             </div>
-            <div id="inline-selector" style="height:0; overflow:hidden; transition:0.3s;"><div id="mini-cal"></div></div>
+            <div id="inline-selector"><div id="mini-cal"></div></div>
         </div>
 
         <div id="sty-section"></div>
         <div id="tag-section"></div>
 
         <div style="padding:30px 0; display:flex; gap:10px;">
-            <div class="apple-btn-mini" style="flex:1; text-align:center;" onclick="exportData()">💾 備份</div>
-            <div class="apple-btn-mini" style="flex:1; text-align:center;" onclick="importData()">📥 恢復</div>
+            <div class="apple-btn-mini" style="flex:1; text-align:center;" onclick="exportData()">💾 備份檔案</div>
+            <div class="apple-btn-mini" style="flex:1; text-align:center;" onclick="importData()">📥 恢復檔案</div>
         </div>
     </div>
 </div>
 
 <div class="nav-container">
-    <div onclick="slideTo(0)" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; color:var(--sub);"><i class="fas fa-calendar-alt"></i><span>預約表</span></div>
-    <div onclick="slideTo(1)" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; color:var(--sub);"><i class="fas fa-user-circle"></i><span>客資</span></div>
-    <div onclick="slideTo(2)" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; color:var(--sub);"><i class="fas fa-cog"></i><span>設定</span></div>
+    <button class="nav-item active" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button>
+    <button class="nav-item" onclick="slideTo(1)"><i class="fas fa-user-circle"></i><span>客資</span></button>
+    <button class="nav-item" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button>
 </div>
 
 <script>
     let calendar, mini;
-    let store = JSON.parse(localStorage.getItem('SALON_V186_IRON')) || {
+    let store = JSON.parse(localStorage.getItem('SALON_V187_CORE')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
         tags: [{id: 1, name: '剪髮'}],
         clients: [], offDays: [], offColor: "#34495e", openT: "11:00", closeT: "21:00", appointments: []
@@ -125,52 +129,92 @@
     }
 
     function renderAll() {
-        localStorage.setItem('SALON_V186_IRON', JSON.stringify(store));
+        localStorage.setItem('SALON_V187_CORE', JSON.stringify(store));
         
-        // 渲染客資
+        // 客資與歷史三代
         const kw = document.getElementById('cSearch')?.value || "";
         document.getElementById('client-list-area').innerHTML = store.clients.filter(c => c.n.includes(kw)).map(c => {
             const sc = store.stylists.find(s => s.id == c.sId)?.color || '#ddd';
+            // 自動計算該客戶最近三次預約
+            const history = store.appointments
+                .filter(a => a.n === c.n)
+                .sort((a,b) => new Date(b.t) - new Date(a.t))
+                .slice(0, 3)
+                .map((a, i) => `<span class="history-tag ${i===0?'newest':''}">${a.t.split('T')[0].slice(5)} ${a.tag||''}</span>`)
+                .join('');
+
             return `
             <div class="client-card">
                 <div class="client-side-mark" style="background:${sc}"></div>
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <div class="gold-wrap">${c.n}</div>
-                    <div style="display:flex; gap:15px; margin-top:8px;">
-                        <a href="tel:${c.p}"><i class="fas fa-phone-alt" style="color:var(--gold);"></i></a>
-                        <i class="fas fa-pen" style="color:var(--gold);" onclick="editClient(${c.id})"></i>
-                        <i class="fas fa-trash-alt" style="color:var(--red);" onclick="delClient(${c.id})"></i>
+                    <div style="display:flex; gap:18px; margin-top:8px;">
+                        <i class="fas fa-calendar-plus" style="color:var(--gold); font-size:1.1rem; cursor:pointer;" onclick="quickBook('${c.n}', ${c.sId})"></i>
+                        <a href="tel:${c.p}"><i class="fas fa-phone-alt" style="color:var(--gold); font-size:1.1rem;"></i></a>
+                        <i class="fas fa-pen" style="color:var(--gold); cursor:pointer;" onclick="editClient(${c.id})"></i>
+                        <i class="fas fa-trash-alt" style="color:var(--red); cursor:pointer;" onclick="delClient(${c.id})"></i>
                     </div>
                 </div>
-                <div style="font-size:0.85rem; color:var(--sub); font-weight:700; margin-top:5px;">📞 ${c.p} | 🎂 ${c.m}${c.d}</div>
+                <div style="font-size:0.85rem; color:var(--sub); font-weight:700;">📞 ${c.p} | 🎂 ${c.m}${c.d}</div>
+                <div class="history-stream">${history || '<span style="font-size:0.7rem; color:#ccc;">尚無預約紀錄</span>'}</div>
             </div>`;
         }).join('');
 
-        // 渲染排休數字
+        // 設定：排休
         document.getElementById('off-days-display').innerHTML = store.offDays.sort().map(d => `<span style="border:1.2px solid var(--gold); border-radius:10px; padding:4px 10px; font-weight:900; font-size:0.85rem; margin-right:5px; margin-bottom:5px; display:inline-block;">${d.slice(5)}</span>`).join('');
-
-        // 渲染人員
+        
+        // 設定：人員
         document.getElementById('sty-section').innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;"><span style="font-size:0.75rem; color:var(--sub); font-weight:700;">人員管理</span><div class="apple-btn-mini" onclick="addSty()">新增成員</div></div>` +
             store.stylists.map(s => `<div style="display:flex; align-items:center; gap:12px; margin:15px 0;">
                 <div class="gold-wrap">${s.name}</div>
                 <div class="picker-dot" style="background:${s.color}"><input type="color" class="native-input" value="${s.color}" oninput="updateStyCol(${s.id}, this.value)"></div>
-                <i class="fas fa-pen" style="color:var(--gold);" onclick="editStyName(${s.id})"></i>
-                <i class="fas fa-trash-alt" style="color:var(--red);" onclick="delSty(${s.id})"></i>
+                <i class="fas fa-pen" style="color:var(--gold); cursor:pointer;" onclick="editStyName(${s.id})"></i>
+                <i class="fas fa-trash-alt" style="color:var(--red); cursor:pointer;" onclick="delSty(${s.id})"></i>
             </div>`).join('');
 
-        // 渲染標籤
+        // 設定：標籤
         document.getElementById('tag-section').innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;"><span style="font-size:0.75rem; color:var(--sub); font-weight:700;">標籤管理</span><div class="apple-btn-mini" onclick="addTag()">新增標籤</div></div>` +
-            `<div style="display:flex; flex-wrap:wrap; gap:8px; padding:15px 0;">${store.tags.map(t => `<div class="apple-btn-mini">${t.name} <i class="fas fa-pen" style="color:var(--gold); margin:0 5px;" onclick="editTagName(${t.id})"></i><i class="fas fa-times" style="color:var(--red);" onclick="delTag(${t.id})"></i></div>`).join('')}</div>`;
+            `<div style="display:flex; flex-wrap:wrap; gap:8px; padding:15px 0;">${store.tags.map(t => `<div class="apple-btn-mini">${t.name} <i class="fas fa-times" style="color:var(--red); margin-left:5px;" onclick="delTag(${t.id})"></i></div>`).join('')}</div>`;
         
         if(calendar) calendar.refetchEvents();
     }
 
-    // --- 顧客系統修正 ---
+    // --- 快約功能 ---
+    async function quickBook(name, sId) {
+        const { value: res } = await Swal.fire({
+            title: `為 ${name} 預約`,
+            html: `<input id="qbt" class="swal2-input" type="datetime-local"><select id="qbtag" class="swal2-input" style="width:100%; margin-top:10px;">${store.tags.map(t=>`<option>${t.name}</option>`).join('')}</select>`,
+            preConfirm: () => ({ t: document.getElementById('qbt').value, tag: document.getElementById('qbtag').value })
+        });
+        if(res && res.t) { store.appointments.push({id: Date.now(), n: name, t: res.t, sId: sId, tag: res.tag}); slideTo(0); renderAll(); }
+    }
+
+    // --- 排休修復：獨立初始化 ---
+    function toggleOffCal() {
+        const box = document.getElementById('inline-selector');
+        box.classList.toggle('open');
+        if(!mini) {
+            mini = new FullCalendar.Calendar(document.getElementById('mini-cal'), {
+                initialView: 'dayGridMonth', headerToolbar: { left: 'prev', right: 'next' }, locale: 'zh-tw', height: 320,
+                dayCellContent: e => e.dayNumberText.replace('日', ''),
+                dateClick: i => {
+                    const idx = store.offDays.indexOf(i.dateStr);
+                    idx > -1 ? store.offDays.splice(idx, 1) : store.offDays.push(i.dateStr);
+                    renderAll();
+                    mini.render(); 
+                },
+                dayCellDidMount: i => { if(store.offDays.includes(i.date.toLocaleDateString('sv'))) i.el.style.background = 'rgba(212,175,55,0.2)'; }
+            });
+            mini.render();
+        }
+    }
+
+    // --- 基礎邏輯 ---
     async function addClient() {
         const { value: res } = await Swal.fire({
             title: '新增顧客',
             html: `<input id="cn" class="swal2-input" placeholder="姓名"><input id="cp" class="swal2-input" placeholder="電話" style="margin-top:10px;">
-                <div style="display:flex; justify-content:flex-end; align-items:center; gap:5px; margin-top:15px;"><span>生日：</span>
+                <div style="display:flex; justify-content:flex-end; align-items:center; gap:5px; margin-top:15px;">
                 <select id="bm" class="mini-date-select">${Array.from({length:12},(_,i)=>`<option>${i+1}月</option>`).join('')}</select>
                 <select id="bd" class="mini-date-select">${Array.from({length:31},(_,i)=>`<option>${i+1}日</option>`).join('')}</select></div>
                 <select id="cs" class="swal2-input" style="width:100%; margin-top:15px;">${store.stylists.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>`,
@@ -191,29 +235,7 @@
         if(res) { Object.assign(c, res); renderAll(); }
     }
     function delClient(id) { store.clients = store.clients.filter(x=>x.id!==id); renderAll(); }
-
-    // --- 排休系統修正 ---
-    function toggleOffCal() {
-        document.getElementById('inline-selector').classList.toggle('open');
-        if(!mini) {
-            mini = new FullCalendar.Calendar(document.getElementById('mini-cal'), {
-                initialView: 'dayGridMonth', headerToolbar: { left: 'prev', right: 'next' }, locale: 'zh-tw', height: 280,
-                dayCellContent: e => e.dayNumberText.replace('日', ''),
-                dateClick: i => {
-                    const idx = store.offDays.indexOf(i.dateStr);
-                    idx > -1 ? store.offDays.splice(idx, 1) : store.offDays.push(i.dateStr);
-                    renderAll();
-                    mini.render();
-                },
-                dayCellDidMount: i => { if(store.offDays.includes(i.date.toLocaleDateString('sv'))) i.el.style.background = 'rgba(212,175,55,0.2)'; }
-            });
-            mini.render();
-        }
-    }
-
-    // --- 其他功能校準 ---
     async function editStyName(id) { const s = store.stylists.find(x=>x.id==id); const { value: n } = await Swal.fire({ title: '修改姓名', input: 'text', inputValue: s.name }); if(n) { s.name = n; renderAll(); } }
-    async function editTagName(id) { const t = store.tags.find(x=>x.id==id); const { value: n } = await Swal.fire({ title: '修改項目', input: 'text', inputValue: t.name }); if(n) { t.name = n; renderAll(); } }
     function updateStyCol(id, c) { const s = store.stylists.find(x=>x.id==id); if(s) s.color = c; renderAll(); }
     function updateOffCol(v) { store.offColor = v; document.getElementById('off-color-dot').style.background = v; renderAll(); }
     async function addSty() { const { value: n } = await Swal.fire({ title: '人員姓名', input: 'text' }); if(n) { store.stylists.push({id: Date.now(), name: n, color: '#D4AF37'}); renderAll(); } }
@@ -221,7 +243,7 @@
     function delSty(id) { store.stylists = store.stylists.filter(x=>x.id!==id); renderAll(); }
     function delTag(id) { store.tags = store.tags.filter(x=>x.id!==id); renderAll(); }
     function updateSys() { store.openT = document.getElementById('openT').value; store.closeT = document.getElementById('closeT').value; renderAll(); }
-    function slideTo(idx) { document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx)); if(idx === 0) setTimeout(()=>calendar.render(), 50); }
+    function slideTo(idx) { document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx)); document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx)); if(idx === 0) setTimeout(()=>calendar.render(), 50); }
     function exportData() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(store)], {type: 'application/json'})); a.download = `SALON.json`; a.click(); }
     function importData() { Swal.fire({ title: '恢復', input: 'file' }).then(res => { if(res.value) { const reader = new FileReader(); reader.onload = e => { store = JSON.parse(e.target.result); renderAll(); location.reload(); }; reader.readAsText(res.value); } }); }
 </script>
