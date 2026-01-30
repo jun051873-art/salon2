@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V182</title>
+    <title>專屬空間 Salon Elite V183</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -13,31 +13,28 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: var(--primary); padding-bottom: 110px; }
         
-        /* 全域唯一標題 */
         .header { padding: 30px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: #fff; z-index: 4500; border-bottom: 1px solid var(--border); }
         .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        /* 白金按鈕 */
         .apple-btn-mini { background: #fff; border: 1.2px solid var(--gold); border-radius: 12px; padding: 6px 15px; font-size: 0.8rem; font-weight: 700; color: #000; cursor: pointer; }
         
-        /* 客資卡片：明信片風格 */
-        .client-card { padding: 25px 0; border-bottom: 1px solid var(--border); position: relative; transition: 0.3s; }
+        /* 客資卡片 */
+        .client-card { padding: 25px 0; border-bottom: 1px solid var(--border); position: relative; }
         .client-side-mark { position: absolute; left: -20px; top: 25%; height: 50%; width: 4px; border-radius: 0 5px 5px 0; }
         .client-name-wrap { border: 1.2px solid var(--gold); border-radius: 12px; padding: 8px 15px; font-weight: 800; display: inline-block; margin-bottom: 10px; background: #fff; }
-        .client-meta { display: flex; justify-content: space-between; align-items: center; }
 
-        /* 明信片生日選單細節 */
+        /* 明信片生日選單 */
         .mini-date-select { border: 1.2px solid var(--gold) !important; background: #fff !important; padding: 6px !important; border-radius: 10px !important; width: 65px !important; font-size: 0.9rem !important; font-weight: 700 !important; }
 
-        /* 彈窗輸入框：灰底純淨 */
+        /* 彈窗輸入 */
         .swal2-input, .swal2-select { border: none !important; background: #f5f5f7 !important; border-radius: 12px !important; color: #000 !important; font-weight: 700 !important; }
         .swal2-confirm { background: #fff !important; color: #000 !important; border: 1.2px solid var(--gold) !important; border-radius: 12px !important; font-weight: 900 !important; }
 
         .page { display: none; width: 100%; padding: 10px 20px; }
         .page.active { display: block; }
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; display: flex; justify-content: space-around; align-items: center; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub); font-size: 0.75rem; gap: 4px; border:none; background:none; }
+        .nav-item { border:none; background:none; display: flex; flex-direction: column; align-items: center; color: var(--sub); font-size: 0.75rem; gap: 4px; cursor: pointer; }
         .nav-item.active { color: var(--gold); font-weight: 700; }
     </style>
 </head>
@@ -75,27 +72,38 @@
 </div>
 
 <div class="nav-container">
-    <button class="nav-item active" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button>
-    <button class="nav-item" onclick="slideTo(1)"><i class="fas fa-user-circle"></i><span>客資</span></button>
-    <button class="nav-item" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button>
+    <button class="nav-item active" id="nav-0" onclick="slideTo(0)"><i class="fas fa-calendar-alt"></i><span>預約表</span></button>
+    <button class="nav-item" id="nav-1" onclick="slideTo(1)"><i class="fas fa-user-circle"></i><span>客資</span></button>
+    <button class="nav-item" id="nav-2" onclick="slideTo(2)"><i class="fas fa-cog"></i><span>設定</span></button>
 </div>
 
 <script>
     let calendar;
-    let store = JSON.parse(localStorage.getItem('SALON_V182_FINAL')) || {
-        stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
-        tags: [{id: 1, name: '剪髮'}],
-        clients: [], offDays: [], offColor: "#34495e", openT: "11:00", closeT: "21:00", appointments: []
-    };
+    // 增加容錯處理，如果資料損壞則重置
+    let store;
+    try {
+        store = JSON.parse(localStorage.getItem('SALON_V183_STABLE')) || {
+            stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
+            tags: [{id: 1, name: '剪髮'}],
+            clients: [], offDays: [], offColor: "#34495e", openT: "11:00", closeT: "21:00", appointments: []
+        };
+    } catch (e) {
+        store = { stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}], tags: [], clients: [], offDays: [], offColor: "#34495e", openT: "11:00", closeT: "21:00", appointments: [] };
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('openT').value = store.openT;
-        document.getElementById('closeT').value = store.closeT;
-        initCal(); renderAll();
+        const oT = document.getElementById('openT');
+        const cT = document.getElementById('closeT');
+        if(oT) oT.value = store.openT;
+        if(cT) cT.value = store.closeT;
+        initCal(); 
+        renderAll();
     });
 
     function initCal() {
-        calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        const calEl = document.getElementById('calendar');
+        if(!calEl) return;
+        calendar = new FullCalendar.Calendar(calEl, {
             initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto',
             dayCellContent: e => e.dayNumberText.replace('日', '')
         });
@@ -103,54 +111,77 @@
     }
 
     function renderAll() {
-        localStorage.setItem('SALON_V182_FINAL', JSON.stringify(store));
-        // 客資渲染
+        localStorage.setItem('SALON_V183_STABLE', JSON.stringify(store));
+        
+        // 客資列表
         const kw = document.getElementById('cSearch')?.value || "";
         const area = document.getElementById('client-list-area');
-        area.innerHTML = store.clients.filter(c => c.n.includes(kw)).map(c => `
-            <div class="client-card">
-                <div class="client-side-mark" style="background:${store.stylists.find(s=>s.id==c.sId)?.color || '#ddd'}"></div>
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <div class="client-name-wrap">${c.n}</div>
-                    <div style="display:flex; gap:15px; margin-top:10px;">
-                        <a href="tel:${c.p}"><i class="fas fa-phone-alt" style="color:var(--gold);"></i></a>
-                        <i class="fas fa-pen" style="color:var(--gold); font-size:0.9rem;" onclick="editClient(${c.id})"></i>
-                        <i class="fas fa-trash-alt" style="color:var(--red); font-size:0.9rem;" onclick="delClient(${c.id})"></i>
+        if(area) {
+            area.innerHTML = store.clients.filter(c => c.n.includes(kw)).map(c => `
+                <div class="client-card">
+                    <div class="client-side-mark" style="background:${store.stylists.find(s=>s.id==c.sId)?.color || '#ddd'}"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div class="client-name-wrap">${c.n}</div>
+                        <div style="display:flex; gap:15px; margin-top:10px;">
+                            <a href="tel:${c.p}"><i class="fas fa-phone-alt" style="color:var(--gold);"></i></a>
+                            <i class="fas fa-pen" style="color:var(--gold); cursor:pointer;" onclick="editClient(${c.id})"></i>
+                            <i class="fas fa-trash-alt" style="color:var(--red); cursor:pointer;" onclick="delClient(${c.id})"></i>
+                        </div>
                     </div>
-                </div>
-                <div class="client-meta">
-                    <div style="font-size:0.9rem; color:var(--sub);">📞 ${c.p}</div>
-                    <div style="font-size:0.8rem; color:var(--sub); font-weight:700;">🎂 ${c.m} / ${c.d}</div>
-                </div>
-            </div>`).join('');
+                    <div style="display:flex; justify-content:space-between; color:var(--sub); font-size:0.85rem;">
+                        <span>📞 ${c.p}</span>
+                        <span style="font-weight:700;">🎂 ${c.m} / ${c.d}</span>
+                    </div>
+                </div>`).join('');
+        }
 
-        // 設定：人員
-        document.getElementById('sty-section').innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;">
-                <span style="font-size:0.75rem; color:var(--sub); font-weight:700;">人員管理</span>
-                <div class="apple-btn-mini" onclick="addSty()">新增成員</div>
-            </div>
-            <div style="padding:10px 0;">${store.stylists.map(s => `
-                <div style="display:flex; align-items:center; gap:12px; margin:10px 0;">
-                    <div style="border:1.2px solid var(--gold); border-radius:12px; padding:8px 15px; font-weight:800;">${s.name}</div>
-                    <div style="width:35px; height:35px; border-radius:50%; background:${s.color}; border:2.5px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); position:relative; overflow:hidden;">
-                        <input type="color" value="${s.color}" style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; border:none; cursor:pointer;" oninput="updateStyCol(${s.id}, this.value)">
-                    </div>
-                </div>`).join('')}</div>
-        `;
+        // 人員設定
+        const styArea = document.getElementById('sty-section');
+        if(styArea) {
+            styArea.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid #f2f2f2;">
+                    <span style="font-size:0.75rem; color:var(--sub); font-weight:700;">人員管理</span>
+                    <div class="apple-btn-mini" onclick="addSty()">新增成員</div>
+                </div>
+                <div style="padding:10px 0;">${store.stylists.map(s => `
+                    <div style="display:flex; align-items:center; gap:12px; margin:10px 0;">
+                        <div style="border:1.2px solid var(--gold); border-radius:12px; padding:8px 15px; font-weight:800;">${s.name}</div>
+                        <div style="width:35px; height:35px; border-radius:50%; background:${s.color}; border:2.5px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); position:relative; overflow:hidden;">
+                            <input type="color" value="${s.color}" style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; border:none; cursor:pointer;" oninput="updateStyCol(${s.id}, this.value)">
+                        </div>
+                    </div>`).join('')}</div>
+            `;
+        }
         if(calendar) calendar.render();
     }
 
-    // --- 客資修改與刪除 ---
+    // --- 顧客邏輯 ---
+    async function addClient() {
+        const { value: res } = await Swal.fire({
+            title: '新增顧客',
+            html: `
+                <input id="cn" class="swal2-input" placeholder="姓名">
+                <input id="cp" class="swal2-input" placeholder="電話" style="margin-top:10px;">
+                <div style="display:flex; justify-content:flex-end; align-items:center; gap:5px; margin-top:15px;">
+                    <span>生日：</span>
+                    <select id="bm" class="mini-date-select">${Array.from({length:12},(_,i)=>`<option>${i+1}月</option>`).join('')}</select>
+                    <select id="bd" class="mini-date-select">${Array.from({length:31},(_,i)=>`<option>${i+1}日</option>`).join('')}</select>
+                </div>
+                <select id="cs" class="swal2-select" style="width:100%; margin-top:15px;">${store.stylists.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+            `,
+            preConfirm: () => ({ n: document.getElementById('cn').value, p: document.getElementById('cp').value, m: document.getElementById('bm').value, d: document.getElementById('bd').value, sId: document.getElementById('cs').value })
+        });
+        if(res && res.n) { store.clients.push({id: Date.now(), ...res}); renderAll(); }
+    }
+
     async function editClient(id) {
         const c = store.clients.find(x => x.id == id);
         const { value: res } = await Swal.fire({
-            title: '修改顧客資料',
+            title: '修改資料',
             html: `
-                <input id="un" class="swal2-input" value="${c.n}" placeholder="姓名">
-                <input id="up" class="swal2-input" value="${c.p}" placeholder="電話" style="margin-top:10px;">
+                <input id="un" class="swal2-input" value="${c.n}">
+                <input id="up" class="swal2-input" value="${c.p}" style="margin-top:10px;">
                 <div style="display:flex; justify-content:flex-end; align-items:center; gap:5px; margin-top:15px;">
-                    <span style="font-size:0.75rem;">生日：</span>
                     <select id="um" class="mini-date-select">${Array.from({length:12},(_,i)=>`<option ${c.m==(i+1+'月')?'selected':''}>${i+1}月</option>`).join('')}</select>
                     <select id="ud" class="mini-date-select">${Array.from({length:31},(_,i)=>`<option ${c.d==(i+1+'日')?'selected':''}>${i+1}日</option>`).join('')}</select>
                 </div>
@@ -162,36 +193,33 @@
     }
 
     function delClient(id) {
-        Swal.fire({ title: '刪除顧客？', text: "此動作無法還原", showCancelButton: true, confirmButtonColor: var(--red), confirmButtonText: '確定刪除' }).then(r => {
+        Swal.fire({ title: '刪除顧客？', showCancelButton: true, confirmButtonColor: "#FF3B30" }).then(r => {
             if(r.isConfirmed) { store.clients = store.clients.filter(x => x.id !== id); renderAll(); }
         });
     }
 
-    async function addClient() {
-        const { value: res } = await Swal.fire({
-            title: '新增顧客',
-            html: `
-                <input id="cn" class="swal2-input" placeholder="姓名">
-                <input id="cp" class="swal2-input" placeholder="電話" style="margin-top:10px;">
-                <div style="display:flex; justify-content:flex-end; align-items:center; gap:5px; margin-top:15px;">
-                    <span style="font-size:0.75rem;">生日：</span>
-                    <select id="bm" class="mini-date-select">${Array.from({length:12},(_,i)=>`<option>${i+1}月</option>`).join('')}</select>
-                    <select id="bd" class="mini-date-select">${Array.from({length:31},(_,i)=>`<option>${i+1}日</option>`).join('')}</select>
-                </div>
-                <select id="cs" class="swal2-input" style="width:100%; margin-top:15px;">${store.stylists.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
-            `,
-            preConfirm: () => ({ n: document.getElementById('cn').value, p: document.getElementById('cp').value, m: document.getElementById('bm').value, d: document.getElementById('bd').value, sId: document.getElementById('cs').value })
-        });
-        if(res && res.n) { store.clients.push({id: Date.now(), ...res}); renderAll(); }
-    }
-
+    // --- 系統邏輯 ---
     function slideTo(idx) {
         document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx));
         document.querySelectorAll('.nav-item').forEach((item, i) => item.classList.toggle('active', i === idx));
-        if(idx === 0) setTimeout(()=>calendar.render(), 50);
+        if(idx === 0 && calendar) setTimeout(()=>calendar.render(), 50);
     }
     function updateStyCol(id, c) { const s = store.stylists.find(x=>x.id==id); if(s) s.color = c; renderAll(); }
-    function exportData() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(store)], {type: 'application/json'})); a.download = `SALON.json`; a.click(); }
+    function updateSys() { 
+        store.openT = document.getElementById('openT').value; 
+        store.closeT = document.getElementById('closeT').value; 
+        renderAll(); 
+    }
+    function exportData() {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(store)], {type: 'application/json'}));
+        a.download = `SALON_BACKUP.json`;
+        a.click();
+    }
+    async function addSty() {
+        const { value: n } = await Swal.fire({ title: '姓名', input: 'text' });
+        if(n) { store.stylists.push({id: Date.now(), name: n, color: '#D4AF37'}); renderAll(); }
+    }
 </script>
 </body>
 </html>
