@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 V211 - 極致白金版</title>
+    <title>專屬空間 V212 - 純粹秩序</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --gold: #D4AF37; --bg: #ffffff; --primary: #1d1d1f; --sub: #86868b; --border: #f2f2f2; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: var(--primary); padding-bottom: 95px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; padding-bottom: 95px; }
 
-        /* 標題秩序 */
         .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: #fff; z-index: 100; border-bottom: 1px solid var(--border); }
         .app-title { font-size: 1.8rem; font-weight: 900; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-
-        .page { display: none; width: 100vw; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* 鋼鐵月曆 */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
@@ -27,26 +22,24 @@
         .dot-group { display: flex; gap: 3px; margin-top: 10px; flex-wrap: wrap; }
         .status-dot { width: 7px; height: 7px; border-radius: 50%; }
 
-        /* 日看板：備忘錄卡片 */
-        .day-header { padding: 20px; border-bottom: 1.5px solid var(--gold); display: flex; align-items: center; justify-content: space-between; background: #fff; }
-        .memo-card { border-left: 8px solid var(--sty-color); border-radius: 18px; padding: 20px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.06); margin-bottom: 15px; border: 1px solid var(--border); border-left: 8px solid var(--sty-color); position: relative; }
-        .memo-time { position: absolute; right: 20px; top: 20px; font-weight: 900; color: var(--gold); font-size: 1.1rem; }
-        .memo-sty-tag { display: inline-block; padding: 3px 10px; border-radius: 8px; background: var(--sty-color); color: #fff; font-size: 0.7rem; font-weight: 900; margin-bottom: 8px; }
-        .memo-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 5px; }
+        /* 備忘錄卡片 */
+        .memo-card { border-left: 8px solid var(--sty-color); border-radius: 18px; padding: 20px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.06); margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        .memo-info { font-weight: 900; color: var(--gold); }
 
-        /* 預約表單：純白金邊 */
-        .drawer-row { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .white-gold-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 10px 18px; font-weight: 800; background: #fff; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
-        .oval-input-pure { border: 1.5px solid var(--gold); border-radius: 20px; padding: 12px; text-align: center; font-weight: 900; font-size: 1rem; flex: 1; background: #fff; -webkit-appearance: none; }
+        /* 暴力美學表單組件 */
+        .pure-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 10px 18px; font-weight: 800; background: #fff; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+        .pure-input { border: 1.5px solid var(--gold); border-radius: 20px; padding: 12px; text-align: center; font-weight: 900; font-size: 1rem; flex: 1; background: #fff; }
         
-        /* 收納式標籤牆 */
-        .tag-drawer { border: 1.5px solid var(--gold); border-radius: 20px; padding: 15px; background: #fff; text-align: left; display: none; margin-top: 10px; }
+        .tag-drawer { border: 1.5px solid var(--gold); border-radius: 20px; padding: 15px; background: #fff; display: none; margin-top: 10px; }
         .tag-drawer.open { display: block; }
         .tag-chip { display: inline-block; padding: 8px 15px; border: 1.2px solid var(--gold); border-radius: 12px; margin: 4px; font-weight: 800; cursor: pointer; }
         .tag-chip.active { background: var(--gold); color: #fff; }
 
         .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .fab { position: fixed; bottom: 105px; right: 25px; width: 65px; height: 65px; background: #fff; border: 2.2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.8rem; box-shadow: 0 10px 30px rgba(212,175,55,0.3); z-index: 2000; }
+        
+        /* 隱藏原生 Checkbox 美化 */
+        .save-check { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -54,133 +47,125 @@
 <div id="page-month" class="page active">
     <div class="header">
         <div class="app-title">專屬空間</div>
-        <div onclick="initMonthView()" style="font-weight:900; color:var(--gold); border:1.5px solid var(--gold); padding:5px 15px; border-radius:12px; cursor:pointer;">TODAY</div>
+        <div onclick="initMonthView()" style="font-weight:900; color:var(--gold); cursor:pointer;">TODAY</div>
     </div>
-    <div style="display:grid; grid-template-columns: repeat(7, 1fr); text-align:center; padding:15px 0; font-weight:900; font-size:0.7rem; color:var(--sub);">
-        <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
-    </div>
-    <div class="calendar-grid" id="cal-grid"></div>
+    <div class="calendar-grid" id="cal-grid" style="margin-top:20px;"></div>
 </div>
 
-<div id="page-day" class="page">
-    <div class="day-header">
-        <i class="fas fa-chevron-left" onclick="showPage('page-month')" style="color:var(--gold); font-size:1.5rem;"></i>
-        <div id="day-title" style="font-weight:900; font-size:1.4rem;">2026-01-31</div>
-        <i class="fas fa-ellipsis-h" style="color:var(--gold); font-size:1.5rem;"></i>
+<div id="page-day" class="page" style="display:none; padding:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+        <i class="fas fa-chevron-left" onclick="location.reload()" style="color:var(--gold); font-size:1.5rem;"></i>
+        <div id="day-title" style="font-weight:900; font-size:1.4rem;"></div>
+        <i class="fas fa-ellipsis-v" style="color:var(--gold);"></i>
     </div>
-    <div class="day-content" id="day-cards"></div>
+    <div id="day-cards"></div>
 </div>
 
 <button class="fab" onclick="openPureBooking()"><i class="fas fa-plus"></i></button>
 
 <div class="nav">
-    <div class="nav-item active" onclick="showPage('page-month')" style="display:flex; flex-direction:column; align-items:center; color:var(--gold);"><i class="fas fa-calendar-alt"></i><span style="font-size:0.7rem;">預約表</span></div>
-    <div class="nav-item" style="display:flex; flex-direction:column; align-items:center; color:var(--sub);"><i class="fas fa-user-circle"></i><span style="font-size:0.7rem;">客資</span></div>
-    <div class="nav-item" style="display:flex; flex-direction:column; align-items:center; color:var(--sub);"><i class="fas fa-cog"></i><span style="font-size:0.7rem;">設定</span></div>
+    <div class="nav-item active" style="text-align:center; color:var(--gold);"><i class="fas fa-calendar-alt"></i><br><span style="font-size:0.7rem;">預約表</span></div>
+    <div class="nav-item" style="text-align:center; color:var(--sub);"><i class="fas fa-user-circle"></i><br><span style="font-size:0.7rem;">客資</span></div>
+    <div class="nav-item" style="text-align:center; color:var(--sub);"><i class="fas fa-cog"></i><br><span style="font-size:0.7rem;">設定</span></div>
 </div>
 
 <script>
-    let activeTags = [], currentStyId = 1;
-    let store = JSON.parse(localStorage.getItem('SALON_V211_PURE')) || {
+    let activeTags = [], currentStyId = 1, currentCount = 1;
+    let store = JSON.parse(localStorage.getItem('SALON_V212_PURE')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#1d1d1f'}, {id: 2, name: 'Apple', color: '#D4AF37'}],
-        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}, {id: 4, name: '護髮'}],
+        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}],
         appointments: []
     };
-
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'page-month') initMonthView();
-    }
 
     function initMonthView() {
         const grid = document.getElementById('cal-grid');
         grid.innerHTML = '';
         const now = new Date();
-        const first = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
         const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-
-        for(let i=0; i<first; i++) grid.appendChild(document.createElement('div'));
         for(let d=1; d<=days; d++) {
             const ds = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const el = document.createElement('div');
             el.className = 'cal-day';
             const apps = store.appointments.filter(a => a.date === ds);
-            const dots = [...new Set(apps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))]
-                .map(c => `<div class="status-dot" style="background:${c}"></div>`).join('');
+            const dots = [...new Set(apps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))].map(c => `<div class="status-dot" style="background:${c}"></div>`).join('');
             el.innerHTML = `<div class="day-num">${d}</div><div class="dot-group">${dots}</div>`;
-            el.onclick = () => openDayBoard(ds);
+            el.onclick = () => showDay(ds);
             grid.appendChild(el);
         }
     }
 
-    function openDayBoard(ds) {
+    function showDay(ds) {
+        document.getElementById('page-month').style.display = 'none';
+        document.getElementById('page-day').style.display = 'block';
         document.getElementById('day-title').innerText = ds;
         const area = document.getElementById('day-cards');
-        const apps = store.appointments.filter(a => a.date === ds).sort((a,b) => a.time.localeCompare(b.time));
-        
-        area.innerHTML = apps.length ? apps.map(a => {
-            const s = store.stylists.find(sty => sty.id == a.sId);
-            return `<div class="memo-card" style="--sty-color: ${s?.color}"><div class="memo-time">${a.time}</div><div class="memo-sty-tag" style="background:${s?.color}">${s?.name}</div><div class="memo-name">${a.name}</div><div style="font-size:0.85rem; color:var(--sub);"><i class="fas fa-check-circle" style="color:var(--gold); margin-right:5px;"></i>${a.tags.join(' + ')}</div></div>`;
-        }).join('') : `<div style="text-align:center; color:#ccc; margin-top:100px;">本日尚無預約</div>`;
-        showPage('page-day');
+        const apps = store.appointments.filter(a => a.date === ds).sort((a,b)=>a.time.localeCompare(b.time));
+        area.innerHTML = apps.map(a => {
+            const s = store.stylists.find(st => st.id == a.sId);
+            return `<div class="memo-card" style="--sty-color:${s?.color}"><div style="display:flex; justify-content:space-between;"><span class="memo-info">${a.time}</span><span class="memo-info">${a.count}人</span></div><div style="font-weight:900; color:${s?.color}; font-size:0.7rem; margin:5px 0;">${s?.name}</div><div class="memo-name">${a.name}</div><div style="font-size:0.85rem; color:var(--sub);">${a.tags.join(' + ')}</div></div>`;
+        }).join('');
     }
 
     async function openPureBooking() {
-        activeTags = []; currentStyId = store.stylists[0].id;
+        activeTags = []; currentCount = 1;
         const { value: res } = await Swal.fire({
-            title: '新增預約記錄',
-            confirmButtonText: '立即存檔',
+            title: '預約',
+            confirmButtonText: '預約',
             showCancelButton: true,
             html: `
-                <div class="drawer-row">
-                    <div class="white-gold-box" onclick="cycleStyLocal()">
-                        <span id="sty-name-local">${store.stylists[0].name}</span>
-                        <i class="fas fa-sync-alt" style="color:var(--gold);"></i>
-                    </div>
-                    <div class="white-gold-box" style="flex:1; justify-content:center; color:var(--gold);">
-                        <i class="fas fa-hdd"></i> 存檔預選設定
-                    </div>
-                </div>
-                <input id="n-in" class="oval-input-pure" placeholder="輸入顧客姓名" style="margin-bottom:15px; width:100%;">
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <input id="d-in" class="oval-input-pure" type="date" value="${new Date().toLocaleDateString('sv')}">
-                    <input id="t-in" class="oval-input-pure" type="time" value="12:00">
+                    <div class="pure-box" onclick="pickSty()"><span id="sty-name">${store.stylists[0].name}</span> <i class="fas fa-chevron-down"></i></div>
+                    <div class="pure-box" style="flex:1; justify-content:center; gap:15px;">
+                        <span>存檔</span><input type="checkbox" id="save-pref" class="save-check">
+                    </div>
                 </div>
-                <div class="white-gold-box" style="width:100%; justify-content:center;" onclick="document.getElementById('tag-drawer-local').classList.toggle('open')">
-                    <i class="fas fa-folder-plus"></i> 收納服務項目抽屜
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input id="n-in" class="pure-input" placeholder="顧客姓名" style="flex:2;">
+                    <div class="pure-box" onclick="pickCount()"><span id="count-val">1人</span></div>
                 </div>
-                <div id="tag-drawer-local" class="tag-drawer">
-                    <div style="font-size:0.75rem; color:var(--sub); margin-bottom:10px; font-weight:700;">點選以多選服務：</div>
-                    ${store.tags.map(t => `<div class="tag-chip" onclick="this.classList.toggle('active'); toggleTagLocal('${t.name}')">${t.name}</div>`).join('')}
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input id="d-in" class="pure-input" type="date" value="${new Date().toLocaleDateString('sv')}">
+                    <input id="t-in" class="pure-input" type="time" value="12:00">
                 </div>
-                <div id="selected-preview" style="margin-top:10px; font-weight:900; color:var(--gold); font-size:0.85rem;"></div>
+                <div class="pure-box" style="width:100%; justify-content:center;" onclick="document.getElementById('tag-drawer').classList.toggle('open')">項目</div>
+                <div id="tag-drawer" class="tag-drawer">
+                    ${store.tags.map(t => `<div class="tag-chip" onclick="this.classList.toggle('active'); toggleTag('${t.name}')">${t.name}</div>`).join('')}
+                </div>
             `,
             preConfirm: () => {
                 const name = document.getElementById('n-in').value;
-                if(!name || activeTags.length === 0) return Swal.showValidationMessage('請填寫姓名並選擇服務');
-                return { sId: currentStyId, name, date: document.getElementById('d-in').value, time: document.getElementById('t-in').value, tags: [...activeTags] };
+                if(!name || activeTags.length === 0) return Swal.showValidationMessage('資料不完整');
+                return { sId: currentStyId, name, date: document.getElementById('d-in').value, time: document.getElementById('t-in').value, tags: [...activeTags], count: currentCount };
             }
         });
         if(res) {
             store.appointments.push(res);
-            localStorage.setItem('SALON_V211_PURE', JSON.stringify(store));
+            localStorage.setItem('SALON_V212_PURE', JSON.stringify(store));
             initMonthView();
-            Swal.fire({ icon: 'success', title: '預約已同步', timer: 1000, showConfirmButton: false });
         }
     }
 
-    function cycleStyLocal() {
-        const idx = store.stylists.findIndex(s => s.id == currentStyId);
-        const next = store.stylists[(idx + 1) % store.stylists.length];
-        currentStyId = next.id;
-        document.getElementById('sty-name-local').innerText = next.name;
+    async function pickSty() {
+        const { value: styId } = await Swal.fire({
+            title: '切換設計師',
+            html: `<div style="padding:10px;">${store.stylists.map(s => `<div class="tag-chip" style="display:block; margin:10px;" onclick="Swal.clickConfirm(); currentStyId=${s.id}">${s.name}</div>`).join('')}</div>`,
+            showConfirmButton: false
+        });
+        if(currentStyId) document.getElementById('sty-name').innerText = store.stylists.find(s=>s.id==currentStyId).name;
     }
 
-    function toggleTagLocal(t) {
+    async function pickCount() {
+        const { value: count } = await Swal.fire({
+            title: '人數',
+            html: `<div style="padding:10px;">${[1,2,3,4].map(n => `<div class="tag-chip" onclick="Swal.clickConfirm(); currentCount=${n}">${n}人</div>`).join('')}</div>`,
+            showConfirmButton: false
+        });
+        if(currentCount) document.getElementById('count-val').innerText = currentCount + '人';
+    }
+
+    function toggleTag(t) {
         const i = activeTags.indexOf(t);
         i > -1 ? activeTags.splice(i, 1) : activeTags.push(t);
-        document.getElementById('selected-preview').innerText = activeTags.join(' + ');
     }
 
     initMonthView();
