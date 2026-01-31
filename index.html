@@ -3,129 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Salon V218 - 極致玻璃奢華版</title>
+    <title>Salon V219 - 液態水滴版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
             --gold: #D4AF37; 
-            --glass-bg: rgba(255, 255, 255, 0.25); 
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --luxury-stroke: rgba(212, 175, 55, 0.5); /* 奢華金邊 */
+            --mist: rgba(242, 242, 247, 0.6); 
+            --glass: rgba(255, 255, 255, 0.3);
+            --luxury-border: rgba(212, 175, 55, 0.3);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: #1d1d1f; padding-bottom: 90px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; padding-bottom: 95px; overflow-x: hidden; }
 
-        /* 標題與底層佈置 */
-        .header { padding: 35px 25px 15px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: rgba(255,255,255,0.7); backdrop-filter: blur(25px); z-index: 100; border-bottom: 0.5px solid rgba(0,0,0,0.05); }
-        .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; }
+        /* 月曆美化：玻璃禪意 */
+        .header { padding: 40px 25px 15px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: rgba(255,255,255,0.7); backdrop-filter: blur(25px); z-index: 100; }
+        .app-title { font-size: 2rem; font-weight: 900; letter-spacing: -2px; }
 
-        /* 月曆背景 */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #f2f2f7; margin: 15px; border-radius: 25px; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        .cal-day { background: #fff; min-height: 95px; padding: 12px; cursor: pointer; }
-        .day-num { font-size: 1.1rem; font-weight: 300; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; margin: 15px; border-radius: 30px; overflow: hidden; background: var(--mist); backdrop-filter: blur(10px); }
+        .cal-day { background: rgba(255,255,255,0.4); min-height: 100px; padding: 12px; cursor: pointer; border: 0.2px solid rgba(0,0,0,0.02); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .cal-day:active { transform: scale(0.92); background: var(--glass); }
+        .day-num { font-size: 1.2rem; font-weight: 300; }
+        .dot-row { display: flex; gap: 4px; margin-top: 15px; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        /* --- 核心：極致玻璃區塊 --- */
-        .glass-item { 
-            background: var(--glass-bg); 
-            backdrop-filter: blur(25px) saturate(180%); 
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid var(--glass-border); 
-            border-radius: 20px; 
-            padding: 14px 22px; 
-            font-weight: 700; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #1d1d1f;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        /* Q彈動畫與玻璃 UI */
+        .glass-btn { 
+            background: var(--glass); backdrop-filter: blur(20px); border: 0.8px solid var(--luxury-border);
+            border-radius: 20px; padding: 12px 20px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer;
         }
-        .glass-item:active { transform: scale(0.96); background: rgba(255,255,255,0.4); }
+        .glass-btn:active { transform: scale(0.9); }
 
-        /* --- 核心：奢華金邊白色輸入框 --- */
         .luxury-input { 
-            width: 100%; 
-            border: 0.8px solid var(--luxury-stroke); /* 極細金邊 */
-            border-radius: 22px; 
-            padding: 16px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            margin-bottom: 18px; 
-            background: #ffffff; 
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.05); /* 淡淡的金光擴散 */
-            transition: 0.3s;
+            width: 100%; border: 0.5px solid var(--luxury-border); border-radius: 22px; padding: 16px; 
+            font-size: 16px; font-weight: 700; background: #fff; text-align: center; margin-bottom: 15px;
         }
-        .luxury-input:focus { border-width: 1.2px; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.15); }
 
-        /* 朦朧玻璃抽屜 */
-        .glass-drawer { 
-            display: none; 
-            margin-top: -10px; 
-            margin-bottom: 20px; 
-            padding: 18px; 
-            border-radius: 25px; 
-            background: rgba(255, 255, 255, 0.4); 
-            backdrop-filter: blur(30px); 
-            border: 1px solid var(--glass-border);
-            animation: glassIn 0.5s ease;
+        /* 項目抽屜：Q彈展開 */
+        .q-drawer { 
+            display: none; padding: 15px; border-radius: 25px; background: rgba(242, 242, 247, 0.5); 
+            backdrop-filter: blur(15px); border: 0.5px solid var(--luxury-border); margin-bottom: 15px;
+            animation: qPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .glass-drawer.open { display: block; }
-        @keyframes glassIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .q-drawer.open { display: block; }
+        @keyframes qPop { from { opacity: 0; transform: scale(0.8) translateY(-20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        .tag-pill { 
-            display: inline-block; 
-            padding: 10px 20px; 
-            background: rgba(255,255,255,0.7); 
-            border: 0.5px solid var(--luxury-stroke); 
-            border-radius: 16px; 
-            margin: 6px; 
-            font-weight: 700; 
-            font-size: 0.9rem; 
-            cursor: pointer; 
-            transition: 0.2s;
+        /* 人數計數器：垂直 Q 彈框 */
+        .counter-box { display: flex; flex-direction: column; align-items: center; gap: 5px; background: var(--glass); border-radius: 15px; padding: 5px; border: 0.5px solid var(--luxury-border); }
+        .counter-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--gold); }
+
+        /* 預約按鈕：磨砂金 */
+        .btn-reserve { 
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.8), rgba(212, 175, 55, 0.5));
+            color: #fff; border: none; border-radius: 25px; padding: 15px 40px; font-weight: 900; letter-spacing: 2px;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3); transition: 0.3s;
         }
-        .tag-pill.active { background: var(--gold); color: #fff; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3); }
+        .btn-reserve:active { transform: scale(0.95); opacity: 0.8; }
 
-        .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: rgba(255,255,255,0.8); backdrop-filter: blur(25px); border-top: 0.5px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .fab { position: fixed; bottom: 100px; right: 25px; width: 68px; height: 68px; background: #fff; border: 1.5px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.8rem; box-shadow: 0 15px 40px rgba(212,175,55,0.2); z-index: 2000; }
+        .nav { position: fixed; bottom: 0; width: 100%; height: 90px; background: rgba(255,255,255,0.8); backdrop-filter: blur(25px); display: flex; justify-content: space-around; align-items: center; border-top: 0.5px solid rgba(0,0,0,0.05); }
+        .fab { position: fixed; bottom: 105px; right: 25px; width: 70px; height: 70px; background: #fff; border: 2.5px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 2rem; box-shadow: 0 15px 35px rgba(212,175,55,0.25); z-index: 2000; }
     </style>
 </head>
 <body>
 
-<div id="p-month" class="page active">
+<div id="v-month" class="page active">
     <div class="header">
         <div class="app-title">專屬空間</div>
-        <div class="glass-item" onclick="initMonth()" style="padding: 6px 15px; font-size: 0.8rem; border-radius: 12px;">TODAY</div>
+        <div class="glass-btn" onclick="initMonth()" style="padding: 6px 15px; font-size: 0.8rem; border-radius: 12px;">TODAY</div>
     </div>
     <div class="calendar-grid" id="cal-grid"></div>
 </div>
 
-<div id="p-day" class="page" style="display:none;">
-    <div style="padding:25px; display:flex; justify-content:space-between; align-items:center;">
-        <i class="fas fa-chevron-left" onclick="showMonth()" style="color:var(--gold); font-size:1.6rem;"></i>
-        <div id="day-title" style="font-weight:900; font-size:1.4rem;"></div>
+<div id="v-day" class="page" style="display:none; padding:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <i class="fas fa-chevron-left" onclick="showMonth()" style="color:var(--gold); font-size:1.8rem; cursor:pointer;"></i>
+        <div id="day-title" style="font-weight:900; font-size:1.6rem; letter-spacing:-1px;"></div>
         <div style="width:24px;"></div>
     </div>
-    <div id="day-lanes" style="display:flex;"></div>
+    <div id="day-lanes" style="display:flex; gap:10px;"></div>
 </div>
 
-<button class="fab" onclick="popLuxuryBooking()"><i class="fas fa-plus"></i></button>
+<button class="fab" onclick="popQBooking()"><i class="fas fa-plus"></i></button>
 
 <div class="nav">
-    <div style="text-align:center; color:var(--gold);"><i class="fas fa-calendar-day"></i><br><span style="font-size:0.7rem; font-weight:900;">RESERVE</span></div>
-    <div style="text-align:center; color:#8e8e93;"><i class="fas fa-user-circle"></i><br><span style="font-size:0.7rem;">CLIENT</span></div>
-    <div style="text-align:center; color:#8e8e93;"><i class="fas fa-compass"></i><br><span style="font-size:0.7rem;">DISCOVER</span></div>
+    <div onclick="showMonth()" style="text-align:center; color:var(--gold);"><i class="fas fa-calendar-check" style="font-size:1.5rem;"></i><br><span style="font-size:0.7rem; font-weight:900;">SCHEDULE</span></div>
+    <div style="text-align:center; color:#ccc;"><i class="fas fa-id-card" style="font-size:1.5rem;"></i><br><span style="font-size:0.7rem;">CLIENT</span></div>
+    <div style="text-align:center; color:#ccc;"><i class="fas fa-sliders" style="font-size:1.5rem;"></i><br><span style="font-size:0.7rem;">SYSTEM</span></div>
 </div>
 
 <script>
     let tempTags = [], tempStyId = 1, tempCount = 1;
-    let store = JSON.parse(localStorage.getItem('SALON_V218_LUX')) || {
+    let store = JSON.parse(localStorage.getItem('SALON_V219_Q')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#1d1d1f'}, {id: 2, name: 'Apple', color: '#D4AF37'}],
-        tags: [{id: 1, name: '精緻剪髮'}, {id: 2, name: '霧面染髮'}, {id: 3, name: '質感燙髮'}, {id: 4, name: '護理'}],
+        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}, {id: 4, name: '護理'}],
         appointments: []
     };
 
@@ -136,73 +108,86 @@
         for(let d=1; d<=days; d++) {
             const ds = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const el = document.createElement('div'); el.className = 'cal-day';
-            el.innerHTML = `<div class="day-num">${d}</div>`;
+            const apps = store.appointments.filter(a => a.date === ds);
+            const dots = [...new Set(apps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))].map(c => `<div class="dot" style="background:${c}"></div>`).join('');
+            el.innerHTML = `<div class="day-num">${d}</div><div class="dot-row">${dots}</div>`;
             el.onclick = () => showDay(ds);
             grid.appendChild(el);
         }
     }
 
-    function showMonth() { document.getElementById('p-day').style.display='none'; document.getElementById('p-month').style.display='block'; initMonth(); }
+    function showDay(ds) {
+        document.getElementById('v-month').style.display = 'none';
+        document.getElementById('v-day').style.display = 'block';
+        document.getElementById('day-title').innerText = ds;
+        const container = document.getElementById('day-lanes'); container.innerHTML = '';
+        store.stylists.forEach(sty => {
+            const lane = document.createElement('div'); lane.style.flex = "1";
+            const apps = store.appointments.filter(a => a.date === ds && a.sId == sty.id).sort((a,b)=>a.time.localeCompare(b.time));
+            const cards = apps.map(a => `<div style="border-radius:20px; padding:15px; background:#fff; box-shadow:0 10px 30px rgba(0,0,0,0.05); margin-bottom:12px; border-left:6px solid ${sty.color};"><div style="font-weight:900; color:var(--gold); font-size:0.8rem;">${a.time} • ${a.count}人</div><div style="font-size:1.2rem; font-weight:900; margin:5px 0;">${a.name}</div><div style="font-size:0.75rem; color:#888;">${a.tags.join(' + ')}</div></div>`).join('');
+            lane.innerHTML = `<div style="text-align:center; font-weight:900; font-size:0.8rem; color:${sty.color}; padding:10px; border-bottom:1px solid #eee; margin-bottom:15px;">${sty.name}</div>${cards}`;
+            container.appendChild(lane);
+        });
+    }
 
-    async function popLuxuryBooking() {
+    function showMonth() { document.getElementById('v-day').style.display = 'none'; document.getElementById('v-month').style.display = 'block'; initMonth(); }
+
+    async function popQBooking() {
         tempTags = []; tempStyId = store.stylists[0].id; tempCount = 1;
         const { value: res } = await Swal.fire({
-            title: '新建預約',
-            confirmButtonText: '完成預約',
+            title: '預約',
+            confirmButtonText: '預約',
+            confirmButtonColor: 'transparent',
+            customClass: { confirmButton: 'btn-reserve', popup: 'swal-q-popup' },
             showCancelButton: true,
-            background: 'rgba(255,255,255,0.85)',
-            backdrop: 'blur(15px)',
-            customClass: { popup: 'swal-luxury-popup' },
+            background: 'rgba(255,255,255,0.95)',
+            backdrop: 'blur(20px)',
             html: `
-                <div style="display:flex; gap:12px; margin-bottom:18px;">
-                    <div class="glass-item" onclick="toggleG('sty-d')" style="flex:1.5;">
-                        <span id="s-label" style="letter-spacing:1px;">${store.stylists[0].name}</span>
-                    </div>
-                    <div class="glass-item" style="flex:1; font-size:0.85rem;">
-                        <span>存檔</span><input type="checkbox" style="margin-left:8px; accent-color:var(--gold);">
+                <div style="display:flex; gap:12px; margin-bottom:20px; align-items:center;">
+                    <div class="glass-btn" onclick="tQ('sty-q')" style="flex:1.5; font-size:1.1rem;"><span id="s-lab">${store.stylists[0].name}</span></div>
+                    <div class="glass-btn" style="flex:0.6; padding:10px;">
+                        <input type="checkbox" id="sv-chk" style="accent-color:var(--gold); width:20px; height:20px;">
                     </div>
                 </div>
-                <div id="sty-d" class="glass-drawer">
-                    ${store.stylists.map(s => `<div class="tag-pill" onclick="setS(${s.id},'${s.name}')">${s.name}</div>`).join('')}
+                <div id="sty-q" class="q-drawer">
+                    ${store.stylists.map(s => `<div class="glass-btn" style="margin:8px;" onclick="setS(${s.id},'${s.name}')">${s.name}</div>`).join('')}
                 </div>
 
-                <input id="n-in" class="luxury-input" placeholder="顧客姓名" autocomplete="off">
+                <input id="n-in" class="luxury-input" placeholder="顧客姓名">
                 
-                <div style="display:flex; gap:12px; margin-bottom:18px;">
-                    <input id="d-in" class="luxury-input" type="date" value="${new Date().toLocaleDateString('sv')}" style="flex:1.8; margin-bottom:0;">
-                    <div class="glass-item" style="flex:1;" onclick="toggleG('c-d')">
-                        <span id="c-label">1人</span>
+                <div style="display:flex; gap:12px; margin-bottom:20px; align-items:center;">
+                    <input id="d-in" class="luxury-input" type="date" value="${new Date().toLocaleDateString('sv')}" style="flex:2; margin-bottom:0;">
+                    <div class="counter-box">
+                        <i class="fas fa-chevron-up counter-btn" onclick="adjC(1)"></i>
+                        <span id="c-lab" style="font-weight:900; font-size:1.1rem;">1人</span>
+                        <i class="fas fa-chevron-down counter-btn" onclick="adjC(-1)"></i>
                     </div>
-                </div>
-                <div id="c-d" class="glass-drawer">
-                    ${[1,2,3,4].map(n => `<div class="tag-pill" onclick="setC(${n})">${n}人</div>`).join('')}
                 </div>
 
                 <input id="t-in" class="luxury-input" type="time" value="12:00">
                 
-                <div class="glass-item" style="width:100%;" onclick="toggleG('t-d')">選擇服務項目</div>
-                <div id="t-d" class="glass-drawer">
-                    ${store.tags.map(t => `<div class="tag-pill" onclick="this.classList.toggle('active'); toggleT('${t.name}')">${t.name}</div>`).join('')}
+                <div class="glass-btn" style="width:100%; margin-bottom:20px;" onclick="tQ('t-q')">項目</div>
+                <div id="t-q" class="q-drawer">
+                    ${store.tags.map(t => `<div class="glass-btn" style="display:inline-flex; margin:5px;" onclick="this.style.background='var(--gold)';this.style.color='#fff'; toggleT('${t.name}')">${t.name}</div>`).join('')}
                 </div>
             `,
             preConfirm: () => {
                 const name = document.getElementById('n-in').value;
-                if(!name || tempTags.length === 0) return Swal.showValidationMessage('姓名與項目為必填');
+                if(!name || tempTags.length === 0) return Swal.showValidationMessage('請輸入完整');
                 return { sId: tempStyId, name, date: document.getElementById('d-in').value, time: document.getElementById('t-in').value, tags: [...tempTags], count: tempCount };
             }
         });
-        if(res) { store.appointments.push(res); localStorage.setItem('SALON_V218_LUX', JSON.stringify(store)); initMonth(); }
+        if(res) { store.appointments.push(res); localStorage.setItem('SALON_V219_Q', JSON.stringify(store)); initMonth(); }
     }
 
-    function toggleG(id) { 
-        const el = document.getElementById(id);
-        const isOpen = el.classList.contains('open');
-        document.querySelectorAll('.glass-drawer').forEach(d => d.classList.remove('open'));
-        if(!isOpen) el.classList.add('open');
+    function tQ(id) { 
+        const el = document.getElementById(id); const open = el.classList.contains('open');
+        document.querySelectorAll('.q-drawer').forEach(d => d.classList.remove('open'));
+        if(!open) el.classList.add('open');
     }
-    function setS(id, name) { tempStyId = id; document.getElementById('s-label').innerText = name; toggleG('sty-d'); }
-    function setC(n) { tempCount = n; document.getElementById('c-label').innerText = n + '人'; toggleG('c-l'); }
-    function toggleT(t) { const i = tempTags.indexOf(t); i > -1 ? tempTags.splice(i, 1) : tempTags.push(t); }
+    function setS(id, name) { tempStyId = id; document.getElementById('s-lab').innerText = name; tQ('sty-q'); }
+    function adjC(v) { tempCount = Math.max(1, tempCount + v); document.getElementById('c-lab').innerText = tempCount + '人'; }
+    function toggleT(t) { if(!tempTags.includes(t)) tempTags.push(t); }
 
     initMonth();
 </script>
