@@ -3,99 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 V215 - 液態美學版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <title>專屬空間 Salon V216</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --gold: #D4AF37; --bg: #ffffff; --primary: #1d1d1f; --sub: #86868b; --border: #f5f5f7; --glass: rgba(255, 255, 255, 0.9); }
+        :root { --gold: #D4AF37; --bg: #ffffff; --primary: #1d1d1f; --sub: #86868b; --border: #f2f2f2; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; padding-bottom: 95px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: var(--primary); padding-bottom: 90px; }
 
-        /* 賈伯斯質感標頭 */
-        .header { padding: 35px 25px 15px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); z-index: 100; border-bottom: 0.5px solid rgba(0,0,0,0.05); }
-        .app-title { font-size: 1.9rem; font-weight: 900; letter-spacing: -1.5px; background: linear-gradient(135deg, #1d1d1f 30%, var(--gold) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* 標題：暴力極簡 */
+        .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 1000; }
+        .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; }
 
-        /* 漣漪切換動畫 */
-        .page { display: none; width: 100vw; animation: rippleIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-        .page.active { display: block; }
-        @keyframes rippleIn { from { opacity: 0; transform: scale(0.98) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        /* 月曆：性能強化 */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 10px; border-radius: 12px; overflow: hidden; }
+        .cal-day { background: #fff; min-height: 85px; padding: 8px; cursor: pointer; }
+        .day-num { font-size: 1rem; font-weight: 400; color: #000; }
+        .dot-row { display: flex; gap: 3px; margin-top: 8px; height: 6px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
 
-        /* 鋼鐵月曆網格 */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #eee; border: 1px solid #eee; margin: 10px 15px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
-        .cal-day { background: #fff; min-height: 100px; padding: 12px; cursor: pointer; transition: background 0.3s ease; }
-        .cal-day:active { background: #f5f5f7; }
-        .day-num { font-size: 1.1rem; font-weight: 300; }
-        .dot-group { display: flex; gap: 4px; margin-top: 12px; }
-        .status-dot { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
-        /* 分欄戰控看板 */
-        .lane-container { display: flex; min-height: 80vh; padding: 5px; }
-        .lane { flex: 1; padding: 12px; border-right: 0.5px solid rgba(212,175,55,0.2); }
+        /* 分欄看板：工業設計質感 */
+        .lane-container { display: flex; border-top: 1.5px solid var(--gold); background: #fff; min-height: 80vh; }
+        .lane { flex: 1; border-right: 1px solid var(--border); padding: 10px; }
         .lane:last-child { border-right: none; }
-        .lane-name-tag { text-align: center; margin-bottom: 25px; padding: 8px; border-radius: 12px; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .lane-name { text-align: center; font-weight: 900; font-size: 0.8rem; color: var(--sub); padding: 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
 
-        .memo-card { border-radius: 22px; padding: 18px; background: #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.02); border-left: 6px solid var(--sty-color); position: relative; transition: transform 0.2s; }
-        .memo-card:active { transform: scale(0.96); }
-        .memo-time { font-weight: 900; color: var(--gold); font-size: 0.9rem; margin-bottom: 8px; display: block; }
-        .memo-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; color: #1d1d1f; }
-        .memo-tags { font-size: 0.8rem; color: var(--sub); line-height: 1.4; font-weight: 400; }
+        .memo-card { border-radius: 12px; padding: 12px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 10px; border: 1px solid var(--border); border-left: 5px solid var(--sty-color); }
+        .memo-time { font-weight: 900; color: var(--gold); font-size: 0.85rem; }
+        .memo-name { font-size: 1.1rem; font-weight: 800; margin: 4px 0; }
+        .memo-tags { font-size: 0.75rem; color: var(--sub); }
 
-        /* 預約表單：液態美學 UI */
-        .swal-liquid-popup { border-radius: 35px !important; padding: 30px !important; backdrop-filter: blur(25px) !important; background: rgba(255,255,255,0.92) !important; border: 1px solid rgba(212,175,55,0.3) !important; }
-        .liquid-box { border: 1.5px solid var(--gold); border-radius: 20px; padding: 14px; font-weight: 800; background: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .liquid-box:active { transform: scale(0.95); background: #fcfcfc; }
-        .liquid-input { border: 1.5px solid var(--gold); border-radius: 22px; padding: 15px; text-align: center; font-weight: 900; font-size: 1.1rem; width: 100%; background: #fff; margin-bottom: 15px; transition: box-shadow 0.3s; }
-        .liquid-input:focus { box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        /* 預約表單：打字穩定優化 */
+        .pure-input { width: 100%; border: 1.5px solid var(--gold); border-radius: 15px; padding: 14px; font-size: 16px; font-weight: 700; margin-bottom: 12px; background: #fff; -webkit-appearance: none; }
+        .toggle-group { display: flex; gap: 8px; margin-bottom: 15px; }
+        .toggle-btn { flex: 1; padding: 12px; border: 1.5px solid var(--gold); border-radius: 12px; text-align: center; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
+        .toggle-btn.active { background: var(--gold); color: #fff; }
 
-        /* 原地抽屜 */
-        .liquid-drawer { display: none; margin-bottom: 20px; padding: 15px; border-radius: 25px; background: rgba(212,175,55,0.03); border: 1px dashed var(--gold); }
-        .liquid-drawer.open { display: block; animation: drawerFlow 0.4s ease-out; }
-        @keyframes drawerFlow { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .tag-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+        .tag-item { border: 1px solid var(--gold); border-radius: 10px; padding: 10px; text-align: center; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+        .tag-item.active { background: var(--gold); color: #fff; }
 
-        .tag-bubble { display: inline-block; padding: 10px 20px; border: 1.2px solid var(--gold); border-radius: 18px; margin: 5px; font-weight: 800; cursor: pointer; transition: 0.2s; background: #fff; }
-        .tag-bubble.active { background: var(--gold); color: #fff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,175,55,0.3); }
-
-        .nav { position: fixed; bottom: 0; width: 100%; height: 90px; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); border-top: 0.5px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .fab { position: fixed; bottom: 110px; right: 25px; width: 70px; height: 70px; background: #fff; border: 2.5px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 2rem; box-shadow: 0 15px 40px rgba(212,175,55,0.25); z-index: 2000; transition: transform 0.2s; }
-        .fab:active { transform: scale(0.9); }
+        .nav { position: fixed; bottom: 0; width: 100%; height: 80px; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .fab { position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px; background: #fff; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 2100; }
     </style>
 </head>
 <body>
 
-<div id="page-month" class="page">
+<div id="view-month" class="page active">
     <div class="header">
         <div class="app-title">專屬空間</div>
-        <div onclick="initMonth()" style="font-weight:900; color:var(--gold); border:1.5px solid var(--gold); padding:6px 18px; border-radius:15px; cursor:pointer; font-size:0.85rem;">本月</div>
-    </div>
-    <div style="display:grid; grid-template-columns: repeat(7, 1fr); text-align:center; padding:20px 0 10px; font-weight:900; font-size:0.75rem; color:var(--sub); letter-spacing:1px;">
-        <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+        <div onclick="initMonth()" style="font-weight:900; color:var(--gold); cursor:pointer; border:1px solid var(--gold); padding:5px 12px; border-radius:10px; font-size:0.8rem;">TODAY</div>
     </div>
     <div class="calendar-grid" id="cal-grid"></div>
 </div>
 
-<div id="page-day" class="page" style="display:none;">
-    <div style="padding:25px; border-bottom:1px solid rgba(212,175,55,0.2); display:flex; justify-content:space-between; align-items:center; background:#fff; position:sticky; top:0; z-index:90;">
-        <i class="fas fa-chevron-left" onclick="showMonth()" style="color:var(--gold); font-size:1.6rem; cursor:pointer;"></i>
-        <div id="day-title" style="font-weight:900; font-size:1.5rem; letter-spacing:-1px;">2026-01-31</div>
-        <i class="fas fa-layer-group" style="color:var(--gold); font-size:1.4rem;"></i>
+<div id="view-day" class="page" style="display:none;">
+    <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
+        <i class="fas fa-chevron-left" onclick="showMonth()" style="color:var(--gold); font-size:1.5rem;"></i>
+        <div id="day-title" style="font-weight:900; font-size:1.3rem;"></div>
+        <div style="width:24px;"></div>
     </div>
-    <div class="lane-container" id="day-lanes"></div>
+    <div class="lane-container" id="lanes"></div>
 </div>
 
-<button class="fab" onclick="popLiquidBooking()"><i class="fas fa-plus"></i></button>
+<button class="fab" onclick="openStableBooking()"><i class="fas fa-plus"></i></button>
 
 <div class="nav">
-    <div class="nav-item" onclick="showMonth()" style="text-align:center; color:var(--gold);"><i class="fas fa-calendar-check" style="font-size:1.4rem;"></i><br><span style="font-size:0.7rem; font-weight:700;">預約</span></div>
-    <div class="nav-item" style="text-align:center; color:var(--sub);"><i class="fas fa-users" style="font-size:1.4rem;"></i><br><span style="font-size:0.7rem;">客資</span></div>
-    <div class="nav-item" style="text-align:center; color:var(--sub);"><i class="fas fa-fingerprint" style="font-size:1.4rem;"></i><br><span style="font-size:0.7rem;">帳戶</span></div>
+    <div onclick="showMonth()" style="text-align:center; color:var(--gold);"><i class="fas fa-calendar-alt"></i><br><span style="font-size:0.7rem; font-weight:700;">預約表</span></div>
+    <div style="text-align:center; color:var(--sub);"><i class="fas fa-user-circle"></i><br><span style="font-size:0.7rem;">客資</span></div>
+    <div style="text-align:center; color:var(--sub);"><i class="fas fa-cog"></i><br><span style="font-size:0.7rem;">設定</span></div>
 </div>
 
 <script>
     let tempTags = [], tempStyId = 1, tempCount = 1;
-    let store = JSON.parse(localStorage.getItem('SALON_V215_LIQUID')) || {
-        stylists: [{id: 1, name: 'TONNY', color: '#1d1d1f'}, {id: 2, name: 'APPLE', color: '#D4AF37'}],
-        tags: [{id: 1, name: '精緻剪髮'}, {id: 2, name: '霧面染髮'}, {id: 3, name: '質感燙髮'}, {id: 4, name: '深層護理'}],
+    let store = JSON.parse(localStorage.getItem('SALON_V216_IRON')) || {
+        stylists: [{id: 1, name: 'Tonny', color: '#1d1d1f'}, {id: 2, name: 'Apple', color: '#D4AF37'}],
+        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}, {id: 4, name: '護髮'}],
         appointments: []
     };
 
@@ -107,62 +91,52 @@
             const ds = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const el = document.createElement('div'); el.className = 'cal-day';
             const apps = store.appointments.filter(a => a.date === ds);
-            const dots = [...new Set(apps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))]
-                .map(c => `<div class="status-dot" style="background:${c}"></div>`).join('');
-            el.innerHTML = `<div class="day-num">${d}</div><div class="dot-group">${dots}</div>`;
-            el.onclick = () => showLiquidDay(ds);
+            const dots = [...new Set(apps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))].map(c => `<div class="dot" style="background:${c}"></div>`).join('');
+            el.innerHTML = `<div class="day-num">${d}</div><div class="dot-row">${dots}</div>`;
+            el.onclick = () => showDay(ds);
             grid.appendChild(el);
         }
     }
 
-    function showLiquidDay(ds) {
-        document.getElementById('page-month').style.display = 'none';
-        document.getElementById('page-day').style.display = 'block';
+    function showDay(ds) {
+        document.getElementById('view-month').style.display = 'none';
+        document.getElementById('view-day').style.display = 'block';
         document.getElementById('day-title').innerText = ds;
-        const container = document.getElementById('day-lanes');
-        container.innerHTML = '';
-        
+        const container = document.getElementById('lanes'); container.innerHTML = '';
         store.stylists.forEach(sty => {
             const lane = document.createElement('div'); lane.className = 'lane';
             const apps = store.appointments.filter(a => a.date === ds && a.sId == sty.id).sort((a,b)=>a.time.localeCompare(b.time));
-            const cards = apps.map(a => `<div class="memo-card" style="--sty-color: ${sty.color}"><span class="memo-time">${a.time} • ${a.count}人</span><div class="memo-name">${a.name}</div><div class="memo-tags">${a.tags.join(' + ')}</div></div>`).join('');
-            lane.innerHTML = `<div class="lane-name-tag" style="color:${sty.color}; border-color:${sty.color}">${sty.name}</div>${cards || '<div style="text-align:center; color:#eee; font-size:3rem; margin-top:40px;"><i class="fas fa-wind"></i></div>'}`;
+            const cards = apps.map(a => `<div class="memo-card" style="--sty-color:${sty.color}"><div class="memo-time">${a.time} | ${a.count}人</div><div class="memo-name">${a.name}</div><div class="memo-tags">${a.tags.join(' + ')}</div></div>`).join('');
+            lane.innerHTML = `<div class="lane-name" style="color:${sty.color}">${sty.name}</div>${cards || '<div style="text-align:center; color:#eee; margin-top:30px;"><i class="fas fa-moon"></i></div>'}`;
             container.appendChild(lane);
         });
     }
 
-    function showMonth() { document.getElementById('page-day').style.display = 'none'; document.getElementById('page-month').style.display = 'block'; initMonth(); }
+    function showMonth() { document.getElementById('view-day').style.display = 'none'; document.getElementById('view-month').style.display = 'block'; initMonth(); }
 
-    async function popLiquidBooking() {
+    async function openStableBooking() {
         tempTags = []; tempStyId = store.stylists[0].id; tempCount = 1;
         const { value: res } = await Swal.fire({
-            title: '預約', confirmButtonText: '預約', showCancelButton: true,
-            customClass: { popup: 'swal-liquid-popup' },
-            showClass: { popup: 'animate__animated animate__zoomIn animate__faster' },
+            title: '預約記錄',
+            confirmButtonText: '預約',
+            showCancelButton: true,
+            confirmButtonColor: '#1d1d1f',
             html: `
-                <div style="display:flex; gap:12px; margin-bottom:18px;">
-                    <div class="liquid-box" onclick="toggleLiq('sty-l')" style="flex:1.5;">
-                        <span id="s-lab" style="font-size:1.1rem;">${store.stylists[0].name}</span>
-                    </div>
-                    <div class="liquid-box" style="flex:1;">
-                        <span style="font-size:0.9rem;">存檔</span> <input type="checkbox" id="sv-p" style="accent-color:var(--gold); width:18px; height:18px; margin-left:5px;">
-                    </div>
+                <div class="toggle-group">
+                    ${store.stylists.map(s => `<div class="toggle-btn ${s.id==1?'active':''}" onclick="setSty(this, ${s.id})">${s.name}</div>`).join('')}
                 </div>
-                <div id="sty-l" class="liquid-drawer">
-                    ${store.stylists.map(s => `<div class="tag-bubble" onclick="selS(${s.id}, '${s.name}')">${s.name}</div>`).join('')}
+                <input id="n-in" class="pure-input" placeholder="顧客姓名" autocomplete="off">
+                <div class="toggle-group">
+                    <input id="d-in" class="pure-input" type="date" value="${new Date().toLocaleDateString('sv')}" style="flex:1.5; margin-bottom:0;">
+                    <div class="toggle-btn active" id="c-btn" onclick="setCount(this)">1人</div>
                 </div>
-                <input id="n-in" class="liquid-input" placeholder="顧客姓名">
-                <div style="display:flex; gap:12px; margin-bottom:18px;">
-                    <input id="d-in" class="liquid-input" type="date" value="${new Date().toLocaleDateString('sv')}" style="flex:1.8;">
-                    <div class="liquid-box" style="flex:1;" onclick="toggleLiq('c-l')"><span id="c-lab">1人</span></div>
+                <input id="t-in" class="pure-input" type="time" value="12:00">
+                <div style="text-align:left; font-weight:900; font-size:0.8rem; margin-top:10px;">項目：</div>
+                <div class="tag-grid">
+                    ${store.tags.map(t => `<div class="tag-item" onclick="this.classList.toggle('active'); toggleT('${t.name}')">${t.name}</div>`).join('')}
                 </div>
-                <div id="c-l" class="liquid-drawer">
-                    ${[1,2,3,4].map(n => `<div class="tag-bubble" onclick="selC(${n})">${n}人</div>`).join('')}
-                </div>
-                <input id="t-in" class="liquid-input" type="time" value="12:00">
-                <div class="liquid-box" style="width:100%;" onclick="toggleLiq('t-l')">項目</div>
-                <div id="t-l" class="liquid-drawer">
-                    ${store.tags.map(t => `<div class="tag-bubble" onclick="this.classList.toggle('active'); toggleT('${t.name}')">${t.name}</div>`).join('')}
+                <div style="margin-top:15px; text-align:right; font-size:0.8rem;">
+                    <span>存檔記憶</span> <input type="checkbox" style="accent-color:var(--gold);">
                 </div>
             `,
             preConfirm: () => {
@@ -171,12 +145,11 @@
                 return { sId: tempStyId, name, date: document.getElementById('d-in').value, time: document.getElementById('t-in').value, tags: [...tempTags], count: tempCount };
             }
         });
-        if(res) { store.appointments.push(res); localStorage.setItem('SALON_V215_LIQUID', JSON.stringify(store)); initMonth(); }
+        if(res) { store.appointments.push(res); localStorage.setItem('SALON_V216_IRON', JSON.stringify(store)); initMonth(); }
     }
 
-    function toggleLiq(id) { const el = document.getElementById(id); const open = el.classList.contains('open'); document.querySelectorAll('.liquid-drawer').forEach(d => d.classList.remove('open')); if(!open) el.classList.add('open'); }
-    function selS(id, name) { tempStyId = id; document.getElementById('s-lab').innerText = name; document.getElementById('sty-l').classList.remove('open'); }
-    function selC(n) { tempCount = n; document.getElementById('c-lab').innerText = n + '人'; document.getElementById('c-l').classList.remove('open'); }
+    function setSty(el, id) { tempStyId = id; document.querySelectorAll('.toggle-btn').forEach(b => { if(b.innerText != '1人' && b.innerText != '2人') b.classList.remove('active'); }); el.classList.add('active'); }
+    function setCount(el) { tempCount = tempCount === 1 ? 2 : 1; el.innerText = tempCount + '人'; }
     function toggleT(t) { const i = tempTags.indexOf(t); i > -1 ? tempTags.splice(i, 1) : tempTags.push(t); }
 
     initMonth();
