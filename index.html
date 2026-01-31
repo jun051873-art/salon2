@@ -3,49 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon V216</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>專屬空間 Salon V217 - 禪意玻璃</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --gold: #D4AF37; --bg: #ffffff; --primary: #1d1d1f; --sub: #86868b; --border: #f2f2f2; }
+        :root { --gold: #D4AF37; --mist: rgba(242, 242, 247, 0.7); --border-light: rgba(212, 175, 55, 0.2); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: var(--primary); padding-bottom: 90px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; color: #1d1d1f; padding-bottom: 90px; }
 
-        /* 標題：暴力極簡 */
-        .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 1000; }
-        .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; }
+        /* 標題：輕盈通透 */
+        .header { padding: 35px 25px 15px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); z-index: 100; border-bottom: 0.5px solid rgba(0,0,0,0.05); }
+        .app-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: #1d1d1f; }
 
-        /* 月曆：性能強化 */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 10px; border-radius: 12px; overflow: hidden; }
-        .cal-day { background: #fff; min-height: 85px; padding: 8px; cursor: pointer; }
-        .day-num { font-size: 1rem; font-weight: 400; color: #000; }
-        .dot-row { display: flex; gap: 3px; margin-top: 8px; height: 6px; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        /* 月曆：微光玻璃卡片 */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #f2f2f7; margin: 15px; border-radius: 25px; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.05); }
+        .cal-day { background: #fff; min-height: 95px; padding: 12px; cursor: pointer; transition: 0.3s; }
+        .cal-day:active { background: var(--mist); }
+        .day-num { font-size: 1.1rem; font-weight: 300; }
+        .dot-row { display: flex; gap: 4px; margin-top: 10px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; opacity: 0.6; }
 
-        /* 分欄看板：工業設計質感 */
-        .lane-container { display: flex; border-top: 1.5px solid var(--gold); background: #fff; min-height: 80vh; }
-        .lane { flex: 1; border-right: 1px solid var(--border); padding: 10px; }
+        /* 分欄看板：水滴透明感 */
+        .lane-container { display: flex; background: #fff; min-height: 80vh; }
+        .lane { flex: 1; border-right: 0.5px solid var(--border-light); padding: 10px; }
         .lane:last-child { border-right: none; }
-        .lane-name { text-align: center; font-weight: 900; font-size: 0.8rem; color: var(--sub); padding: 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
+        .lane-name { text-align: center; font-weight: 900; font-size: 0.75rem; color: var(--gold); padding: 12px 0; letter-spacing: 2px; }
 
-        .memo-card { border-radius: 12px; padding: 12px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 10px; border: 1px solid var(--border); border-left: 5px solid var(--sty-color); }
-        .memo-time { font-weight: 900; color: var(--gold); font-size: 0.85rem; }
-        .memo-name { font-size: 1.1rem; font-weight: 800; margin: 4px 0; }
-        .memo-tags { font-size: 0.75rem; color: var(--sub); }
+        .memo-card { border-radius: 20px; padding: 18px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.03); border-left: 5px solid var(--sty-color); transition: 0.3s; }
+        .memo-time { font-weight: 700; color: #86868b; font-size: 0.8rem; }
+        .memo-name { font-size: 1.2rem; font-weight: 900; margin: 5px 0; color: #1d1d1f; }
 
-        /* 預約表單：打字穩定優化 */
-        .pure-input { width: 100%; border: 1.5px solid var(--gold); border-radius: 15px; padding: 14px; font-size: 16px; font-weight: 700; margin-bottom: 12px; background: #fff; -webkit-appearance: none; }
-        .toggle-group { display: flex; gap: 8px; margin-bottom: 15px; }
-        .toggle-btn { flex: 1; padding: 12px; border: 1.5px solid var(--gold); border-radius: 12px; text-align: center; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
-        .toggle-btn.active { background: var(--gold); color: #fff; }
+        /* 核心組件：微灰霧透明效果 */
+        .glass-block { background: var(--mist); backdrop-filter: blur(15px); border: 0.5px solid var(--border-light); border-radius: 18px; padding: 12px 20px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; color: #444; }
+        .glass-block:active { transform: scale(0.97); background: rgba(212, 175, 55, 0.05); }
 
-        .tag-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-        .tag-item { border: 1px solid var(--gold); border-radius: 10px; padding: 10px; text-align: center; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
-        .tag-item.active { background: var(--gold); color: #fff; }
+        .mist-input { width: 100%; border: 0.5px solid var(--border-light); border-radius: 20px; padding: 16px; font-size: 16px; font-weight: 700; margin-bottom: 15px; background: #fff; text-align: center; }
 
-        .nav { position: fixed; bottom: 0; width: 100%; height: 80px; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .fab { position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px; background: #fff; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 2100; }
+        /* 朦朧選擇面板 */
+        .mist-drawer { display: none; margin-top: 5px; padding: 15px; border-radius: 22px; background: rgba(242, 242, 247, 0.5); backdrop-filter: blur(10px); border: 0.5px solid var(--border-light); margin-bottom: 15px; animation: mistIn 0.4s ease; }
+        .mist-drawer.open { display: block; }
+        @keyframes mistIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .tag-mist { display: inline-block; padding: 10px 18px; background: #fff; border: 0.5px solid var(--border-light); border-radius: 15px; margin: 5px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+        .tag-mist.active { background: rgba(212, 175, 55, 0.1); color: var(--gold); border-color: var(--gold); }
+
+        .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border-top: 0.5px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .fab { position: fixed; bottom: 100px; right: 25px; width: 65px; height: 65px; background: #fff; border: 1.5px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.6rem; box-shadow: 0 10px 30px rgba(212,175,55,0.15); z-index: 2100; }
     </style>
 </head>
 <body>
@@ -53,33 +57,33 @@
 <div id="view-month" class="page active">
     <div class="header">
         <div class="app-title">專屬空間</div>
-        <div onclick="initMonth()" style="font-weight:900; color:var(--gold); cursor:pointer; border:1px solid var(--gold); padding:5px 12px; border-radius:10px; font-size:0.8rem;">TODAY</div>
+        <div class="glass-block" onclick="initMonth()" style="padding: 6px 15px; font-size: 0.8rem;">TODAY</div>
     </div>
     <div class="calendar-grid" id="cal-grid"></div>
 </div>
 
 <div id="view-day" class="page" style="display:none;">
-    <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
-        <i class="fas fa-chevron-left" onclick="showMonth()" style="color:var(--gold); font-size:1.5rem;"></i>
-        <div id="day-title" style="font-weight:900; font-size:1.3rem;"></div>
-        <div style="width:24px;"></div>
+    <div style="padding:25px; display:flex; justify-content:space-between; align-items:center;">
+        <i class="fas fa-chevron-left" onclick="showMonth()" style="color:var(--gold); font-size:1.6rem; cursor:pointer;"></i>
+        <div id="day-title" style="font-weight:900; font-size:1.4rem;"></div>
+        <div class="glass-block" style="padding:8px 12px;"><i class="fas fa-bars"></i></div>
     </div>
     <div class="lane-container" id="lanes"></div>
 </div>
 
-<button class="fab" onclick="openStableBooking()"><i class="fas fa-plus"></i></button>
+<button class="fab" onclick="openMistBooking()"><i class="fas fa-plus"></i></button>
 
 <div class="nav">
-    <div onclick="showMonth()" style="text-align:center; color:var(--gold);"><i class="fas fa-calendar-alt"></i><br><span style="font-size:0.7rem; font-weight:700;">預約表</span></div>
-    <div style="text-align:center; color:var(--sub);"><i class="fas fa-user-circle"></i><br><span style="font-size:0.7rem;">客資</span></div>
-    <div style="text-align:center; color:var(--sub);"><i class="fas fa-cog"></i><br><span style="font-size:0.7rem;">設定</span></div>
+    <div onclick="showMonth()" style="text-align:center; color:var(--gold);"><i class="fas fa-calendar-alt"></i><br><span style="font-size:0.7rem; font-weight:900;">SCHEDULE</span></div>
+    <div style="text-align:center; color:#8e8e93;"><i class="fas fa-user-circle"></i><br><span style="font-size:0.7rem;">CLIENT</span></div>
+    <div style="text-align:center; color:#8e8e93;"><i class="fas fa-circle-nodes"></i><br><span style="font-size:0.7rem;">SYSTEM</span></div>
 </div>
 
 <script>
     let tempTags = [], tempStyId = 1, tempCount = 1;
-    let store = JSON.parse(localStorage.getItem('SALON_V216_IRON')) || {
+    let store = JSON.parse(localStorage.getItem('SALON_V217_MIST')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#1d1d1f'}, {id: 2, name: 'Apple', color: '#D4AF37'}],
-        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}, {id: 4, name: '護髮'}],
+        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}, {id: 4, name: '護理'}],
         appointments: []
     };
 
@@ -106,37 +110,46 @@
         store.stylists.forEach(sty => {
             const lane = document.createElement('div'); lane.className = 'lane';
             const apps = store.appointments.filter(a => a.date === ds && a.sId == sty.id).sort((a,b)=>a.time.localeCompare(b.time));
-            const cards = apps.map(a => `<div class="memo-card" style="--sty-color:${sty.color}"><div class="memo-time">${a.time} | ${a.count}人</div><div class="memo-name">${a.name}</div><div class="memo-tags">${a.tags.join(' + ')}</div></div>`).join('');
-            lane.innerHTML = `<div class="lane-name" style="color:${sty.color}">${sty.name}</div>${cards || '<div style="text-align:center; color:#eee; margin-top:30px;"><i class="fas fa-moon"></i></div>'}`;
+            const cards = apps.map(a => `<div class="memo-card" style="--sty-color:${sty.color}"><div class="memo-time">${a.time} | ${a.count}人</div><div class="memo-name">${a.name}</div><div style="font-size:0.75rem; color:#8e8e93;">${a.tags.join(' + ')}</div></div>`).join('');
+            lane.innerHTML = `<div class="lane-name">${sty.name}</div>${cards || '<div style="text-align:center; color:#eee; margin-top:30px;"><i class="fas fa-snowflake" style="font-size:2rem;"></i></div>'}`;
             container.appendChild(lane);
         });
     }
 
     function showMonth() { document.getElementById('view-day').style.display = 'none'; document.getElementById('view-month').style.display = 'block'; initMonth(); }
 
-    async function openStableBooking() {
+    async function openMistBooking() {
         tempTags = []; tempStyId = store.stylists[0].id; tempCount = 1;
         const { value: res } = await Swal.fire({
             title: '預約記錄',
             confirmButtonText: '預約',
             showCancelButton: true,
-            confirmButtonColor: '#1d1d1f',
+            background: '#fff',
+            customClass: { popup: 'swal-mist-popup', confirmButton: 'glass-block' },
             html: `
-                <div class="toggle-group">
-                    ${store.stylists.map(s => `<div class="toggle-btn ${s.id==1?'active':''}" onclick="setSty(this, ${s.id})">${s.name}</div>`).join('')}
+                <div style="display:flex; gap:12px; margin-bottom:15px;">
+                    <div class="glass-block" onclick="toggleMist('sty-d')" style="flex:1.5;"><span id="s-label">${store.stylists[0].name}</span></div>
+                    <div class="glass-block" style="flex:1;"><span style="font-size:0.8rem;">存檔</span><input type="checkbox" style="margin-left:8px; accent-color:var(--gold);"></div>
                 </div>
-                <input id="n-in" class="pure-input" placeholder="顧客姓名" autocomplete="off">
-                <div class="toggle-group">
-                    <input id="d-in" class="pure-input" type="date" value="${new Date().toLocaleDateString('sv')}" style="flex:1.5; margin-bottom:0;">
-                    <div class="toggle-btn active" id="c-btn" onclick="setCount(this)">1人</div>
+                <div id="sty-d" class="mist-drawer">
+                    ${store.stylists.map(s => `<div class="tag-mist" onclick="setSty(${s.id},'${s.name}')">${s.name}</div>`).join('')}
                 </div>
-                <input id="t-in" class="pure-input" type="time" value="12:00">
-                <div style="text-align:left; font-weight:900; font-size:0.8rem; margin-top:10px;">項目：</div>
-                <div class="tag-grid">
-                    ${store.tags.map(t => `<div class="tag-item" onclick="this.classList.toggle('active'); toggleT('${t.name}')">${t.name}</div>`).join('')}
+
+                <input id="n-in" class="mist-input" placeholder="顧客姓名" autocomplete="off">
+                
+                <div style="display:flex; gap:12px; margin-bottom:15px;">
+                    <input id="d-in" class="mist-input" type="date" value="${new Date().toLocaleDateString('sv')}" style="flex:1.8; margin-bottom:0;">
+                    <div class="glass-block" style="flex:1;" onclick="toggleMist('c-d')"><span id="c-label">1人</span></div>
                 </div>
-                <div style="margin-top:15px; text-align:right; font-size:0.8rem;">
-                    <span>存檔記憶</span> <input type="checkbox" style="accent-color:var(--gold);">
+                <div id="c-d" class="mist-drawer">
+                    ${[1,2,3,4].map(n => `<div class="tag-mist" onclick="setCount(${n})">${n}人</div>`).join('')}
+                </div>
+
+                <input id="t-in" class="mist-input" type="time" value="12:00">
+                
+                <div class="glass-block" style="width:100%;" onclick="toggleMist('t-d')">項目</div>
+                <div id="t-d" class="mist-drawer">
+                    ${store.tags.map(t => `<div class="tag-mist" onclick="this.classList.toggle('active'); toggleT('${t.name}')">${t.name}</div>`).join('')}
                 </div>
             `,
             preConfirm: () => {
@@ -145,11 +158,17 @@
                 return { sId: tempStyId, name, date: document.getElementById('d-in').value, time: document.getElementById('t-in').value, tags: [...tempTags], count: tempCount };
             }
         });
-        if(res) { store.appointments.push(res); localStorage.setItem('SALON_V216_IRON', JSON.stringify(store)); initMonth(); }
+        if(res) { store.appointments.push(res); localStorage.setItem('SALON_V217_MIST', JSON.stringify(store)); initMonth(); }
     }
 
-    function setSty(el, id) { tempStyId = id; document.querySelectorAll('.toggle-btn').forEach(b => { if(b.innerText != '1人' && b.innerText != '2人') b.classList.remove('active'); }); el.classList.add('active'); }
-    function setCount(el) { tempCount = tempCount === 1 ? 2 : 1; el.innerText = tempCount + '人'; }
+    function toggleMist(id) { 
+        const el = document.getElementById(id);
+        const isOpen = el.classList.contains('open');
+        document.querySelectorAll('.mist-drawer').forEach(d => d.classList.remove('open'));
+        if(!isOpen) el.classList.add('open');
+    }
+    function setSty(id, name) { tempStyId = id; document.getElementById('s-label').innerText = name; toggleMist('sty-d'); }
+    function setCount(n) { tempCount = n; document.getElementById('c-label').innerText = n + '人'; toggleMist('c-d'); }
     function toggleT(t) { const i = tempTags.indexOf(t); i > -1 ? tempTags.splice(i, 1) : tempTags.push(t); }
 
     initMonth();
