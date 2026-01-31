@@ -3,183 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V207</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <title>專屬空間 V208 PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #1d1d1f; --gold: #D4AF37; --bg: #ffffff; --sub: #86868b; --border: #f2f2f2; --red: #FF3B30; }
+        :root { --gold: #D4AF37; --bg: #ffffff; --primary: #1d1d1f; --sub: #86868b; --border: #f2f2f2; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; padding-bottom: 95px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; color: var(--primary); padding-bottom: 100px; }
         
         /* 固定標頭 */
-        .sticky-header { position: sticky; top: 0; z-index: 4500; background: #fff; border-bottom: 1px solid var(--border); }
-        .header { padding: 25px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: #fff; z-index: 100; border-bottom: 1px solid var(--border); }
         .app-title { font-size: 1.8rem; font-weight: 900; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        .view-switcher { display: flex; justify-content: center; gap: 30px; padding: 10px 0; }
-        .view-link { font-size: 0.85rem; font-weight: 700; color: var(--sub); cursor: pointer; padding: 8px 18px; border-radius: 12px; }
-        .view-link.active { color: var(--gold); background: rgba(212,175,55,0.1); }
-
-        /* 月曆小圓點：固定在數字下方 */
-        .fc-daygrid-day-top { display: flex; flex-direction: column; align-items: center; position: relative; }
-        .dot-row { display: flex; gap: 3px; height: 6px; position: absolute; bottom: 5px; }
+        /* 暴力月曆 */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+        .cal-day { background: #fff; min-height: 80px; padding: 5px; cursor: pointer; transition: 0.2s; position: relative; }
+        .cal-day.active { background: rgba(212, 175, 55, 0.05); }
+        .day-num { font-size: 0.9rem; font-weight: 400; }
+        .dot-group { display: flex; gap: 3px; margin-top: 5px; flex-wrap: wrap; }
         .status-dot { width: 6px; height: 6px; border-radius: 50%; }
-        .fc-daygrid-day-number { padding: 10px 0 !important; font-weight: 400 !important; cursor: pointer; text-decoration: none !important; color: #000 !important; }
 
-        /* 預約塊：備忘錄式全訊息卡片 */
-        .fc-event { background: #fff !important; border: 1.2px solid var(--border) !important; border-left: 6px solid var(--event-color) !important; color: #000 !important; padding: 8px !important; border-radius: 12px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
-        .fc-event-main { white-space: normal !important; display: block !important; }
-        .ev-header { color: var(--gold); font-size: 0.7rem; font-weight: 900; margin-bottom: 3px; display: block; }
-        .ev-title { font-size: 0.95rem; font-weight: 800; display: block; margin-bottom: 4px; }
-        .ev-memo { font-size: 0.78rem; color: #666; line-height: 1.4; display: block; }
+        /* 日行備忘錄面板 */
+        .day-panel { padding: 20px; border-top: 1.5px solid var(--gold); background: #fff; min-height: 300px; }
+        .day-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        
+        .memo-card { border-left: 5px solid var(--sty-color); border-radius: 12px; padding: 15px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .memo-sty { font-size: 0.7rem; font-weight: 900; color: var(--gold); margin-bottom: 5px; }
+        .memo-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 5px; }
+        .memo-tags { font-size: 0.85rem; color: var(--sub); line-height: 1.4; }
 
-        .fc-timegrid-slot { height: 100px !important; } /* 高度保證內容不重疊 */
-        .fc-timegrid-now-indicator-line { border-color: var(--gold); }
+        /* 底部導航 */
+        .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub); font-size: 0.75rem; gap: 5px; cursor: pointer; }
+        .nav-item.active { color: var(--gold); font-weight: 700; }
 
-        /* 預約表單組件 */
-        .oval-input { border: 1.2px solid var(--gold); border-radius: 25px; padding: 12px; text-align: center; font-weight: 900; background: #fff; font-size: 1rem; width: 100%; margin-bottom: 12px; }
+        .fab { position: fixed; bottom: 100px; right: 25px; width: 65px; height: 65px; background: #fff; border: 1.5px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); cursor: pointer; }
+        
+        /* 橢圓輸入框 */
+        .oval-input { border: 1.2px solid var(--gold); border-radius: 25px; padding: 12px; width: 100%; text-align: center; font-weight: 900; margin-bottom: 15px; font-size: 1rem; }
         .tag-pill { display: inline-block; padding: 8px 15px; border: 1.2px solid var(--gold); border-radius: 15px; margin: 4px; font-weight: 800; cursor: pointer; }
         .tag-pill.active { background: var(--gold); color: #fff; }
-        .memo-box { border: 1.2px solid var(--gold); border-radius: 15px; padding: 12px; width: 100%; height: 110px; margin-top: 10px; resize: none; font-size: 1rem; }
-
-        .page { display: none; width: 100%; padding: 10px 20px; }
-        .page.active { display: block; }
-        .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); z-index: 4000; height: 85px; display: flex; justify-content: space-around; align-items: center; }
-        .fab { position: fixed; bottom: 100px; right: 25px; width: 65px; height: 65px; z-index: 1500; background: #fff; color: var(--gold); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.1); font-size: 1.5rem; }
     </style>
 </head>
 <body>
 
-<div class="sticky-header">
-    <div class="header">
-        <div class="app-title">專屬空間</div>
-        <div onclick="calendar.today()" style="font-weight:900; color:var(--gold); border:1.2px solid var(--gold); padding:5px 15px; border-radius:12px; cursor:pointer;">TODAY</div>
+<div class="header">
+    <div class="app-title">專屬空間</div>
+    <div onclick="initCalendar()" style="font-weight:900; color:var(--gold); cursor:pointer; border:1px solid var(--gold); padding:5px 12px; border-radius:10px;">TODAY</div>
+</div>
+
+<div id="calendar-area">
+    <div style="display:grid; grid-template-columns: repeat(7, 1fr); text-align:center; padding:10px 0; font-weight:900; font-size:0.7rem; color:var(--sub);">
+        <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
     </div>
-    <div class="view-switcher">
-        <span class="view-link active" id="btn-month" onclick="switchV('dayGridMonth')">月曆</span>
-        <span class="view-link" id="btn-day" onclick="switchV('timeGridDay')">日行</span>
+    <div class="calendar-grid" id="cal-grid"></div>
+</div>
+
+<div class="day-panel">
+    <div class="day-title" id="selected-date-label">選擇日期</div>
+    <div id="day-list">
+        <div style="text-align:center; color:var(--sub); margin-top:50px;">點擊上方日期查看預約</div>
     </div>
 </div>
 
-<div class="page-container">
-    <div class="page active" id="page-0"><div id='calendar'></div></div>
-    <div class="page" id="page-1" id="client-list"></div>
-    <div class="page" id="page-2" id="setting-list"></div>
-</div>
+<button class="fab" onclick="openBooking()"><i class="fas fa-plus"></i></button>
 
-<button class="fab" onclick="addRes()"><i class="fas fa-plus"></i></button>
-
-<div class="nav-container">
-    <div onclick="slideTo(0)" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; color:var(--gold);" id="n-0"><i class="fas fa-calendar-alt"></i><span>預約表</span></div>
-    <div onclick="slideTo(1)" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; color:var(--sub);" id="n-1"><i class="fas fa-user-circle"></i><span>客資</span></div>
-    <div onclick="slideTo(2)" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; color:var(--sub);" id="n-2"><i class="fas fa-cog"></i><span>設定</span></div>
+<div class="nav">
+    <div class="nav-item active"><i class="fas fa-calendar-alt"></i><span>預約表</span></div>
+    <div class="nav-item"><i class="fas fa-user-circle"></i><span>客資</span></div>
+    <div class="nav-item"><i class="fas fa-cog"></i><span>設定</span></div>
 </div>
 
 <script>
-    let calendar, activeTags = [];
-    let store = JSON.parse(localStorage.getItem('SALON_V207_STEEL')) || {
-        stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
-        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}],
-        appointments: [], clients: [], offDays: [], offColor: "#34495e", openT: "11:00", closeT: "21:00"
+    let activeTags = [];
+    let currentSelectDate = new Date().toLocaleDateString('sv');
+    let store = JSON.parse(localStorage.getItem('SALON_V208_PURE')) || {
+        stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}, {id: 2, name: 'Apple', color: '#D4AF37'}],
+        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}],
+        appointments: []
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initCal(); renderAll();
-    });
+    function initCalendar() {
+        const grid = document.getElementById('cal-grid');
+        grid.innerHTML = '';
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
+        const totalDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
-    function initCal() {
-        calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto',
-            allDaySlot: false, slotDuration: '01:00:00',
-            slotMinTime: store.openT + ":00", slotMaxTime: store.closeT + ":00",
-            // 鋼鐵跳轉邏輯
-            dateClick: (info) => { 
-                calendar.changeView('timeGridDay', info.dateStr); 
-                updateTabVisual('timeGridDay');
-            },
-            events: (info, successCallback) => {
-                let evs = store.appointments.map(a => ({ 
-                    id: a.id, title: a.n, start: a.t, 
-                    extendedProps: { sId: a.sId, memo: a.memo } 
-                }));
-                store.offDays.forEach(d => evs.push({ start: d, display: 'background', backgroundColor: store.offColor }));
-                successCallback(evs);
-            },
-            // 月曆訊號點渲染
-            dayCellContent: (arg) => {
-                const dateStr = arg.date.toLocaleDateString('sv');
-                const apps = store.appointments.filter(a => a.t.startsWith(dateStr));
-                const dots = [...new Set(apps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))]
-                    .map(c => `<div class="status-dot" style="background:${c}"></div>`).join('');
-                return { html: `<div>${arg.dayNumberText.replace('日','')}</div><div class="dot-row">${dots}</div>` };
-            },
-            // 日行視圖卡片渲染
-            eventContent: (arg) => {
-                const s = store.stylists.find(x => x.id == arg.event.extendedProps.sId);
-                arg.el.style.setProperty('--event-color', s?.color || '#ddd');
-                if(calendar.view.type === 'timeGridDay') {
-                    return { html: `
-                        <div class="ev-header">${s?.name || ''}</div>
-                        <div class="ev-title">${arg.event.title}</div>
-                        <div class="ev-memo">${arg.event.extendedProps.memo || ''}</div>
-                    ` };
-                }
-                return { html: `<b>${arg.event.title}</b>` };
-            },
-            eventClick: (info) => editRes(info.event.id)
-        });
-        calendar.render();
+        for(let i=0; i<firstDay; i++) { grid.appendChild(document.createElement('div')); }
+
+        for(let d=1; d<=totalDays; d++) {
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const dayEl = document.createElement('div');
+            dayEl.className = 'cal-day';
+            if(dateStr === currentSelectDate) dayEl.classList.add('active');
+            
+            const dayApps = store.appointments.filter(a => a.date === dateStr);
+            const dots = [...new Set(dayApps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))]
+                .map(c => `<div class="status-dot" style="background:${c}"></div>`).join('');
+
+            dayEl.innerHTML = `<div class="day-num">${d}</div><div class="dot-group">${dots}</div>`;
+            dayEl.onclick = () => selectDate(dateStr);
+            grid.appendChild(dayEl);
+        }
+        selectDate(currentSelectDate);
     }
 
-    async function addRes() {
+    function selectDate(dateStr) {
+        currentSelectDate = dateStr;
+        document.getElementById('selected-date-label').innerText = dateStr;
+        const list = document.getElementById('day-list');
+        const apps = store.appointments.filter(a => a.date === dateStr);
+        
+        list.innerHTML = apps.length ? apps.map(a => {
+            const sty = store.stylists.find(s => s.id == a.sId);
+            return `
+                <div class="memo-card" style="--sty-color: ${sty?.color || '#ddd'}">
+                    <div class="memo-sty">${sty?.name || '未指定'}</div>
+                    <div class="memo-name">${a.name}</div>
+                    <div class="memo-tags">${a.tags.join(' + ')}</div>
+                </div>
+            `;
+        }).join('') : `<div style="text-align:center; color:var(--sub); margin-top:50px;">本日尚無預約</div>`;
+        
+        // 刷新月曆選中狀態
+        document.querySelectorAll('.cal-day').forEach(el => {
+            const isTarget = el.querySelector('.day-num')?.innerText == parseInt(dateStr.split('-')[2]);
+            el.classList.toggle('active', isTarget);
+        });
+    }
+
+    async function openBooking() {
         activeTags = [];
         const { value: res } = await Swal.fire({
-            title: '新增預約', confirmButtonText: '確定存檔', showCancelButton: true,
+            title: '新增預約',
+            confirmButtonText: '確定存檔',
+            showCancelButton: true,
             html: `
                 <select id="s-in" class="oval-input">${store.stylists.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
-                <input id="n-in" class="oval-input" style="border-radius:15px;" placeholder="顧客姓名">
-                <div style="display:flex; gap:10px; margin-bottom:12px;">
-                    <input id="d-in" class="oval-input" type="date" value="${new Date().toISOString().split('T')[0]}">
-                    <input id="t-in" class="oval-input" type="time" value="${store.openT}">
-                </div>
-                <div style="text-align:left;">${store.tags.map(t => `<div class="tag-pill" onclick="syncMemo(this, '${t.name}')">${t.name}</div>`).join('')}</div>
-                <textarea id="m-in" class="memo-box" placeholder="備忘內容..."></textarea>
+                <input id="n-in" class="oval-input" placeholder="顧客姓名" style="border-radius:15px;">
+                <input id="d-in" class="oval-input" type="date" value="${currentSelectDate}">
+                <div style="text-align:left; font-size:0.8rem; font-weight:700; color:var(--sub);">服務多選：</div>
+                <div style="text-align:left; margin:10px 0;">${store.tags.map(t => `<div class="tag-pill" onclick="this.classList.toggle('active'); toggleTag('${t.name}')">${t.name}</div>`).join('')}</div>
             `,
             preConfirm: () => {
-                const n = document.getElementById('n-in').value;
-                if(!n) return Swal.showValidationMessage('姓名必填');
-                return { sId: document.getElementById('s-in').value, n, t: `${document.getElementById('d-in').value}T${document.getElementById('t-in').value}`, memo: document.getElementById('m-in').value };
+                const name = document.getElementById('n-in').value;
+                if(!name || activeTags.length === 0) return Swal.showValidationMessage('姓名與項目必填');
+                return { sId: parseInt(document.getElementById('s-in').value), name, date: document.getElementById('d-in').value, tags: [...activeTags] };
             }
         });
-        if(res) { store.appointments.push({id: Date.now(), ...res}); renderAll(); }
+        if(res) {
+            store.appointments.push(res);
+            localStorage.setItem('SALON_V208_PURE', JSON.stringify(store));
+            initCalendar();
+            Swal.fire({ icon: 'success', title: '存檔成功', timer: 1000, showConfirmButton: false });
+        }
     }
 
-    function syncMemo(el, tag) {
-        const memo = document.getElementById('m-in');
-        el.classList.toggle('active');
-        if(el.classList.contains('active')) activeTags.push(tag); else activeTags = activeTags.filter(t => t !== tag);
-        memo.value = activeTags.join(' + ');
+    function toggleTag(tag) {
+        const i = activeTags.indexOf(tag);
+        i > -1 ? activeTags.splice(i, 1) : activeTags.push(tag);
     }
 
-    function renderAll() {
-        localStorage.setItem('SALON_V207_STEEL', JSON.stringify(store));
-        if(calendar) { calendar.refetchEvents(); calendar.render(); }
-    }
-
-    function switchV(v) { calendar.changeView(v); updateTabVisual(v); }
-    function updateTabVisual(v) {
-        document.getElementById('btn-month').classList.toggle('active', v === 'dayGridMonth');
-        document.getElementById('btn-day').classList.toggle('active', v === 'timeGridDay');
-    }
-
-    function slideTo(idx) {
-        document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx));
-        [0,1,2].forEach(i => document.getElementById(`n-${i}`).style.color = (i === idx) ? 'var(--gold)' : 'var(--sub)');
-        if(idx === 0) setTimeout(()=>calendar.render(), 50);
-    }
+    initCalendar();
 </script>
 </body>
 </html>
