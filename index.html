@@ -3,162 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 V208 PRO</title>
+    <title>專屬空間 V209 PRO - 全螢幕看板</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --gold: #D4AF37; --bg: #ffffff; --primary: #1d1d1f; --sub: #86868b; --border: #f2f2f2; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; color: var(--primary); padding-bottom: 100px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; color: var(--primary); padding-bottom: 95px; overflow-x: hidden; }
         
-        /* 固定標頭 */
+        /* 標頭與切換 */
         .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: #fff; z-index: 100; border-bottom: 1px solid var(--border); }
         .app-title { font-size: 1.8rem; font-weight: 900; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        /* 暴力月曆 */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
-        .cal-day { background: #fff; min-height: 80px; padding: 5px; cursor: pointer; transition: 0.2s; position: relative; }
-        .cal-day.active { background: rgba(212, 175, 55, 0.05); }
-        .day-num { font-size: 0.9rem; font-weight: 400; }
-        .dot-group { display: flex; gap: 3px; margin-top: 5px; flex-wrap: wrap; }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+        /* 月曆視圖頁面 */
+        .page { display: none; width: 100vw; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 日行備忘錄面板 */
-        .day-panel { padding: 20px; border-top: 1.5px solid var(--gold); background: #fff; min-height: 300px; }
-        .day-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 20px; display: flex; justify-content: space-between; }
-        
-        .memo-card { border-left: 5px solid var(--sty-color); border-radius: 12px; padding: 15px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .memo-sty { font-size: 0.7rem; font-weight: 900; color: var(--gold); margin-bottom: 5px; }
-        .memo-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 5px; }
-        .memo-tags { font-size: 0.85rem; color: var(--sub); line-height: 1.4; }
+        /* 暴力月曆網格 */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+        .cal-day { background: #fff; min-height: 90px; padding: 8px; cursor: pointer; position: relative; }
+        .day-num { font-size: 0.95rem; font-weight: 400; }
+        .dot-group { display: flex; gap: 3px; margin-top: 8px; flex-wrap: wrap; }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+        /* 單日獨立看板頁面 */
+        .day-view-header { padding: 20px; background: #fff; display: flex; align-items: center; gap: 15px; border-bottom: 1.5px solid var(--gold); }
+        .back-btn { font-size: 1.2rem; color: var(--gold); cursor: pointer; }
+        .day-display-title { font-size: 1.4rem; font-weight: 900; }
+
+        .day-content { padding: 20px; }
+        .memo-card { border-left: 8px solid var(--sty-color); border-radius: 15px; padding: 20px; background: #fff; box-shadow: 0 8px 25px rgba(0,0,0,0.06); margin-bottom: 15px; position: relative; }
+        .memo-sty { font-size: 0.75rem; font-weight: 900; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .memo-name { font-size: 1.25rem; font-weight: 800; margin-bottom: 8px; }
+        .memo-tags { font-size: 0.9rem; color: var(--sub); line-height: 1.5; font-weight: 400; }
 
         /* 底部導航 */
         .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub); font-size: 0.75rem; gap: 5px; cursor: pointer; }
         .nav-item.active { color: var(--gold); font-weight: 700; }
 
-        .fab { position: fixed; bottom: 100px; right: 25px; width: 65px; height: 65px; background: #fff; border: 1.5px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); cursor: pointer; }
+        .fab { position: fixed; bottom: 105px; right: 25px; width: 65px; height: 65px; background: #fff; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.6rem; box-shadow: 0 10px 35px rgba(212,175,55,0.25); z-index: 2000; }
         
-        /* 橢圓輸入框 */
         .oval-input { border: 1.2px solid var(--gold); border-radius: 25px; padding: 12px; width: 100%; text-align: center; font-weight: 900; margin-bottom: 15px; font-size: 1rem; }
-        .tag-pill { display: inline-block; padding: 8px 15px; border: 1.2px solid var(--gold); border-radius: 15px; margin: 4px; font-weight: 800; cursor: pointer; }
+        .tag-pill { display: inline-block; padding: 8px 18px; border: 1.2px solid var(--gold); border-radius: 20px; margin: 4px; font-weight: 800; cursor: pointer; }
         .tag-pill.active { background: var(--gold); color: #fff; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="app-title">專屬空間</div>
-    <div onclick="initCalendar()" style="font-weight:900; color:var(--gold); cursor:pointer; border:1px solid var(--gold); padding:5px 12px; border-radius:10px;">TODAY</div>
-</div>
-
-<div id="calendar-area">
-    <div style="display:grid; grid-template-columns: repeat(7, 1fr); text-align:center; padding:10px 0; font-weight:900; font-size:0.7rem; color:var(--sub);">
+<div id="page-month" class="page active">
+    <div class="header">
+        <div class="app-title">專屬空間</div>
+        <div onclick="initMonthView()" style="font-weight:900; color:var(--gold); border:1px solid var(--gold); padding:5px 12px; border-radius:10px;">本月</div>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(7, 1fr); text-align:center; padding:15px 0; font-weight:900; font-size:0.75rem; color:var(--sub);">
         <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
     </div>
     <div class="calendar-grid" id="cal-grid"></div>
 </div>
 
-<div class="day-panel">
-    <div class="day-title" id="selected-date-label">選擇日期</div>
-    <div id="day-list">
-        <div style="text-align:center; color:var(--sub); margin-top:50px;">點擊上方日期查看預約</div>
+<div id="page-day" class="page">
+    <div class="day-view-header">
+        <i class="fas fa-chevron-left back-btn" onclick="showPage('page-month')"></i>
+        <div class="day-display-title" id="target-date-title">2026-01-31</div>
     </div>
+    <div class="day-content" id="day-memo-list">
+        </div>
 </div>
 
 <button class="fab" onclick="openBooking()"><i class="fas fa-plus"></i></button>
 
 <div class="nav">
-    <div class="nav-item active"><i class="fas fa-calendar-alt"></i><span>預約表</span></div>
+    <div class="nav-item active" onclick="showPage('page-month')"><i class="fas fa-calendar-alt"></i><span>預約表</span></div>
     <div class="nav-item"><i class="fas fa-user-circle"></i><span>客資</span></div>
     <div class="nav-item"><i class="fas fa-cog"></i><span>設定</span></div>
 </div>
 
 <script>
     let activeTags = [];
-    let currentSelectDate = new Date().toLocaleDateString('sv');
-    let store = JSON.parse(localStorage.getItem('SALON_V208_PURE')) || {
-        stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}, {id: 2, name: 'Apple', color: '#D4AF37'}],
-        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}],
+    let store = JSON.parse(localStorage.getItem('SALON_V209_STEEL')) || {
+        stylists: [
+            {id: 1, name: 'Tonny', color: '#1d1d1f'}, 
+            {id: 2, name: 'Apple', color: '#D4AF37'},
+            {id: 3, name: 'Kevin', color: '#8e44ad'}
+        ],
+        tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}, {id: 3, name: '燙髮'}, {id: 4, name: '護髮'}],
         appointments: []
     };
 
-    function initCalendar() {
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        if(pageId === 'page-month') initMonthView();
+    }
+
+    function initMonthView() {
         const grid = document.getElementById('cal-grid');
         grid.innerHTML = '';
         const now = new Date();
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
         const totalDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
+        // 填充空格
         for(let i=0; i<firstDay; i++) { grid.appendChild(document.createElement('div')); }
 
+        // 生成日期格
         for(let d=1; d<=totalDays; d++) {
             const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const dayEl = document.createElement('div');
             dayEl.className = 'cal-day';
-            if(dateStr === currentSelectDate) dayEl.classList.add('active');
             
+            // 找出當天的預約顏色點
             const dayApps = store.appointments.filter(a => a.date === dateStr);
             const dots = [...new Set(dayApps.map(a => store.stylists.find(s=>s.id==a.sId)?.color || '#ddd'))]
                 .map(c => `<div class="status-dot" style="background:${c}"></div>`).join('');
 
             dayEl.innerHTML = `<div class="day-num">${d}</div><div class="dot-group">${dots}</div>`;
-            dayEl.onclick = () => selectDate(dateStr);
+            dayEl.onclick = () => openDayBoard(dateStr);
             grid.appendChild(dayEl);
         }
-        selectDate(currentSelectDate);
     }
 
-    function selectDate(dateStr) {
-        currentSelectDate = dateStr;
-        document.getElementById('selected-date-label').innerText = dateStr;
-        const list = document.getElementById('day-list');
+    // 關鍵功能：打開獨立日看板
+    function openDayBoard(dateStr) {
+        document.getElementById('target-date-title').innerText = dateStr;
+        const listArea = document.getElementById('day-memo-list');
         const apps = store.appointments.filter(a => a.date === dateStr);
         
-        list.innerHTML = apps.length ? apps.map(a => {
-            const sty = store.stylists.find(s => s.id == a.sId);
-            return `
-                <div class="memo-card" style="--sty-color: ${sty?.color || '#ddd'}">
-                    <div class="memo-sty">${sty?.name || '未指定'}</div>
-                    <div class="memo-name">${a.name}</div>
-                    <div class="memo-tags">${a.tags.join(' + ')}</div>
-                </div>
-            `;
-        }).join('') : `<div style="text-align:center; color:var(--sub); margin-top:50px;">本日尚無預約</div>`;
-        
-        // 刷新月曆選中狀態
-        document.querySelectorAll('.cal-day').forEach(el => {
-            const isTarget = el.querySelector('.day-num')?.innerText == parseInt(dateStr.split('-')[2]);
-            el.classList.toggle('active', isTarget);
-        });
+        if(apps.length === 0) {
+            listArea.innerHTML = `<div style="text-align:center; color:var(--sub); margin-top:100px; font-size:1.1rem;">本日尚無預約資料</div>`;
+        } else {
+            // 依據設計師排序，方便查看
+            apps.sort((a,b) => a.sId - b.sId);
+            listArea.innerHTML = apps.map(a => {
+                const sty = store.stylists.find(s => s.id == a.sId);
+                return `
+                    <div class="memo-card" style="--sty-color: ${sty?.color || '#ddd'}">
+                        <div class="memo-sty">${sty?.name || '未指定'}</div>
+                        <div class="memo-name">${a.name}</div>
+                        <div class="memo-tags"><i class="fas fa-tag" style="margin-right:5px;"></i>${a.tags.join(' + ')}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        showPage('page-day');
     }
 
     async function openBooking() {
         activeTags = [];
         const { value: res } = await Swal.fire({
-            title: '新增預約',
-            confirmButtonText: '確定存檔',
+            title: '新增預約卡片',
+            confirmButtonText: '加入看板',
             showCancelButton: true,
             html: `
                 <select id="s-in" class="oval-input">${store.stylists.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
                 <input id="n-in" class="oval-input" placeholder="顧客姓名" style="border-radius:15px;">
-                <input id="d-in" class="oval-input" type="date" value="${currentSelectDate}">
-                <div style="text-align:left; font-size:0.8rem; font-weight:700; color:var(--sub);">服務多選：</div>
-                <div style="text-align:left; margin:10px 0;">${store.tags.map(t => `<div class="tag-pill" onclick="this.classList.toggle('active'); toggleTag('${t.name}')">${t.name}</div>`).join('')}</div>
+                <input id="d-in" class="oval-input" type="date" value="${new Date().toLocaleDateString('sv')}">
+                <div style="text-align:left; font-size:0.8rem; font-weight:700; color:var(--sub); margin-bottom:10px;">服務項目：</div>
+                <div style="text-align:left;">${store.tags.map(t => `<div class="tag-pill" onclick="this.classList.toggle('active'); toggleTag('${t.name}')">${t.name}</div>`).join('')}</div>
             `,
             preConfirm: () => {
                 const name = document.getElementById('n-in').value;
-                if(!name || activeTags.length === 0) return Swal.showValidationMessage('姓名與項目必填');
-                return { sId: parseInt(document.getElementById('s-in').value), name, date: document.getElementById('d-in').value, tags: [...activeTags] };
+                const date = document.getElementById('d-in').value;
+                if(!name || activeTags.length === 0) return Swal.showValidationMessage('姓名與服務必填');
+                return { sId: parseInt(document.getElementById('s-in').value), name, date, tags: [...activeTags] };
             }
         });
         if(res) {
             store.appointments.push(res);
-            localStorage.setItem('SALON_V208_PURE', JSON.stringify(store));
-            initCalendar();
-            Swal.fire({ icon: 'success', title: '存檔成功', timer: 1000, showConfirmButton: false });
+            localStorage.setItem('SALON_V209_STEEL', JSON.stringify(store));
+            initMonthView();
+            Swal.fire({ icon: 'success', title: '預約已同步', timer: 1000, showConfirmButton: false });
         }
     }
 
@@ -167,7 +185,8 @@
         i > -1 ? activeTags.splice(i, 1) : activeTags.push(tag);
     }
 
-    initCalendar();
+    // 初始啟動
+    initMonthView();
 </script>
 </body>
 </html>
