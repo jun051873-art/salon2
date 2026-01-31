@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>專屬空間 Salon Elite V202</title>
+    <title>專屬空間 Salon Elite V203</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -13,25 +13,32 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Noto Sans TC', sans-serif; background: #fff; margin: 0; padding-bottom: 95px; }
         
-        .header { padding: 25px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; position: sticky; top: 0; background: #fff; z-index: 4500; border-bottom: 1px solid var(--border); }
+        .sticky-top-group { position: sticky; top: 0; z-index: 4500; background: #fff; border-bottom: 1px solid var(--border); }
+        .header { padding: 25px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-end; }
         .app-title { font-size: 1.8rem; font-weight: 900; background: linear-gradient(120deg, #1d1d1f 20%, var(--gold) 40%, #1d1d1f 60%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: flow 6s linear infinite; }
         @keyframes flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        .view-switcher { display: flex; justify-content: center; gap: 30px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .view-switcher { display: flex; justify-content: center; gap: 30px; padding: 10px 0; }
         .view-link { font-size: 0.85rem; font-weight: 700; color: var(--sub); cursor: pointer; padding: 6px 15px; border-radius: 10px; }
         .view-link.active { color: var(--gold); background: rgba(212,175,55,0.08); }
 
-        /* 預約塊：白底、側色條、文字優化 */
-        .fc-event { background: #fff !important; border: 1px solid var(--border) !important; border-left: 5px solid var(--event-color) !important; color: #000 !important; font-weight: 700 !important; padding: 5px !important; border-radius: 8px !important; box-shadow: 0 4px 10px rgba(0,0,0,0.03) !important; overflow: hidden; }
-        .fc-event-title { white-space: normal !important; display: block; font-size: 0.8rem; line-height: 1.2; }
-        .fc-timegrid-slot { height: 80px !important; }
+        /* 月曆訊號點系統 */
+        .dot-container { display: flex; justify-content: center; gap: 3px; margin-top: 2px; height: 6px; }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-        /* 預約表單組件 */
-        .oval-field { border: 1.2px solid var(--gold); border-radius: 25px; padding: 12px; text-align: center; font-weight: 900; background: #fff; font-size: 1rem; flex: 1; margin-bottom: 15px; width: 100%; }
-        .memo-area { border: 1.2px solid var(--gold); border-radius: 15px; padding: 12px; width: 100%; height: 80px; font-family: inherit; font-size: 1rem; font-weight: 400; margin-top: 10px; resize: none; }
-        .tag-wall { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .tag-pill { border: 1.2px solid var(--gold); border-radius: 12px; padding: 6px 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; background: #fff; }
+        /* 預約塊：Apple 備忘錄延展風格 */
+        .fc-event { background: #fff !important; border: 1.2px solid var(--border) !important; border-left: 5px solid var(--event-color) !important; color: #000 !important; padding: 6px !important; border-radius: 10px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.04) !important; overflow: visible !important; }
+        .fc-event-main { white-space: normal !important; overflow: visible !important; }
+        .event-info-line { display: block; font-size: 0.85rem; font-weight: 800; line-height: 1.4; }
+        .event-sty-tag { color: var(--gold); font-size: 0.7rem; font-weight: 900; margin-bottom: 2px; display: block; }
+        
+        .fc-timegrid-slot { height: 90px !important; } /* 加高格線以便備忘錄顯示 */
+
+        /* 預約視窗 */
+        .oval-field { border: 1.2px solid var(--gold); border-radius: 25px; padding: 12px; text-align: center; font-weight: 900; background: #fff; font-size: 1rem; width: 100%; margin-bottom: 15px; }
+        .tag-pill { display: inline-block; padding: 8px 15px; border: 1.2px solid var(--gold); border-radius: 15px; margin: 4px; font-weight: 800; cursor: pointer; }
         .tag-pill.active { background: var(--gold); color: #fff; }
+        .memo-box { border: 1.2px solid var(--gold); border-radius: 15px; padding: 12px; width: 100%; height: 100px; font-size: 1rem; margin-top: 10px; resize: none; }
 
         .page { display: none; width: 100%; padding: 10px 20px; }
         .page.active { display: block; }
@@ -44,11 +51,11 @@
 <div class="sticky-top-group">
     <div class="header">
         <div class="app-title">專屬空間</div>
-        <div onclick="calendar.today()" style="font-weight:900; color:var(--gold); cursor:pointer; border:1px solid var(--gold); padding:4px 10px; border-radius:10px;">TODAY</div>
+        <div class="apple-btn-mini" style="border:1.2px solid var(--gold); border-radius:12px; padding:5px 15px; font-weight:900;" onclick="calendar.today()">TODAY</div>
     </div>
     <div class="view-switcher">
-        <span class="view-link active" id="tab-m" onclick="changeV('dayGridMonth')">月曆</span>
-        <span class="view-link" id="tab-d" onclick="changeV('timeGridDay')">日行</span>
+        <span class="view-link active" id="tab-month" onclick="changeV('dayGridMonth')">月曆</span>
+        <span class="view-link" id="tab-day" onclick="changeV('timeGridDay')">日行</span>
     </div>
 </div>
 
@@ -58,7 +65,7 @@
     <div class="page" id="page-2" id="settings-area"></div>
 </div>
 
-<button class="fab" onclick="openMemoBooking()"><i class="fas fa-plus"></i></button>
+<button class="fab" onclick="openFullBooking()"><i class="fas fa-plus"></i></button>
 
 <div class="nav-container">
     <div onclick="slideTo(0)" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; color:var(--gold);" class="nav-item"><i class="fas fa-calendar-alt"></i><span>預約表</span></div>
@@ -68,7 +75,7 @@
 
 <script>
     let calendar, activeTags = [];
-    let store = JSON.parse(localStorage.getItem('SALON_V202_MEMO')) || {
+    let store = JSON.parse(localStorage.getItem('SALON_V203_DOTS')) || {
         stylists: [{id: 1, name: 'Tonny', color: '#2c3e50'}],
         tags: [{id: 1, name: '剪髮'}, {id: 2, name: '染髮'}],
         appointments: [], clients: [], offDays: [], offColor: "#34495e", openT: "11:00", closeT: "21:00"
@@ -82,105 +89,108 @@
         calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'dayGridMonth', headerToolbar: false, locale: 'zh-tw', height: 'auto',
             dayCellContent: e => e.dayNumberText.replace('日', ''),
-            allDaySlot: false, slotMinTime: store.openT + ":00", slotMaxTime: store.closeT + ":00",
+            allDaySlot: false, slotDuration: '01:00:00',
+            slotMinTime: store.openT + ":00", slotMaxTime: store.closeT + ":00",
             dateClick: (i) => { calendar.changeView('timeGridDay', i.dateStr); updateSwitcherState('timeGridDay'); },
             events: (i, s) => {
-                let evs = store.appointments.map(a => ({ 
-                    id: a.id, 
-                    title: `${a.n} | ${a.memo}`, 
-                    start: a.t, 
-                    extendedProps: {sId: a.sId} 
-                }));
+                let evs = store.appointments.map(a => {
+                    const sty = store.stylists.find(s => s.id == a.sId);
+                    return { 
+                        id: a.id, 
+                        title: `【${sty?.name || '未定'}】${a.n} | ${a.memo}`, 
+                        start: a.t, 
+                        extendedProps: { sId: a.sId, memo: a.memo, name: a.n, styName: sty?.name } 
+                    };
+                });
                 store.offDays.forEach(d => evs.push({ start: d, display: 'background', backgroundColor: store.offColor }));
                 s(evs);
             },
-            eventDidMount: i => { if(i.event.display !== 'background') { const s = store.stylists.find(x => x.id == i.event.extendedProps.sId); if(s) i.el.style.setProperty('--event-color', s.color); } },
+            // 月視圖小圓點渲染邏輯
+            dayCellDidMount: (info) => {
+                const dateStr = info.date.toLocaleDateString('sv');
+                const appointmentsToday = store.appointments.filter(a => a.t.startsWith(dateStr));
+                if(appointmentsToday.length > 0) {
+                    const dotContainer = document.createElement('div');
+                    dotContainer.className = 'dot-container';
+                    // 取得當日所有設計師的唯一顏色
+                    const uniqueColors = [...new Set(appointmentsToday.map(a => {
+                        return store.stylists.find(s => s.id == a.sId)?.color || '#ddd';
+                    }))];
+                    uniqueColors.forEach(color => {
+                        const dot = document.createElement('div');
+                        dot.className = 'status-dot';
+                        dot.style.backgroundColor = color;
+                        dotContainer.appendChild(dot);
+                    });
+                    info.el.querySelector('.fc-daygrid-day-top').appendChild(dotContainer);
+                }
+            },
+            eventDidMount: i => {
+                if(i.event.display !== 'background') {
+                    const s = store.stylists.find(x => x.id == i.event.extendedProps.sId);
+                    if(s) i.el.style.setProperty('--event-color', s.color);
+                    
+                    // 日視圖專用內容強化
+                    if(calendar.view.type === 'timeGridDay') {
+                        const { styName, name, memo } = i.event.extendedProps;
+                        i.el.querySelector('.fc-event-main').innerHTML = `
+                            <span class="event-sty-tag">${styName}</span>
+                            <span class="event-info-line">${name}</span>
+                            <div style="font-size:0.75rem; color:#666; margin-top:3px; font-weight:400;">${memo}</div>
+                        `;
+                    }
+                }
+            },
             eventClick: i => editBooking(i.event.id)
         });
         calendar.render();
     }
 
-    // --- 暴力美學：備忘錄預約視窗 ---
-    async function openMemoBooking(name = "") {
+    async function openFullBooking(name = "") {
         activeTags = [];
         const { value: res } = await Swal.fire({
             title: '新增預約',
             confirmButtonText: '確定存檔',
             showCancelButton: true,
             html: `
-                <select id="s-in" class="oval-field">
-                    ${store.stylists.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
-                </select>
+                <select id="s-in" class="oval-field">${store.stylists.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
                 <input id="n-in" class="oval-field" style="border-radius:15px;" placeholder="顧客姓名" value="${name}">
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
                     <input id="d-in" class="oval-field" type="date" value="${new Date().toISOString().split('T')[0]}">
                     <input id="t-in" class="oval-field" type="time" value="${store.openT}">
                 </div>
-                <div style="text-align:left; font-size:0.8rem; color:var(--sub); font-weight:700;">快速選擇項目：</div>
-                <div class="tag-wall" style="margin-top:8px;">
-                    ${store.tags.map(t => `<div class="tag-pill" onclick="syncMemo(this, '${t.name}')">${t.name}</div>`).join('')}
+                <div class="tag-wall" style="text-align:left;">
+                    ${store.tags.map(t => `<div class="tag-pill" onclick="syncMemoText(this, '${t.name}')">${t.name}</div>`).join('')}
                 </div>
-                <textarea id="m-in" class="memo-area" placeholder="備忘錄 (點擊標籤自動填入)"></textarea>
+                <textarea id="m-in" class="memo-box" placeholder="點擊上方項目自動填入，也可手動備註..."></textarea>
             `,
             preConfirm: () => {
                 const n = document.getElementById('n-in').value;
                 const m = document.getElementById('m-in').value;
-                if(!n || !m) return Swal.showValidationMessage('姓名與備忘錄內容必填');
+                if(!n || !m) return Swal.showValidationMessage('請填寫姓名與預約內容');
                 return { sId: document.getElementById('s-in').value, n, t: `${document.getElementById('d-in').value}T${document.getElementById('t-in').value}`, memo: m };
             }
         });
         if(res) { store.appointments.push({id: Date.now(), ...res}); renderAll(); }
     }
 
-    // 點擊標籤同步到備忘錄
-    function syncMemo(el, tagName) {
+    function syncMemoText(el, tagName) {
         const memo = document.getElementById('m-in');
         el.classList.toggle('active');
-        if (el.classList.contains('active')) {
-            activeTags.push(tagName);
-        } else {
-            activeTags = activeTags.filter(t => t !== tagName);
-        }
+        if (el.classList.contains('active')) activeTags.push(tagName);
+        else activeTags = activeTags.filter(t => t !== tagName);
         memo.value = activeTags.join('+');
     }
 
-    async function editBooking(id) {
-        const a = store.appointments.find(x => x.id == id);
-        const { value: res, isDenied } = await Swal.fire({
-            title: '修改預約',
-            showCancelButton: true, showDenyButton: true, confirmButtonText: '更新', denyButtonText: '刪除',
-            html: `<input id="en" class="oval-field" value="${a.n}"><input id="et" class="oval-field" type="datetime-local" value="${a.t}"><textarea id="em" class="memo-area">${a.memo}</textarea>`,
-            preConfirm: () => ({ n: document.getElementById('en').value, t: document.getElementById('et').value, memo: document.getElementById('em').value })
-        });
-        if(res) { Object.assign(a, res); renderAll(); }
-        else if (isDenied) { 
-            Swal.fire({ title: '確定刪除？', showCancelButton: true }).then(r => { if(r.isConfirmed) { store.appointments = store.appointments.filter(x => x.id !== id); renderAll(); } });
-        }
-    }
-
     function renderAll() {
-        localStorage.setItem('SALON_V202_MEMO', JSON.stringify(store));
-        const clientArea = document.getElementById('client-area');
-        if(clientArea) {
-            const kw = document.getElementById('cSearch')?.value || "";
-            clientArea.innerHTML = store.clients.filter(c => c.n.includes(kw)).map(c => {
-                const sc = store.stylists.find(s => s.id == c.sId)?.color || '#ddd';
-                const history = store.appointments.filter(a => a.n === c.n).sort((a,b)=>new Date(b.t)-new Date(a.t)).slice(0,3)
-                    .map(a => `<span style="font-size:0.7rem; border:1px solid #eee; padding:2px 6px; border-radius:5px; margin-right:4px;">${a.t.split('T')[0].slice(5)} ${a.memo}</span>`).join('');
-                return `<div style="padding:15px 0; border-bottom:1px solid #f2f2f2; position:relative;">
-                    <div style="position:absolute; left:-20px; top:25%; height:50%; width:4px; background:${sc}"></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;"><div class="gold-wrap">${c.n}</div>
-                    <div style="display:flex; gap:15px;"><i class="fas fa-calendar-plus" style="color:var(--gold);" onclick="openMemoBooking('${c.n}')"></i><a href="tel:${c.p}"><i class="fas fa-phone-alt" style="color:var(--gold);"></i></a></div></div>
-                    <div style="font-size:0.8rem; color:var(--sub); margin-top:5px;">📞 ${c.p} | 🎂 ${c.m}${c.d}</div><div style="margin-top:8px;">${history}</div></div>`;
-            }).join('');
-        }
-        if(calendar) calendar.refetchEvents();
+        localStorage.setItem('SALON_V203_DOTS', JSON.stringify(store));
+        if(calendar) { calendar.refetchEvents(); calendar.render(); }
     }
 
     function changeV(v) { calendar.changeView(v); updateSwitcherState(v); }
     function updateSwitcherState(v) {
-        document.getElementById('tab-m').classList.toggle('active', v === 'dayGridMonth');
-        document.getElementById('tab-d').classList.toggle('active', v === 'timeGridDay');
+        document.getElementById('tab-month').classList.toggle('active', v === 'dayGridMonth');
+        document.getElementById('tab-day').classList.toggle('active', v === 'timeGridDay');
     }
     function slideTo(idx) { 
         document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === idx)); 
