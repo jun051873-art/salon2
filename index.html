@@ -267,10 +267,19 @@ const S1_OrderModule = ({ onCheckout, staffList, services, products, setActiveTa
 
     return (
         <div className="flex flex-col gap-4 animate-fade-in relative pb-10">
-            <div className="flex justify-between items-end mb-1 px-2">
-                <h1 className="text-5xl font-black text-gold-gradient tracking-tighter italic">開單結帳</h1>
-                <input type="date" className="btn-glass-white px-4 py-2 text-sm outline-none" value={orderDate} onChange={e => setOrderDate(e.target.value)} />
-            </div>
+          <div className="flex justify-between items-end mb-1 px-2">
+    <h1 className="text-5xl font-black text-gold-gradient tracking-tighter italic">開單結帳</h1>
+    {/* ⚡️ 日期選擇器：優化為 iOS 圓膠囊質感，去除灰方感 */}
+    <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/80 shadow-sm hover:border-[#D4AF37]/50 transition-all">
+        <Icon name="calendar" size={16} color="#D4AF37" />
+        <input 
+            type="date" 
+            className="bg-transparent text-sm font-black text-gray-800 outline-none cursor-pointer" 
+            value={orderDate} 
+            onChange={e => setOrderDate(e.target.value)} 
+        />
+    </div>
+</div>
 
             <div className="flex flex-col md:flex-row gap-6">
                 {/* 左側面板 */}
@@ -293,12 +302,31 @@ const S1_OrderModule = ({ onCheckout, staffList, services, products, setActiveTa
 
                 {/* 右側明細 */}
                 <div className="flex-1 liquid-glass p-6 md:p-8 flex flex-col relative shadow-2xl">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-black italic tracking-tighter">結帳明細</h2>
-                        <div className="flex bg-gray-200/40 p-1 rounded-xl">
-                            {['散客', '會員'].map(t => (<button key={t} onClick={() => setCustomerType(t)} className={`px-5 py-2 rounded-lg text-xs font-black transition-all ${customerType === t ? 'bg-white shadow-sm text-black' : 'text-gray-400'}`}>{t}</button>))}
-                        </div>
-                    </div>
+                   <div className="flex justify-between items-center mb-6">
+    <h2 className="text-2xl font-black italic tracking-tighter">結帳明細</h2>
+    
+    {/* ⚡️ 套用動態滑動膠囊風格 */}
+    <div className="nav-container w-36 shadow-inner border-white/60 bg-white/40 relative p-1 rounded-2xl">
+        <div 
+            className="pearl-slider" 
+            style={{ 
+                left: customerType === '散客' ? '4px' : '50%', 
+                width: '46%',
+                top: '4px',
+                bottom: '4px'
+            }}
+        ></div>
+        {['散客', '會員'].map(t => (
+            <button 
+                key={t} 
+                onClick={() => setCustomerType(t)} 
+                className={`nav-item flex-1 text-xs font-black italic relative z-20 py-2 text-center transition-colors ${customerType === t ? 'active text-gray-900' : 'text-gray-400'}`}
+            >
+                {t}
+            </button>
+        ))}
+    </div>
+</div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6 relative items-end">
                         <div className="space-y-1 relative">
