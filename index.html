@@ -291,11 +291,12 @@ const S1_OrderModule = ({ onCheckout, staffList, services, products, setActiveTa
                         {['全部', '洗髮', '剪髮', '燙髮', '染髮', '護理', '販賣'].map(c => (<button key={c} onClick={() => setCategory(c)} className={`pill-toggle whitespace-nowrap ${category === c ? 'active' : ''}`}>{c}</button>))}
                     </div>
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[500px] no-scrollbar">
-                            {services.concat(products || []).filter(s => category === '全部' || s.cat === category).map(s => (                            <button key={s.id} onClick={() => addItem(s)} className="service-card liquid-glass p-6 bg-white/40 hover:bg-white/80 active:scale-95 transition-all text-left">
-                                <span className="text-[9px] font-black text-gray-400 block mb-1 uppercase tracking-widest">{s.cat}</span>
-                                <h3 className="text-lg font-black text-gray-800 truncate">{s.name}</h3>
-                                <b className="text-[#D4AF37] text-xl font-black">${s.price}</b>
-                            </button>
+                            {services.concat(products || []).filter(s => category === '全部' || s.cat === category).map(s => (                            
+                              <button key={s.id} onClick={() => addItem(s)} className="p-6 bg-white/40 backdrop-blur-md border border-white/70 rounded-[2rem] shadow-inner hover:bg-white/80 hover:border-white active:scale-95 transition-all text-left relative overflow-hidden group">
+    <span className="text-[9px] font-black text-gray-400 block mb-1 uppercase tracking-widest">{s.cat}</span>
+    <h3 className="text-lg font-black text-gray-800 truncate">{s.name}</h3>
+    <b className="text-[#D4AF37] text-xl font-black">${s.price}</b>
+</button>
                         ))}
                     </div>
                 </div>
@@ -306,7 +307,7 @@ const S1_OrderModule = ({ onCheckout, staffList, services, products, setActiveTa
     <h2 className="text-2xl font-black italic tracking-tighter">結帳明細</h2>
     
     {/* ⚡️ 套用動態滑動膠囊風格 */}
-    <div className="nav-container w-36 shadow-inner border-white/60 bg-white/40 relative p-1 rounded-2xl">
+   <div className="nav-container w-36 shadow-inner border-white/60 bg-white/40 backdrop-blur-md relative p-1 rounded-2xl">
         <div 
             className="pearl-slider" 
             style={{ 
@@ -329,22 +330,22 @@ const S1_OrderModule = ({ onCheckout, staffList, services, products, setActiveTa
 </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6 relative items-end">
-                        <div className="space-y-1 relative">
-                            <label className="text-[9px] font-black text-gray-400 ml-4">設計師</label>
-                            <div onClick={() => setIsStaffOpen(!isStaffOpen)} className="input-ios cursor-pointer flex justify-between items-center bg-white/90 font-black text-sm">
-                                {selectedStaff} <Icon name="chevron-down" size={16} color="#D4AF37" />
-                            </div>
-                            {isStaffOpen && <div className="crystal-menu shadow-2xl z-[100]">{staffList.map(s => (<div key={s} onClick={() => { setSelectedStaff(s); setIsStaffOpen(false); }} className="crystal-option"><span>{s}</span></div>))}</div>}
-                        </div>
-                        <div className="space-y-1 relative">
-                            <label className="text-[9px] font-black text-gray-400 ml-4">{customerType}搜尋</label>
-                            <input className="input-ios font-black text-sm" placeholder="名字或電話" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-                        </div>
+                      <div className="space-y-1 relative">
+    <label className="text-[9px] font-black text-gray-400 ml-4">設計師</label>
+    <div onClick={() => setIsStaffOpen(!isStaffOpen)} className="cursor-pointer flex justify-between items-center bg-white/40 backdrop-blur-md border border-white/60 shadow-inner px-5 py-3 rounded-2xl font-black text-sm text-gray-800 hover:bg-white/60 transition-all">
+        {selectedStaff} <Icon name="chevron-down" size={16} color="#D4AF37" />
+    </div>
+    {isStaffOpen && <div className="crystal-menu shadow-2xl z-[100]">{staffList.map(s => (<div key={s} onClick={() => { setSelectedStaff(s); setIsStaffOpen(false); }} className="crystal-option"><span>{s}</span></div>))}</div>}
+</div>
+                      <div className="space-y-1 relative">
+    <label className="text-[9px] font-black text-gray-400 ml-4">{customerType}搜尋</label>
+    <input className="w-full bg-white/40 backdrop-blur-md border border-white/60 shadow-inner px-5 py-3 rounded-2xl font-black text-sm outline-none text-gray-800 placeholder-gray-400 focus:bg-white/70 transition-all" placeholder="名字或電話" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+</div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto space-y-3 mb-6 no-scrollbar pr-1">
                         {orderItems.map(item => (
-                            <div key={item.orderId} className="flex justify-between items-center bg-white/50 p-5 rounded-[2.5rem] border border-white shadow-sm transition-all animate-fade-in">
+                          <div key={item.orderId} className="flex justify-between items-center bg-white/40 backdrop-blur-md p-5 rounded-[2.5rem] border border-white/70 shadow-inner transition-all animate-fade-in hover:bg-white/60">
                                 <div className="flex-1 truncate pr-4">
                                     <div className="text-sm font-black text-gray-800 italic">{item.name}</div>
                                     <div className="text-[9px] text-gray-400 font-bold">助理: {item.assistant}</div>
@@ -363,18 +364,18 @@ const S1_OrderModule = ({ onCheckout, staffList, services, products, setActiveTa
                     <div className="pt-4 border-t border-white/50">
                         <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">{['現金', 'LinePay', '街口', '信用卡'].map(p => (<button key={p} onClick={() => setPayMethod(p)} className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all shrink-0 ${payMethod === p ? 'bg-black text-[#D4AF37] shadow-xl' : 'bg-white text-gray-400'}`}>{p}</button>))}</div>
 
-                        {payMethod === '現金' && (
-                            <div className="bg-white/80 p-5 rounded-[2.5rem] border border-white shadow-xl mb-6 space-y-4 animate-fade-in">
-                                <div className="flex items-center gap-4">
-                                    <span className="text-[10px] font-black text-green-600 w-16 shrink-0 italic">收現款項</span>
-                                    <input className="input-ios text-xl font-black text-green-600 bg-white shadow-inner" type="number" value={cashIn} onChange={e => setCashIn(e.target.value)} placeholder="0" />
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <span className="text-[10px] font-black text-red-400 w-16 shrink-0 italic">應找零錢</span>
-                                    <div className="input-ios text-xl font-black text-red-400 bg-gray-50 flex items-center justify-center italic shadow-inner">${change}</div>
-                                </div>
-                            </div>
-                        )}
+                      {payMethod === '現金' && (
+    <div className="bg-white/40 backdrop-blur-md p-5 rounded-[2.5rem] border border-white/70 shadow-inner mb-6 space-y-4 animate-fade-in">
+        <div className="flex items-center gap-4">
+            <span className="text-[10px] font-black text-green-600 w-16 shrink-0 italic">收現款項</span>
+            <input className="w-full bg-white/60 border border-white/80 shadow-inner px-5 py-3 rounded-2xl text-xl font-black text-green-600 outline-none focus:bg-white transition-all" type="number" value={cashIn} onChange={e => setCashIn(e.target.value)} placeholder="0" />
+        </div>
+        <div className="flex items-center gap-4">
+            <span className="text-[10px] font-black text-red-400 w-16 shrink-0 italic">應找零錢</span>
+            <div className="w-full bg-white/30 border border-white/60 shadow-inner px-5 py-3 rounded-2xl text-xl font-black text-red-400 flex items-center justify-center italic">${change}</div>
+        </div>
+    </div>
+)}
 
                         <div className="flex justify-between items-end mb-6 px-4">
                             <span className="text-gray-400 font-black text-xs uppercase tracking-widest">Total</span>
